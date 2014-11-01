@@ -1,0 +1,262 @@
+%!TEX root = head.tex
+
+\section{Observational refinement}
+
+\subsection{Libraries}
+
+Programs interact with libraries by calling named library \emph{methods}, which
+receive \emph{parameter values} and yield \emph{return values} upon completion.
+We fix arbitrary sets $\<Methods>$ and $\<Vals>$ of method names and
+parameter/return values. 
+
+\begin{example}
+  \label{ex:methods}
+
+  The method and value sets for the stack implementation in
+  Figure~\ref{fig:treiber} are $\<Methods> = \set{ \<push>, \<pop> }$ and
+  $\<Vals> = \<Nats> \u \set{ {\tt EMPTY} }$.
+
+\end{example}
+
+\noindent
+We fix an arbitrary set $\<Ops>$ of operation identifiers, and for given sets
+$\<Methods>$ and $\<Vals>$ of methods and values, we fix the sets
+\begin{align*}
+  & C = \set{ m(v)_o : m \in \<Methods>, v \in \<Vals>, o \in \<Ops> }
+  \text{, and } \\
+  & R = \set{ \<ret>(v)_o : v \in \<Vals>, o \in \<Ops> }  
+\end{align*}
+of \emph{call actions} and \emph{return actions}; each call action $m(v)_o$
+combines a method $m \in \<Methods>$ and value $v \in \<Vals>$ with an
+\emph{operation identifier} $o \in \<Ops>$. Operation identifiers are used to
+pair call and return actions. We denote the operation identifier of a
+call/return action $a$ by $\<op>(a)$. Call and return actions $c \in C$ and $r
+\in R$ are \emph{matching}, written $c \match r$, when $\<op>(c) = \<op>(r)$. A
+word $e \in @S^*$ over alphabet $@S$, such that $(C \u R) \subseteq @S$, is
+\emph{well formed} when:
+\begin{itemize}
+
+  \item Each return is preceded by a matching call: \\
+  $e_j \in R$ implies $e_i \match e_j$ for some $i < j$.
+
+  \item Each operation identifier is used in at most one call/return: \\
+  $\<op>(e_i) = \<op>(e_j)$ and $i < j$ implies $e_i \match e_j$.
+
+\end{itemize}
+We say that the well-formed word $e \in @S^*$ is \emph{sequential} when
+\begin{itemize}
+
+  \item Operations do not overlap: \\
+  $e_i, e_k \in C$ and $i < k$ implies $e_i \match e_j$ for some $i < j < k$.
+
+\end{itemize}
+Well-formed words represent library executions. We assume every set of well-formed
+words is closed under isomorphic renaming of operation identifiers. For
+notational convenience, we often associate $\<Ops>$ with $\<Nats>$,
+e.g.,~writing $m(u)_1$ and $\<ret>(v)_2$ in place of $m(u)_{o_1}$ and
+$\<ret>(v)_{o_2}$. An operation $o$ of an execution $e$ is \emph{completed}
+when both call and return actions $m(u)_o$ and $\<ret>(v)_o$ of $o$ occur in
+$e$, and is otherwise \emph{pending}.
+
+\begin{example}
+  \label{ex:executions}
+
+  The well-formed words
+  \scriptsize
+  \begin{align*}
+     \<push>(0)_1\ \<pop>_2\ \<pop>_3\ \<ret>_1\ \<ret>(0)_3\ \<ret>(0)_2
+    \text{\normalsize, and } 
+    \<push>(0)_1\ \<pop>_2\ \<pop>_3\ \<ret>_1\ \<ret>(0)_2
+  \end{align*}
+  \normalsize
+  represent executions in which one call to the $\<push>(0)$ method overlaps
+  with two calls to $\<pop>$. In the first execution both calls to $\<pop>$
+  have matching return actions $\<ret>(0)$, i.e., the operations $2$ and $3$ are completed,
+  while operation $3$ is pending in the second, it has no matching return.
+
+\end{example}
+
+Libraries dictate the execution of methods between their call and return
+points. Accordingly, a library cannot prevent a method from being called,
+though it can decide not to return. Furthermore, any library action performed
+in the interval between call and return points can also be performed should the
+call have been made earlier, and/or the return made later. Our technical
+results rely on these properties. A library thus allows any sequence of
+invocations to its methods made by \emph{some} program.
+
+\begin{definition}
+  \label{def:library}
+
+  A \emph{library} $L$ is a set of well-formed words over alphabet $C \u R$, called \emph{executions}, such that 
+  \begin{itemize}
+
+    \item Call actions $c \in C$ cannot be disabled: \\
+    $e \cdot e' \in L$ implies $e \cdot c \cdot e' \in L$
+    if $e \cdot c \cdot e'$ is well formed.
+  
+    \item Call actions $c \in C$ cannot disable other actions: \\
+    $e \cdot a \cdot c \cdot e' \in L$ implies $e \cdot c \cdot a \cdot e' \in L$.
+  
+    \item Return actions $r \in R$ cannot enable other actions: \\
+    $e \cdot r \cdot a \cdot e' \in L$ implies $e \cdot a \cdot r \cdot e' \in L$.
+  
+  \end{itemize}
+
+\end{definition}
+
+\noindent
+We write $e_1 ~> e_2$ when $e_2$ can be derived from $e_1$ by applying zero or
+more of the above rules. The \emph{closure} of a set $E$ of executions under
+$~>$ is denoted $\overline{E}$.
+
+Note that even a library that implements \emph{atomic methods}, e.g.,~by
+guarding method bodies with a global-lock acquisition, admits executions in
+which method calls and returns overlap. A library which accesses the client's
+thread identifiers can be modeled by taking thread identifiers as method
+parameters.
+
+\begin{example}
+  \label{ex:libraries}
+
+  Any library which admits the execution
+  \scriptsize
+  \begin{align*}
+    \<push>(0)_1\ \<ret>_1\ \<pop>_2\ \<ret>(0)_2
+  \end{align*}
+  \normalsize
+  with sequential calls to $\<push>$ and $\<pop>$ must also admit
+  \scriptsize
+  \begin{align*}
+    \<push>(0)_1\ \<pop>_2\ \<ret>_1\ \<ret>(0)_2
+    \text{ \normalsize and }
+    \<push>(0)_1\ \<pop>_2\ \<pop>_3\ \<ret>_1\ \<ret>(0)_2
+    \text{\normalsize,}
+  \end{align*}
+  \normalsize
+  among others, yet need not admit an execution
+  \scriptsize
+  \begin{align*}
+    \<push>(0)_1\ \<pop>_2\ \<pop>_3\ \<ret>_1\ \<ret>(0)_3\ \<ret>(0)_2
+  \end{align*}
+  \normalsize
+  with two completed $\<pop>$ operations returning $0$.
+  
+\end{example}
+
+A library $L$ is called \emph{atomic} if it is defined by the closure of some
+set $E$ of sequential executions, i.e.,~$L = \overline{E}$. When such a set
+$E$ exists, it is unique, and we call it \emph{the kernel of $L$}, denoted by
+$\ker L$. Note that $\ker L$ contains only completed operations since $e_1
+\cdot e_2 ~> e_1 \cdot c \cdot e_2$, for any unmatched call $c$. Atomic
+libraries are often considered as specifications for concurrent objects.
+
+\begin{example}
+  \label{ex:atomic_stack}
+
+  The \emph{atomic stack} is the library whose kernel is the set of sequential
+  executions for which the return value of each $\<pop>$ operation is either
+  \begin{itemize}
+    
+    \item the argument value $v$ to the last unmatched $\<push>$ operation, or
+    
+    \item {\tt EMPTY} if there are no unmatched $\<push>$ operations.
+
+  \end{itemize}
+  In practice, the atomic stack can be implemented by guarding the methods
+  of a ``sequential'' stack object by global-lock acquisition.
+
+\end{example}
+
+\subsection{Histories}
+
+For given sets $\<Methods>$ and $\<Vals>$ of methods and values, we fix a set
+$\<Labels> = \<Methods> \x \<Vals> \x (\<Vals> \u \set{\bot})$ of
+\emph{operation labels}, and denote the label $\tup{m,u,v}$ by $m(u) => v$. A
+\emph{history} $h = \tup{O,<,f}$ is a partial order $<$ on a set $O \subseteq
+\<Ops>$ of operation identifiers labeled by $f: O -> \<Labels>$ for which $f(o)
+= m(u) => \bot$ implies $o$ is maximal in $<$. The \emph{history} $H(e)$ of
+a well-formed execution $e \in @S^*$ labels each operation with a method-call
+summary, and orders non-overlapping operations:
+\begin{itemize}
+
+  \item $O = \set{ \<op>(e_i) : 0 \le i < |e| \text{ and } e_i \in C }$,
+
+  \item $\<op>(e_i) < \<op>(e_j)$ if{f} $i < j$, $e_i \in R$, and $e_j \in C$.
+
+  \item $f(o) = \left\{
+  \begin{array}{ll}
+    m(u) => v     & \text{if } m(u)_o \in e \text{ and } \<ret>(v)_o \in e \\
+    m(u) => \bot  & \text{if } m(u)_o \in e \text{ and } \<ret>(\_)_o \not\in e
+  \end{array}
+  \right.$
+
+\end{itemize}
+An operation of $h$ labeled by $@l\in \<Labels>$ is called an \emph{$@l$
+operation}. The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L
+}$.
+
+\begin{example}
+
+  Figure~\ref{fig:stacks}(b) depicts the history of the execution in
+  Figure~\ref{fig:stacks}(a). Arrows depict the order relation modulo
+  transitivity. Operations $o_1$ and $o_2$ are ordered in $h$ if $o_1$'s return
+  precedes $o_2$'s call. For example, $\<push>(1)$ precedes $\<pop>=>3$.
+  However, $\<pop>=>1$ is incomparable to $\<pop>=>3$ because $\<pop>=>1$'s
+  return comes after $\<pop>=>3$'s call, and $\<pop>=>3$'s return comes after
+  $\<pop>=>1$'s call. The order among operations' call actions is irrelevant,
+  as is the order among their return actions.
+
+\end{example}
+
+This notion of histories gives rise to a natural order relating histories by
+their operation ordering. Basically, a history $h_1$ is \emph{weaker} than
+another history $h_2$ if $h_2$ contains all completed operations of $h_1$, and
+preserves the order between $h_1$'s operations. The pending operations of $h_1$
+can be either omitted or completed in $h_2$.
+
+\begin{definition}
+
+  Let $h_1 = \tup{O_1,<_1,f_1}$ and $h_2 = \tup{O_2,<_2,f_2}$. We say $h_1$ is
+  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
+  injection $g: O_2 -> O_1$ such that
+  \begin{itemize}
+
+    \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
+
+    \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
+
+    \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
+
+  \end{itemize}
+  where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
+  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
+  \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
+
+\end{definition}
+
+\begin{example}
+
+Figure~\ref{fig:stacks}(c) pictures a history $h'$ weaker than the history $h$ in Figure~\ref{fig:stacks}(b).
+Note that $h'$ contains two pending $\<pop>=>\bot$ operations, one of them is completed in $h$ 
+(it corresponds to the $\<pop>=>3$ operation) and one of them is omitted in $h$.
+
+\end{example}
+
+Throughout this work we do not distinguish between equivalent histories, and we
+assume every set $H$ of histories is closed under inclusion of equivalent
+histories, i.e.,~if $h_1$ and $h_2$ are equivalent and $h_1 \in H$, then $h_2
+\in H$ as well.
+
+\subsection{Refinement between Libraries}
+
+Refinement between libraries is defined with respect to the observable actions
+of programs which invoke library methods. Essentially, an implementation $L_1$ of a
+concurrent object \emph{refines} another implementation $L_2$ if every
+observable behavior of a program using $L_1$ is also observable using $L_2$.
+
+\begin{definition}
+
+  The library $L_1$ \emph{refines} $L_2$, written $L_1 \leq L_2$, iff $H(L_1)\subseteq H(L_2)$.
+  
+\end{definition}
+

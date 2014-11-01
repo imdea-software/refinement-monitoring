@@ -1,0 +1,40 @@
+%!TEX root = head.tex
+
+\section{Logical characterizations of atomic objects}
+
+\subsection{Matching relations}
+
+We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
+We assume that each concurrent collection defines a matching relation $\<Matching>\subseteq \<PosLab>\times \<NegLab>$ between positive and negative labels such that
+$\<Matching>$ is functional and total in the second argument.
+
+
+\begin{example}
+
+Examples of relations $\<Matching>$ and how they can be implemented.
+
+\end{example}
+
+
+\subsection{Logical characterizations of complete histories}
+
+\[
+F\land \forall o,o'.\ o < o' => o\prec o' 
+\]
+
+
+\begin{figure}
+  \begin{align*}
+    o,o' & \in \<Ops>
+      \qquad \text{operation identifiers} \\
+    @l & \in \<Labels>
+      \qquad \text{operation-label constants} \\[2mm]
+%    X & ::= @l \mid x \\
+%    T & ::= i \mid \#(X, i, j) \mid T + T \\
+    F & ::= @l(o)\mid \<Matching>(o,o') \mid o\prec o' \mid \neg F \mid %\\
+    %&\hspace{6mm}  
+    F \land F \mid \exists o.\ F 
+  \end{align*}
+  \caption{The syntax of History Logic.}
+  \label{fig:logic}
+\end{figure}

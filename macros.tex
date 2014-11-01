@@ -17,6 +17,7 @@
 \let\oldae=\ae
 \renewcommand{\ae}{\oldae\xspace}
 
+\newcommand{\matched}[1]{{\overline{#1}}}
 \newcommand{\set}[1]{{\{ #1 \}}}
 \newcommand{\mset}[1]{{\{\!\{ #1 \}\!\}}}
 \newcommand{\tup}[1]{\angles{#1}}
@@ -131,6 +132,9 @@
   Methods[\mathbb{M}],
   Vals[\mathbb{V}],
   Labels[\mathbb{L}],
+  PosLab[\mathbb{L}_+],
+  NegLab[\mathbb{L}_{-}],
+  Matching[\mathbb{R}],
   Ops[\mathbb{O}]
 }
 
