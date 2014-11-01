@@ -1,0 +1,146 @@
+
+\newcommand{\stacklabel}[1]{\stackrel{\smash{\scriptscriptstyle \mathrm{#1}}}}
+\newcommand{\Def}{\stacklabel{def}}
+\newcommand{\db}[1]{\llbracket{#1}\rrbracket}
+\newcommand{\parens}[1]{\ensuremath{\left( {#1} \right)}}
+\newcommand{\brackets}[1]{\ensuremath{\left[ {#1} \right]}}
+\newcommand{\angles}[1]{\ensuremath{\left\langle {#1} \right\rangle}}
+\newcommand{\fangles}[1]{\ensuremath{\langle {#1} \rangle}}
+\newcommand{\lines}[1]{\ensuremath{\left| {#1} \right|}}
+\newcommand{\A}[1]{\forall{#1}.\ }
+\newcommand{\E}[1]{\exists{#1}.\ }
+\newcommand{\n}{\cap}
+\let\oldu=\u
+\renewcommand{\u}{\cup}
+\newcommand{\U}{\bigcup}
+\newcommand{\x}{\times}
+\let\oldae=\ae
+\renewcommand{\ae}{\oldae\xspace}
+
+\newcommand{\set}[1]{{\{ #1 \}}}
+\newcommand{\mset}[1]{{\{\!\{ #1 \}\!\}}}
+\newcommand{\tup}[1]{\angles{#1}}
+\newcommand{\card}[1]{\lines{#1}}
+\DeclareMathOperator{\len}{len}
+\newcommand{\order}[1]{\mathcal{O}(#1)}
+\newcommand{\pow}[1]{\wp({#1})}
+\newcommand{\bottom}{\perp}
+\newcommand{\nil}{\mathbin\perp}
+
+%%% MATH LIGATURES %%%
+
+\mathlig{,.,}{,\ldots,}
+\mathlig{,..}{,\ldots}
+\mathlig{..,}{\ldots,}
+\mathlig{-->}{\longrightarrow}
+\mathlig{<=>}{\Leftrightarrow}
+\mathlig{==>}{\implies}
+\mathlig{|->}{\mapsto}
+\mathlig{<-}{\gets}
+\mathlig{->}{\mathbin{\rightarrow}}
+\mathlig{~>}{\mathbin{\leadsto}}
+\mathlig{..}{\ldots}
+\mathlig{/|}{\land}
+\mathlig{|/}{\lor}
+\mathlig{=>}{\mathbin{\Rightarrow}}
+\mathlig{<=}{\leq}
+\mathlig{==}{\equiv}
+\mathlig{~=}{\approx}
+\mathlig{!=}{\neq}
+\mathlig{|-}{\vdash}
+\mathlig{|=}{\models}
+\mathlig{~}{\sim}
+
+%%% GREEK LETTERS %%%
+
+\newcommand{\asgreekstyle}{\mathrm} % overridde when greek letters are italic
+\newcommand{\greek}[1]{\ensuremath{#1}\xspace}
+\newatcommand a {\greek{\alpha}}
+\newatcommand b {\greek{\beta}}
+\newatcommand c {\greek{\xi}}
+\newatcommand C {\greek{\Xi}}
+\newatcommand d {\greek{\delta}}
+\newatcommand D {\greek{\Delta}}
+\newatcommand e {\greek{\varepsilon}}
+\newatcommand E {\greek{\asgreekstyle{E}}}
+\newatcommand f {\greek{\phi}}
+\newatcommand F {\greek{\Phi}}
+\newatcommand g {\greek{\gamma}}
+\newatcommand G {\greek{\Gamma}}
+\newatcommand h {\greek{\varrho}}
+% \newatcommand i {\ensuremath{\iota}} % conflicts with something
+\newatcommand j {\greek{\iota}}
+\newatcommand k {\greek{\kappa}}
+\newatcommand l {\greek{\ell}\xspace}
+\newatcommand ll {\greek{\lambda}}
+\newatcommand L {\greek{\Lambda}}
+\newatcommand m {\greek{\mu}}
+\newatcommand n {\greek{\eta}}
+\newatcommand o {\greek{\theta}}
+\newatcommand oo {\greek{\vartheta}}
+\newatcommand O {\greek{\Theta}}
+\newatcommand p {\greek{\varphi}}
+\newatcommand P {\greek{\Pi}}
+\newatcommand q {\greek{\epsilon}}
+\newatcommand Q {\greek{\Phi}} % duplicate
+\newatcommand r {\greek{\rho}}
+\newatcommand s {\greek{\sigma}}
+\newatcommand ss {\greek{\sigma}}
+\newatcommand S {\greek{\Sigma}}
+\newatcommand t {\greek{\tau}}
+\newatcommand u {\greek{\upsilon}}
+\newatcommand U {\greek{\Upsilon}}
+\newatcommand v {\greek{\nu}}
+\newatcommand w {\greek{\omega}}
+\newatcommand W {\greek{\Omega}}
+\newatcommand x {\greek{\chi}}
+\newatcommand y {\greek{\psi}}
+\newatcommand Y {\greek{\Psi}}
+\newatcommand z {\greek{\zeta}}
+
+\newatcommand 0 {\emptyset}
+\newatcommand \ {\setminus}
+
+\newcommand{\mathfnstyle}[1]{\ensuremath{\mathrm{#1}}}
+\reservestyle{\mathfn}{\mathfnstyle}
+
+\newcommand{\metalangkeywordstyle}[1]{\ensuremath{\mathsf{#1}}}
+\reservestyle{\metalangkeyword}{\metalangkeywordstyle}
+
+\newcommand{\semanticdomainstyle}[1]{%
+  \ensuremath{\mathchoice%
+    {\mbox{\normalfont\ensuremath{#1}}}%
+    {\mbox{\normalfont\ensuremath{#1}}}%
+    {\mbox{\normalfont\scriptsize\ensuremath{#1}}}%
+    {\mbox{\normalfont\tiny\ensuremath{#1}}}}}
+
+\reservestyle{\semanticdomain}{\semanticdomainstyle} 
+
+\mathfn{min,max,log,dom,range}
+
+\semanticdomain{%
+  Bools[\mathbb{B}],
+  Nats[\mathbb{N}],
+  Lab[\mathbb{A}],
+  Ints[\mathbb{Z}]
+}
+
+%%% LOCAL MACROS
+
+\semanticdomain{%
+  Methods[\mathbb{M}],
+  Vals[\mathbb{V}],
+  Labels[\mathbb{L}],
+  Ops[\mathbb{O}]
+}
+
+\metalangkeyword{true,false}
+\metalangkeyword{ret,op}
+\mathfn{past,future,width}
+\metalangkeyword{push,pop}
+\metalangkeyword{read,write}
+
+\newcommand{\match}{\mathbin{\mapstochar\relbar\mapsfromchar}}
+\newcommand{\call}[2]{{\ensuremath{#1_{#2}}}}
+\newcommand{\ret}[1]{{\ensuremath{\mathsf{ret}_{#1}}}}
+\newcommand{\pred}[1]{\mathsf{#1}}
