@@ -109,6 +109,8 @@ We write $e_1 ~> e_2$ when $e_2$ can be derived from $e_1$ by applying zero or
 more of the above rules. The \emph{closure} of a set $E$ of executions under
 $~>$ is denoted $\overline{E}$.
 
+The set of executions in $L$ with only completed executions is denoted by $L_c$.
+
 Note that even a library that implements \emph{atomic methods}, e.g.,~by
 guarding method bodies with a global-lock acquisition, admits executions in
 which method calls and returns overlap. A library which accesses the client's
@@ -193,7 +195,7 @@ summary, and orders non-overlapping operations:
 \end{itemize}
 An operation of $h$ labeled by $@l\in \<Labels>$ is called an \emph{$@l$
 operation}. The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L
-}$.
+}$. The set of histories of \emph{complete} executions in $L$ are $H_c(L)=\set{ H(e): e\in L_c}$.
 
 \begin{example}
 

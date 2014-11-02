@@ -1,11 +1,17 @@
 %!TEX root = head.tex
 
-\section{Logical characterizations of atomic objects}
+\section{Logical characterizations of concurrent objects}
+
+In this work, we consider a logical formulation of checking whether a given \emph{complete} history $h$ belongs to a set of histories $H(L)$,
+which is based on a formula $\psi_L$ describing $H(L)$. This formula belongs to the theory of labeled partially ordered sets,
+that uses a symbol $<$ for the partial order relation defined by a history and the symbols in $\<Labels>$ for the
+labels of the history's operations.
+
 
 \subsection{Matching relations}
 
 We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
-We assume that each concurrent collection defines a matching relation $\<Matching>\subseteq \<PosLab>\times \<NegLab>$ between positive and negative labels such that
+We assume that each concurrent object defines a matching relation $\<Matching>\subseteq \<PosLab>\times \<NegLab>$ between positive and negative labels such that
 $\<Matching>$ is functional and total in the second argument.
 
 
@@ -18,23 +24,51 @@ Examples of relations $\<Matching>$ and how they can be implemented.
 
 \subsection{Logical characterizations of complete histories}
 
+The formula $\psi_L$ describing the set of complete histories $H_c(L)$ of a library $L$ states that 
+a history $h$ belongs to $H_c(L)$ iff it is weaker than the history of an execution in the 
+\emph{kernel} of $L$. This is possible because of the following result.
+
+\begin{lemma}
+
+Let $h$ be a history and $L$ a library with kernel $\ker L$. Then, 
 \[
-F\land \forall o,o'.\ o < o' => o\prec o' 
+h\in H(L)\mbox{ iff there exists }h'\in H(\ker L)\mbox{ s.t. }h\preceq h'.
 \]
+
+\end{lemma}
+
+
+%, it uses another symbol $<_{\sf k}$.
+More precisely, $\psi_L$ is a formula of the form:
+\begin{align}\label{eq:formula}
+\psi_L ::= F\land \forall o,o'.\ o < o' => o<_k o',
+\end{align}
+where $F$ is a formula describing histories of executions in the kernel of $L$. 
+The order relation in a history from $H(\ker L)$ is denoted by $<_k$.
+Formally, $F$ is a \emph{closed} formula in the \emph{History Logic} described 
+in Figure~\ref{fig:logic}.
 
 
 \begin{figure}
   \begin{align*}
     o,o' & \in \<Ops>
-      \qquad \text{operation identifiers} \\
+      \qquad \text{operation-identifier constants} \\
+     x & : \<Ops>
+      \qquad \text{operation-identifier variables} \\
     @l & \in \<Labels>
-      \qquad \text{operation-label constants} \\[2mm]
-%    X & ::= @l \mid x \\
+      \qquad \text{operation labels} \\[2mm]
+    X & ::= o \mid x \\
 %    T & ::= i \mid \#(X, i, j) \mid T + T \\
-    F & ::= @l(o)\mid \<Matching>(o,o') \mid o\prec o' \mid \neg F \mid %\\
+    F & ::= @l(o)\mid \<Matching>(X,X) \mid X <_k X \mid \neg F \mid %\\
     %&\hspace{6mm}  
     F \land F \mid \exists o.\ F 
   \end{align*}
   \caption{The syntax of History Logic.}
   \label{fig:logic}
 \end{figure}
+
+\begin{example}
+
+Examples of formulas $\psi_L$ for the most common objects.
+
+\end{example}

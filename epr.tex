@@ -1,3 +1,28 @@
 %!TEX root = head.tex
 
-\section{Reducing History Containment to Satisfiability in the EPR Fragment}
+\section{Reducing History Membership to Satisfiability in the EPR Fragment}
+
+Given a history $h=\tup{O,<,f}$, we construct a formula $\varphi(h)$ describing the order constraints
+and the labels in $h$ as follows:
+\[
+\varphi[h]::= \bigwedge_{o\in O} f(o)\land \bigwedge_{o,o'\in O, o<o'} o< o'
+\]
+
+Also, given $h$, let $F[h]$ be the HL formula $F$ where the relation symbol $<_k$ is replaced by $<$
+and the quantifiers are instantiated on the set of operations $O$, 
+i.e., every sub-formula $\exists x.\ G$ of $F$ is rewritten into
+\[
+\bigvee_{o\in O} G[x\mapsto o].
+\]
+
+\begin{theorem}
+Let $h$ be a history and $\psi_L$ a formula as in (\ref{eq:formula}). Then,
+\[
+h\models \psi_L\mbox{ iff }\varphi[h]\land F[h]\mbox{ is satisfiable.}
+\]
+\end{theorem}
+
+Since the conjunction of $\varphi[h]\land F[h]$ and the axioms of the theory of 
+labeled partial orders can be written in the EPR fragment, we obtain that the
+membership problem of a history into a set of histories described by a formula $\psi_L$ as above
+can be reduced to propositional satisfiability.
