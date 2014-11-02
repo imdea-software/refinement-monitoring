@@ -1,0 +1,35 @@
+%!TEX root = head.tex
+
+\section{Concurrent objects}
+
+We describe the class of concurrent objects considered in this paper. 
+
+\subsection{Matching Relations}
+
+We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
+We assume that each concurrent object defines a matching relation $\<Matching>\subseteq \<PosLab>\times \<NegLab>$ between positive and negative labels such that
+$\<Matching>$ is functional and total in the second argument.
+
+
+\begin{example}
+
+Examples of relations $\<Matching>$ and how they can be implemented.
+
+\end{example}
+
+\subsection{Kernel Properties}
+
+\begin{theorem}
+
+The kernel $\ker L$ of a library $L$ is prefix-closed.
+
+\end{theorem}
+
+We assume concurrent libraries $L$ such that for any execution $e\in\ker L$ and $o_1$, $o_2$ two (complete) operations in $e$
+with $\<Matching>(f(o_1),f(o_2))$, the execution $e\setminus\{o_1,o_2\}$ also belongs to $\ker L$.
+
+\begin{example}
+
+Show that all objects we know satisfy this property.
+
+\end{example}

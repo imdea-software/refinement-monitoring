@@ -1,28 +1,11 @@
 %!TEX root = head.tex
 
-\section{Logical Characterizations of Concurrent Objects}
+\section{Logical Characterizations of Complete Histories}
 
 In this work, we consider a logical formulation of checking whether a given \emph{complete} history $h$ belongs to a set of histories $H(L)$,
 which is based on a formula $\psi_L$ describing $H(L)$. This formula belongs to the theory of labeled partially ordered sets,
 that uses a symbol $<$ for the partial order relation defined by a history and the symbols in $\<Labels>$ for the
 labels of the history's operations.
-
-
-\subsection{Matching Relations}
-
-We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
-We assume that each concurrent object defines a matching relation $\<Matching>\subseteq \<PosLab>\times \<NegLab>$ between positive and negative labels such that
-$\<Matching>$ is functional and total in the second argument.
-
-
-\begin{example}
-
-Examples of relations $\<Matching>$ and how they can be implemented.
-
-\end{example}
-
-
-\subsection{Logical Characterizations of Complete Histories}
 
 The formula $\psi_L$ describing the set of complete histories $H_c(L)$ of a library $L$ states that 
 a history $h$ belongs to $H_c(L)$ iff it is weaker than the history of an execution in the 
@@ -59,9 +42,10 @@ in Figure~\ref{fig:logic}.
       \qquad \text{operation labels} \\[2mm]
     X & ::= o \mid x \\
 %    T & ::= i \mid \#(X, i, j) \mid T + T \\
-    F & ::= @l(o)\mid \<Matching>(X,X) \mid X <_k X \mid \neg F \mid %\\
+    A & ::= @l(o)\mid \<Matching>(X,X) \mid X <_k X \mid \neg A \mid %\\
     %&\hspace{6mm}  
-    F \land F \mid \exists o.\ F 
+    A \land A \\
+    F  & ::= \forall \vec{x}\ \exists \vec{y}.\ A
   \end{align*}
   \caption{The syntax of History Logic.}
   \label{fig:logic}
