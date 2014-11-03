@@ -2,18 +2,15 @@
 
 \section{Logical Characterizations of Complete Histories}
 
-In this work, we consider a logical formulation of checking whether a given \emph{complete} history $h$ belongs to a set of histories $H(L)$,
-which is based on a formula $\psi_L$ describing $H(L)$. This formula belongs to the theory of labeled partially ordered sets,
-that uses a symbol $<$ for the partial order relation defined by a history and the symbols in $\<Labels>$ for the
-labels of the history's operations.
-
-The formula $\psi_L$ describing the set of complete histories $H_c(L)$ of a library $L$ states that 
-a history $h$ belongs to $H_c(L)$ iff it is weaker than the history of an execution in the 
-\emph{kernel} of $L$. This is possible because of the following result.
+We consider a logical formulation of whether a given \emph{complete} history $h$ belongs to 
+the set of complete histories $H_c(L)$ of a library $L$ by exhibiting formulas $\psi_L$ 
+describing  $H_c(L)$. The formulas $\psi_L$ express the fact that the modeled history
+is weaker than a history in the kernel of $L$. By the following lemma, this is equivalent
+to the fact that the modeled history belongs to $H(L)$.
 
 \begin{lemma}
 
-Let $h$ be a history and $L$ a library with kernel $\ker L$. Then, 
+Let $h$ be a history and $L$ a library such that $\ker L$ is defined. Then, 
 \[
 h\in H(L)\mbox{ iff there exists }h'\in H(\ker L)\mbox{ s.t. }h\preceq h'.
 \]
@@ -22,15 +19,6 @@ h\in H(L)\mbox{ iff there exists }h'\in H(\ker L)\mbox{ s.t. }h\preceq h'.
 
 
 %, it uses another symbol $<_{\sf k}$.
-More precisely, $\psi_L$ is a formula of the form:
-\begin{align}\label{eq:formula}
-\psi_L ::= F\land \forall o,o'.\ o < o' => o<_k o',
-\end{align}
-where $F$ is a formula describing histories of executions in the kernel of $L$. 
-The order relation in a history from $H(\ker L)$ is denoted by $<_k$.
-Formally, $F$ is a \emph{closed} formula in the \emph{History Logic} described 
-in Figure~\ref{fig:logic}.
-
 
 \begin{figure}
   \begin{align*}
@@ -38,18 +26,37 @@ in Figure~\ref{fig:logic}.
       \qquad \text{operation-identifier constants} \\
      x & : \<Ops>
       \qquad \text{operation-identifier variables} \\
+     \vec{x},\vec{y} & : \<Ops>^*
+      \qquad \text{tuples of operation-identifier variables} \\
     @l & \in \<Labels>
       \qquad \text{operation labels} \\[2mm]
     X & ::= o \mid x \\
 %    T & ::= i \mid \#(X, i, j) \mid T + T \\
-    A & ::= @l(o)\mid \<Matching>(X,X) \mid X <_k X \mid \neg A \mid %\\
-    %&\hspace{6mm}  
-    A \land A \\
-    F  & ::= \forall \vec{x}\ \exists \vec{y}.\ A
+    F & ::= @l(X)\mid \<Matching>(X,X) \mid X \poker X \mid \neg F \mid F \land F \\
+    \<POSet>(\poker) & ::= \forall o.\ \neg o \poker o  \\
+    &\land\,\forall o_1,o_2,o_3.\ (o_1\poker o_2\land o_2 \poker o_3) => o_1 \poker o_3 \\
+    \psi  & ::= \exists \poker.\ \big(\, \forall o,o'.\ o < o' => o \poker o' \\
+    &\hspace{17mm}\land \<POSet>(\poker)\land \forall \vec{x}\ \exists \vec{y}.\ F\, \big)
   \end{align*}
-  \caption{The syntax of History Logic.}
+  \caption{The syntax of $\psi_L$.}
   \label{fig:logic}
 \end{figure}
+
+The formula $\psi_L$, whose syntax is given in Figure~\ref{fig:logic}, is a second-order
+formula that existentially quantifies over a relation $\poker$ and that is a conjunction between:
+\begin{itemize}
+  \item a formula $\<POSet>(\poker)$ expressing the fact that $\poker$ is a strict
+  partial order,
+  \item a formula expressing the fact that the order relation $<$ in the modeled history 
+  is weaker than the order relation $\poker$,
+  \item a formula expressing the fact that the set of operations in the modeled history
+ordered by $\poker$ forms a history in the kernel of $L$.
+\end{itemize} 
+The latter sub-formula is a \emph{closed} formula (i.e., without free variables) 
+with $\forall^*\exists^*$ quantifier prefix.
+
+The semantics of $\psi_L$ is defined as usual. 
+
 
 \begin{example}
 
