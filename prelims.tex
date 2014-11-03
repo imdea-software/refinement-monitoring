@@ -195,8 +195,7 @@ summary, and orders non-overlapping operations:
 
 \end{itemize}
 An operation of $h$ labeled by $@l\in \<Labels>$ is called an \emph{$@l$
-operation}. The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L
-}$. 
+operation}. The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L}$. 
 
 The history of a complete execution is called \emph{complete}. 
 The set of complete histories admitted by $L$ are $H_c(L)=\set{ H(e): e\in L,\mbox{ $e$ is complete}}$.
@@ -220,7 +219,7 @@ another history $h_2$ if $h_2$ contains all completed operations of $h_1$, and
 preserves the order between $h_1$'s operations. The pending operations of $h_1$
 can be either omitted or completed in $h_2$.
 
-\begin{definition}
+\begin{definition}\label{def:weaker_than}
 
   Let $h_1 = \tup{O_1,<_1,f_1}$ and $h_2 = \tup{O_2,<_2,f_2}$. We say $h_1$ is
   \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an

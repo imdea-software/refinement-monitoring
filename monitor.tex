@@ -2,31 +2,215 @@
 
 \section{Monitoring History Inclusion}
 
-\subsection{Plain Monitoring}
+\subsection{Monitoring complete histories}
 
-Given a history $h=\tup{O,<,f}$, we construct a formula $\varphi(h)$ describing the order constraints
-and the labels in $h$ as follows:
+Though $\psi$ is a second-order formula, the satisfaction problem of whether a complete history $h$ satisfies
+$\psi$ can be reduced to a propositional satisfiability problem.
+Thus, given a complete history $h=\tup{O,<,f}$, let $\varphi(h)$ be a formula describing the order constraints
+and the labels in $h$:
 \[
-\varphi[h]::= \bigwedge_{o\in O} f(o)\land \bigwedge_{o,o'\in O, o<o'} o< o'
+\varphi(h)::= \bigwedge_{o\in O} f(o)\land \bigwedge_{o,o'\in O, o<o'} o< o'\land \<PO>(<)
 \]
 
-Also, given $h$, let $F[h]$ be the HL formula $F$ where the relation symbol $<_k$ is replaced by $<$
-and the quantifiers are instantiated on the set of operations $O$, 
-i.e., every sub-formula $\exists x.\ G$ of $F$ is rewritten into
+Also, let $\<Dom>(O)::=\forall x. x\in O$ be a formula restricting the interpretation domain of every 
+operation-identifier variable to the elements of $O$. The formula $x\in O$ is a syntactic sugar for 
+$
+\bigvee_{o\in O} x=o
+$.
+
+%Also, given $h$, let $F[h]$ be the HL formula $F$ where the relation symbol $<_k$ is replaced by $<$
+%and the quantifiers are instantiated on the set of operations $O$, 
+%i.e., every sub-formula $\exists x.\ G$ of $F$ is rewritten into
+%\[
+%\bigvee_{o\in O} G[x\mapsto o].
+%\]
+
+\begin{theorem}\label{th:satisfiability}
+Let $h$ be a complete history and $\psi::=\exists\poker.\ \psi'$ a formula as in Figure~\ref{fig:logic}. Then,
 \[
-\bigvee_{o\in O} G[x\mapsto o].
+h\models \psi\mbox{ iff }\varphi(h)\land \<Dom>(O)\land \psi'\mbox{ is satisfiable.}
+\]
+\end{theorem}
+\begin{proof}
+($=>$) Let $h=\tup{O,<,f}$. Since $h\models \psi$, there exists a relation $\poker\subseteq O\times O$
+such that $\tup{h,\poker}\models\psi'$, which implies that $\tup{h,\poker}$ is a model of $\varphi(h)\land \psi'$.
+
+($\Leftarrow$) Let $\tup{h',\poker}$ be a model of $\varphi(h)\land \<Dom>(O)\land \psi'$. By the definition of $\varphi(h)$, 
+we obtain that $h\preceq h'$. Since $\psi'$ requires that $\poker$ is stronger than the order relation in $h'$,
+we obtain that $\poker$ is also stronger than the order relation in $h$. Moreover, since $\tup{h',\poker}$ is a model
+of $ \<Dom>(O)$, we get that $\poker$ is an order relation between elements of $O$.
+Therefore, $\tup{h,\poker}$ is also a model of $\psi'$, which implies that $h$ is a model of $\psi$.
+\end{proof}
+
+The satisfiability of $\varphi(h)\land \<Dom>(O)\land \psi'$ can be reduced to propositional satisfiability since
+the domain of the operation-identifier variables is fixed and the quantifiers can be replaced by finite 
+conjunctions/disjunctions, e.g., any sub-formula $\exists x.\ \varphi$ can be replaced by
+\[
+\bigvee_{o\in O}\ \varphi[x\mapsto o].
 \]
 
-\begin{theorem}
-Let $h$ be a history and $\psi_L$ a formula as in (\ref{eq:formula}). Then,
+\begin{corollary}\label{cor:satisfiability}
+
+State the reduction to propositional satisfiability
+
+\end{corollary}
+
+\subsection{Monitoring histories with pending operations}
+
+The formulas $\psi$ defined in Section~\ref{sec:logic} describe only complete histories
+of a library $L$ but, they can be used to check even whether a history $h$ with \emph{pending} operations 
+belongs to $H(L)$. Essentially, one can enumerate all the possible ways of completing or removing
+pending operations of $h$ and check whether the obtained histories satisfy the formula $\psi$. 
+In general, this works if the kernel of $L$ is defined and it contains only executions with completed operations.
+
+\begin{definition}
+
+Let $h_1=\tup{O_1,<_1,f_1}$ and $h_2=\tup{O_2,<_2,f_2}$ be two histories. We say $h_2$ 
+is a \emph{completion} of $h_1$, written $h_1\preceq_c h_2$, when
+
+\begin{itemize}
+
+  \item $h_2$ consists only of completed operations, i.e., for all $o\in O_2$, $f_2(o)=m(u)=>v$ and $v\neq \bot$, and 
+  
+  \item there exists an injection $g:O_2 -> O_1$ satisfying the properties in Definition~\ref{def:weaker_than}
+  and $o_1<_2 o_2$ implies $g(o_1)<_2 g(o_2)$ for each $o_1,o_2\in O_2$.
+
+\end{itemize}
+
+\end{definition}
+
+\begin{lemma}\label{lemma:pending_histories}
+
+Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
+A history $h$ belongs to the histories $H(L)$ of a library $L$ iff there exists 
+a history $h_c$ such that $h\preceq_c h_c$ and $h_c\in H(L)$.
+
+\end{lemma}
+
+\begin{proof}
+
+($=>$) Let $h=\tup{O,<,f}$. By Lemma~\ref{lemma:kernel_histories}, $h\in H(L)$ implies that there exists 
+a complete history $h'=\tup{O',<',f'}$ such that $h'\in H(\ker L)$ and $h\preceq h'$. 
+Then, there exists an injection $g:O' -> O$ 
+satisfying the properties in Definition~\ref{def:weaker_than}. We define $h_c=\tup{O',<_c,f'}$ 
+such that $o<_c o'$ iff $g(o) < g(o')$. Clearly, $h\preceq_c h_c$ and $h_c\preceq h'$. The latter implies
+$h_c\in H(L)$, which finishes the proof.
+
+($\Leftarrow$) Since $h\preceq_c h_c$ implies $h\preceq h_c$, then by Lemma~\ref{downward-closed},
+$h_c\in H(L)$ implies $h\in H(L)$.
+
+\end{proof}
+
+Though we seek to develop an efficient monitor that can check whether a history with pending
+operations is a refinement violation, the result in Lemma~\ref{lemma:pending_histories}
+leads to an exponential blow-up: the number of possible completions of a given history $h$
+is in general exponential in the number of operations in $h$. Therefore, we introduce
+a sound, but incomplete, decision procedure that avoids enumerating all completions of $h$.
+Essentially, this works by constructing a formula which is weaker than all the first-order formulas
+corresponding to completions of $h$ via Theorem~\ref{th:satisfiability}. Therefore, if this formula
+is unsatisfiable, then there exists no completion of $h$ which is included in $H(L)$.
+
+Thus, given a history $h=\tup{O,<,f}$, let $O_c\subseteq O$ be the set of completed operations
+in $h$, i.e., 
 \[
-h\models \psi_L\mbox{ iff }\varphi[h]\land F[h]\mbox{ is satisfiable.}
+O_c=\set{o:f(o)=m(u)=>v,v\neq\bot}.
+\]
+
+An operation $o\in O$ is called \emph{obsolete} iff there exists no pending operation $o'\in O$ which 
+overlaps with $o$, i.e., for all $o'\in O$, $\neg o<o'$ and $\neg o'<o$ implies
+$f(o')\in O_c$. The set of obsolete operations in the history $h$ is denoted by $O_{ob}$.
+ 
+\begin{lemma}
+
+Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
+Let $h_1=\tup{O_1,<_1,f_1}\in H(L)$ and $Ob$ a set of obsolete operations in $h_1$. Then, there exists a 
+history $h_2=\tup{O_2,<_2,f_2}$ such that 
+
+\begin{itemize}
+
+	\item $h_2$ is a prefix of $h_1$ and $h_2\in H(L)$, 
+
+	\item $h_2$ includes all operations in $Ob$ and no operation ordered by $h_1$ after all operations in $Ob$, i.e.,
+	$Ob\subseteq O_2$ and for all $o\in O_2$ there exists $o'\in Ob$ such that $\neg o'<o$.
+	
+\end{itemize}
+
+\end{lemma}
+
+\begin{proof}
+
+Since $h_1\in H(L)$, there exists a completion $h_{1,c}$ and a kernel history $h_3\in H(\ker L)$ such that
+$h_1\preceq_c h_{1,c} \preceq h_3=\tup{O_3,<_3,f_3}$. Let $h_4=\tup{O_4,<_4,f_4}$ be a minimal prefix of $h_3$ that
+includes all operations in $Ob$. We define $O_2=O_4$, $<_2=<_1 |_{O_4}$, and $f_2=f_1 |_{O_4}$.
+
+Since $h_4$ is downward closed w.r.t. $<_3$ and any two operations in $O_4$ ordered by $<_1$ are 
+also ordered by $<_3$, it follows that $h_2$ is downward closed w.r.t. $<_1$. 
+%Every $o\in O_4$ is completed in $h_1$: 
+Therefore, $h_2$ is a prefix of $h_1$.
+
+Every operation $o\in O_4$ is completed in $h_1$: by definition, 
+$h_1$ orders every obsolete operation before every pending operation $o'$,
+and by the minimality of $h_4$, it follows that $O_4$ doesn't include pending operations
+of $h_1$. This implies that $f_1 |_{O_4}=f_4$ which is enough to conclude that 
+$h_2\preceq h_4$. By Lemma~\ref{lemma:kernel_histories_prefix}, $h_4\in H(\ker L)$ and consequently, 
+$h_2\in H(L)$.
+
+Assume by contradiction that $O_4$ includes an operation $o$ such that $o' <_1 o$ for each $o'\in Ob$.
+Since $h_1\preceq h_3$, we obtain that $o' <_3 o$ for each $o'\in Ob$, which contradicts the minimality of
+the prefix $h_4$.
+
+
+\end{proof}
+
+
+Let $\varphi_c(h)$ be a formula describing the order constraints
+and the labels in $h$ but only for completed operations:
+\[
+\varphi_c(h)::= \bigwedge_{o\in O_c} f(o)\land \bigwedge_{o,o'\in O_c, o<o'} o< o'\land \<PO>(<)
+\]
+%The formula $\<PO>_c$ restricts the interpretation of the universally-quantified variables to
+%complete operations:
+%\<PO>_c(<)
+
+Moreover, given a formula $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$, where 
+$F$ is defined as in Figure~\ref{fig:logic}, we define the formula $\varphi_{ob}$ that
+restricts the interpretation of the universally quantified variables to obsolete operations
+and the interpretation of the existentially quantified variables to complete operations:
+\[
+\varphi_{ob}::=\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob}\land \bigwedge_{y\in\vec{y}}\ y\in O_c \land F.
+\]
+
+%\exists \poker.\ \big( < \subseteq \hspace{-1mm}\poker 
+%    \land \<PO>(\poker)\land \forall \vec{x}\ \exists \vec{y}.\ F
+    
+Given a formula $\psi::=\exists\poker.\ \psi'$ as in Figure~\ref{fig:logic}, let $\psi'_{ob}$ be the formula
+obtained from $\psi'$ by replacing the sub-formula $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$
+with $\varphi_{ob}$.
+
+\begin{theorem}\label{th:satisfiability_pending}
+Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
+Also, let $\psi::=\exists\poker.\ \psi'$ be a formula as in Figure~\ref{fig:logic} describing the set of 
+complete histories $H_c(L)$. Then,
+\[
+h\in H(L)\mbox{ implies }\varphi_c(h)\land \psi'_{ob}\mbox{ is satisfiable.}
 \]
 \end{theorem}
 
-Since the conjunction of $\varphi[h]\land F[h]$ and the axioms of the theory of 
-labeled partial orders can be written in the EPR fragment, we obtain that the
-membership problem of a history into a set of histories described by a formula $\psi_L$ as above
-can be reduced to propositional satisfiability.
-
 \subsection{Removing Obsolete Operations}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
