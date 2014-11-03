@@ -57,6 +57,7 @@ e.g.,~writing $m(u)_1$ and $\<ret>(v)_2$ in place of $m(u)_{o_1}$ and
 $\<ret>(v)_{o_2}$. An operation $o$ of an execution $e$ is \emph{completed}
 when both call and return actions $m(u)_o$ and $\<ret>(v)_o$ of $o$ occur in
 $e$, and is otherwise \emph{pending}.
+An execution with only completed operations is called \emph{complete}.
 
 \begin{example}
   \label{ex:executions}
@@ -112,7 +113,7 @@ $L = \overline{E}$, then $E$ is called \emph{the kernel of $L$}
 and it is denoted by $\ker L$. Note that $\ker L$ contains only completed operations since $e_1
 \cdot e_2 ~> e_1 \cdot c \cdot e_2$, for any unmatched call $c$.
 
-The set of executions in $L$ with only completed executions is denoted by $L_c$.
+%The set of complete executions in $L$ is denoted by $L_c$.
 
 Note that even a library that implements \emph{atomic methods}, e.g.,~by
 guarding method bodies with a global-lock acquisition, admits executions in
@@ -195,7 +196,10 @@ summary, and orders non-overlapping operations:
 \end{itemize}
 An operation of $h$ labeled by $@l\in \<Labels>$ is called an \emph{$@l$
 operation}. The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L
-}$. The set of histories of \emph{complete} executions in $L$ are $H_c(L)=\set{ H(e): e\in L_c}$.
+}$. 
+
+The history of a complete execution is called \emph{complete}. 
+The set of complete histories admitted by $L$ are $H_c(L)=\set{ H(e): e\in L,\mbox{ $e$ is complete}}$.
 
 \begin{example}
 
