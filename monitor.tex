@@ -79,6 +79,12 @@ is a \emph{completion} of $h_1$, written $h_1\preceq_c h_2$, when
 
 \end{definition}
 
+\begin{example}
+
+Examples of completions.
+
+\end{example}
+
 \begin{lemma}\label{lemma:pending_histories}
 
 Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
@@ -119,7 +125,7 @@ O_c=\set{o:f(o)=m(u)=>v,v\neq\bot}.
 An operation $o\in O$ is called \emph{obsolete} iff there exists no pending operation $o'\in O$ which 
 overlaps with $o$, i.e., for all $o'\in O$, $\neg o<o'$ and $\neg o'<o$ implies
 $f(o')\in O_c$. The set of obsolete operations in the history $h$ is denoted by $O_{ob}$.
- 
+
 \begin{lemma}
 
 Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
@@ -198,6 +204,12 @@ h\in H(L)\mbox{ implies }\varphi_c(h)\land \psi'_{ob}\mbox{ is satisfiable.}
 \begin{proof}
 
 \end{proof}
+
+\begin{corollary}\label{cor:satisfiability}
+
+State the reduction to propositional satisfiability
+
+\end{corollary}
 
 \subsection{Removing Obsolete Operations}
 
