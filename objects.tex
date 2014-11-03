@@ -1,15 +1,31 @@
 %!TEX root = head.tex
 
-\section{Concurrent objects}
+\section{Concurrent collections ??}
 
-We describe the class of concurrent objects considered in this paper. 
+We define the class of concurrent libraries considered in this paper. 
 
 \subsection{Matching Relations}
 
 We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
-We assume that each concurrent object defines a matching relation $\<Matching>\subseteq \<PosLab>\times \<NegLab>$ between positive and negative labels such that
-$\<Matching>$ is functional and total in the second argument.
 
+\begin{example}
+
+Positive and negative labels for different objects.
+
+\end{example}
+
+We assume that each concurrent library comes with a matching relation $\<Matching>$ between negative and positive labels such that for every history $h$ of that library, each negative operation label in $h$ is matched to a unique positive label in $h$. Sometimes it is also required that every two different negative operation labels are matched to different positive labels.
+
+\begin{definition}
+
+A relation $\<Matching>\subseteq \<NegLab>\times \<PosLab>$ is a \emph{matching relation} for a library $L$ iff for every history $h=\tup{O,<,f}$ in $H(L)$, the following holds:
+\begin{itemize}
+	\item for every $o\in O$ such that $f(o)\in \<NegLab>$, there exists an unique $o'\in O$ such that $\<Matching>(f(o),f(o'))$.
+\end{itemize}
+
+A matching relation $\<Matching>$ is called \emph{injective} iff for every history $h=\tup{O,<,f}$ in $H(L)$ and $o_1\neq o_2\in O$ with $\{f(o_1),f(o_2)\}\in \<NegLab>$, there exist two different operations $o_1'\neq o_2'\in O$ such that $\<Matching>(f(o_1),f(o_1'))$ and $\<Matching>(f(o_2),f(o_2'))$.
+
+\end{definition}
 
 \begin{example}
 
@@ -17,16 +33,42 @@ Examples of relations $\<Matching>$ and how they can be implemented.
 
 \end{example}
 
-\subsection{Kernel Properties}
+\subsection{Kernel Closure Properties}
+
+In this work, we consider the problem of checking refinement with respect to libraries $L$ for which $\ker L$ is defined.
+The histories of executions in $\ker L$ are $H(\ker L)=\set{H(e) : e\in \ker L}$.
+
+A \emph{prefix} of a history $h=\tup{O,<,f}$ is a history $h'=\tup{O',<',f'}$, that contains a subset of the operations in $h$,
+i.e., $O'\subseteq O$, $<'=<|_{O'}$, and $f'=f|_{O'}$, and that is downward closed w.r.t. $<$, i.e., $o\in O'$ and $o'<o$ implies $o'\in O'$.
+
+\begin{example}
+
+Prefix of a history.
+
+\end{example}
 
 \begin{theorem}
 
-The kernel $\ker L$ of a library $L$ is prefix-closed.
+Let $L$ be a library for which $\ker L$ is defined. The set of histories $H(\ker L)$ is prefix-closed.
 
 \end{theorem}
 
-We assume concurrent libraries $L$ such that for any execution $e\in\ker L$ and $o_1$, $o_2$ two (complete) operations in $e$
-with $\<Matching>(f(o_1),f(o_2))$, the execution $e\setminus\{o_1,o_2\}$ also belongs to $\ker L$.
+A set of histories $H$ is closed under matched-operations removal iff $H$ contains all the histories
+obtained by removing a pair of matched operations from another history in $H$. We say that 
+a library $L$ is \emph{$\<Matching>$-closed} iff the set of kernel histories is closed under 
+matched-operations removal. Formally, given a history $h=\tup{O,<,f}$ and $O'\subseteq O$, 
+\[
+h\setminus O'=\tup{O\setminus O',<',f'},
+\] 
+where $<'=<|_{O\setminus O'}$, and $f'=f|_{O\setminus O'}$.
+
+\begin{definition}
+
+Let $L$ be a library for which $\ker L$ is defined. $L$ is \emph{$\<Matching>$-closed}
+iff for any history $h\in H(\ker L)$ and $o_1, o_2\in O$ two operations such that $\<Matching>(f(o_1),f(o_2))$,
+the history $h\setminus \{o_1,o_2\}\in H(\ker L)$
+
+\end{definition}
 
 \begin{example}
 

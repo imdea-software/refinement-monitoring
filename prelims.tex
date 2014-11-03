@@ -107,7 +107,10 @@ invocations to its methods made by \emph{some} program.
 \noindent
 We write $e_1 ~> e_2$ when $e_2$ can be derived from $e_1$ by applying zero or
 more of the above rules. The \emph{closure} of a set $E$ of executions under
-$~>$ is denoted $\overline{E}$.
+$~>$ is denoted $\overline{E}$. If there exists a unique set of executions $E$ such that 
+$L = \overline{E}$, then $E$ is called \emph{the kernel of $L$}
+and it is denoted by $\ker L$. Note that $\ker L$ contains only completed operations since $e_1
+\cdot e_2 ~> e_1 \cdot c \cdot e_2$, for any unmatched call $c$.
 
 The set of executions in $L$ with only completed executions is denoted by $L_c$.
 
@@ -145,12 +148,9 @@ parameters.
   
 \end{example}
 
-A library $L$ is called \emph{atomic} if it is defined by the closure of some
-set $E$ of sequential executions, i.e.,~$L = \overline{E}$. When such a set
-$E$ exists, it is unique, and we call it \emph{the kernel of $L$}, denoted by
-$\ker L$. Note that $\ker L$ contains only completed operations since $e_1
-\cdot e_2 ~> e_1 \cdot c \cdot e_2$, for any unmatched call $c$. Atomic
-libraries are often considered as specifications for concurrent objects.
+A library $L$ is called \emph{atomic} if $\ker L$ is defined and it consists only of
+sequential executions. Atomic libraries are often considered as specifications 
+for concurrent objects.
 
 \begin{example}
   \label{ex:atomic_stack}
