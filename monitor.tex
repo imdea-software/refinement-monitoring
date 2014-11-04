@@ -336,6 +336,12 @@ One hopes that the history is extensible, that all pending operations become com
 
 \subsection{Removing Matching Clusters}\label{ssec:removal}
 
+The following result shows that removing a matching cluster from a history 
+$h\in H(L)$ results in a history that also belongs to $H(L)$, 
+provided that the same closure property holds for the set of kernel histories 
+$H(\ker L)$.
+
+
 \begin{theorem}\label{th:removing_matching}
 
 Let $L$ be a library for which $\ker L$ is defined. If $H(\ker L)$ is $\<Matching>$-closed, 
@@ -356,6 +362,60 @@ $h_{c}\setminus O_1\preceq h'\setminus O_1$ and since the operations in $O_1$
 are completed, we get that $h\setminus O_1\preceq h_{c}\setminus O_1$. Consequently,
 $h\setminus O_1\in H(L)$.
 \end{proof}
+
+Theorem~\ref{th:removing_matching} provides soundness guarantees for   
+a monitor that instead of checking whether the tracked history belongs to $H(L)$,
+checks whether a smaller history, obtained from $h$ by removing all matching clusters,
+belongs to $H(L)$. In order to define a monitor that is allowed to remove
+the matching clusters from the tracked history, either the matching relation $\<Matching>$
+is injective or one needs to impose supplementary
+conditions on the removed clusters. When the matching function is not injective, 
+a matching cluster of a history $h$ could be strictly included in a 
+matching cluster of an extension of $h$. Therefore, removing it, may make the 
+extension of the history without the matching cluster a spurious violation.
+
+\begin{figure}
+
+\input figures/removal_even_saturation
+
+\caption{Removing the matching cluster $\{{\tt write}(1),{\tt read}=>1\}$ formed of obsolete operations.}
+\label{fig:removal_even_saturation}
+
+\end{figure}
+
+\begin{example}\label{ex:removal_even_saturation}
+
+Figure~\ref{fig:removal_even_saturation} pictures two histories $h$ and $h'$, the latter being an
+extension of the former. Note that the matching cluster $\{\<write>(1),\<read>=>1\}$ of $h$
+is strictly included in the cluster $\{\<write>(1),\<read>=>1,\<read>=>(1)\}$ of $h'$. 
+Removing the cluster of $h$ and extending it with the $\<read>=>(1)$ operation
+results in a spurious violation.
+
+\end{example}
+
+\begin{definition}
+
+A matching cluster $O$ of a history $h$ is called \emph{obsolete} iff 
+
+\begin{itemize}
+
+	\item $\<Matching>$ is injective or
+
+	\item there exists another matching cluster $O'$ of $h$ such that the positive operation in $O'$
+	is obsolete and ordered after the positive operation in $O$
+
+\end{itemize}
+
+\end{definition}
+
+\begin{lemma}
+
+Let $L$ be a library such that for every two matching clusters $O_1$ and $O_2$ of a kernel history 
+$h=\tup{O,<,f}$, $o_1<o_2$ for each $o_1\in O_1$ and $o_2\in O_2$. 
+Also, let $h\in H(L)$ and $h'\in H(L)$ an extension of $h$. Then, there exists no matching cluster $O$ 
+of $h'$, which strictly includes an obsolete matching cluster of $h$.
+
+\end{lemma}
 
 \begin{figure}
 
@@ -394,13 +454,13 @@ on the kernel order implied by the presence of the matching cluster.
 \input figures/removal_no_saturation
 
 \caption{Removing the matching cluster $\{{\tt push}(1),{\tt pop}=>1\}$ formed of obsolete operations.}
-\label{fig:complete_removal}
+\label{fig:removal_no_saturation}
 
 \end{figure}
 
 \begin{example}\label{ex:removal_no_saturation}
 
-Figure~\ref{fig:complete_removal} pictures two histories $h$ and $h'$, the latter being an
+Figure~\ref{fig:removal_no_saturation} pictures two histories $h$ and $h'$, the latter being an
 extension of the former. Even though the matching cluster $\{{\tt push}(1),{\tt pop}=>1\}$
 consists only of obsolete operations, removing it from the history $h'\not\in H(L_{stacks})$ 
 results in a history $h$ which is not anymore a violation, since $h\in H(L_{stacks})$.
@@ -408,10 +468,6 @@ In order to detect this violation, the monitor should remember the constraint
 $\<push>(2) \poker \<pop>=>Empty$ implied by the presence of this matching cluster.
 
 \end{example}
-
-
-
-
 
 
 
