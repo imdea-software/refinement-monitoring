@@ -71,4 +71,104 @@ h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$
 
 Examples of formulas $\psi_L$ for the most common objects.
 
+\todo{add predicates to recognize negative/positive labels}
+
+\newcommand{\ispositive}[1]{L_+({#1})}
+\newcommand{\isnegative}[1]{L_{-}({#1})}
+\newcommand{\remove}{Rem}
+\newcommand{\add}{Add}
+\newcommand{\containstrue}{CT}
+\newcommand{\containsfalse}{CF}
+
+\begin{itemize}
+\item
+We define a formula of the form $\exists \forall$ which recognizes histories
+which are not in the kernel of the Queue specification. When negated, it can
+thus be plugged in place of $\forall \vec{x}\ \exists \vec{y}.\ F$. 
+
+There are three ways a history can violate the Queue specification.
+Either it does not form a total order:
+\[
+  \exists x_1,x_2.
+  \ x_1 != x_2 \land \neg (x_1 \poker x_2) \land \neg (x_2 \poker x_1) 
+\]
+or there is a dequeue operation with no matching enqueue operation which 
+precedes it:
+\[
+  \exists y.\ \isnegative{y} \land 
+  \forall x.\ \<Matching>(y,x) \implies y \poker x
+\]
+or there is a violation of the FIFO order -- that is, there is some enqueue
+($x_1$) which happened before another enqueue ($x_2$) such that the dequeue
+corresponding to $x_2$ ($y_2$) happened before any dequeue corresponding to
+$x_1$ ($y_1$), if any:
+\begin{align*}
+\exists x_1,x_2,y_2.
+  &\ x_1 \poker x_2 \land \<Matching>(y_2,x_2) 
+    \land \ispositive{x_1} \land\\
+  &\forall y_1.\ 
+    \<Matching>(y_1,x_1) \implies y_2 \poker y_1
+\end{align*}
+
+
+
+\item 
+For the Stack, we use the same first two formulas as the Queue. To
+recognize LIFO violations, we use a formula similar to the formula recognizing
+FIFO violations. 
+Note though that we need one more constraint ($x_1 \poker y_2$), since the 
+order of operations $x_2 \poker y_2 \land y_2 \poker x_1$ does not yield a
+violation of the LIFO order.
+\begin{align*}
+\exists x_2,x_1,y_2.
+  &\ x_2 \poker x_1 \land x_1 \poker y_2 
+    \land \<Matching>(y_2,x_2) \land \ispositive{x_1} \land \\
+  &\forall y_1.\ 
+      \<Matching>(y_1,x_1) \implies y_1 \poker y_2
+\end{align*}
+
+
+
+\item 
+For the Register, we also use the same first two formulas.
+The third formula recognize histories where there is a read ($y_2$) with 
+no matching write ($x_2$) in between $y_2$ and the preceding write.
+\begin{align*}
+  \exists x_1,y_2.
+    &\ x_1 \poker y_2 \land \ispositive{x_1} \land
+      \isnegative{y_2} \land \neg \<Matching>(y_2,x_1) \land\\
+    &\forall x_2.\ x_1 \poker x_2 \land x_2 \poker y_1 \implies 
+      \neg \<Matching>(y_2,x_2)
+\end{align*}
+
+
+
+\item
+Concerning the set, we still use the same first two formulas. Then we use
+two more formulas, one for $\tt contains => true$ violations, 
+and one for $\tt contains => false$ violations.
+
+The first one says that there is a $\tt contains => true$ (abbreviated $CT$
+for better readability) and a remove, so that there is no add in between.
+\begin{align*}
+\exists x_r,x_c.\ &
+  \remove(x_r) \land \containstrue(x_c)
+  \land x_r \poker x_c \land\\
+    &\forall x_a.\ x_r \poker x_a \land x_a \poker x_c \implies 
+      \neg \<Matching>(x_c,x_a)
+\end{align*}
+
+The second one says that there is a $\tt contains => false$ (abbreviated $CF$)
+and an add, so that there is no remove in between.
+\begin{align*}
+\exists x_a,x_c.\ &
+  \add(x_a) \land \containsfalse(x_c)
+  \land x_a \poker x_c \land\\
+   & \forall x_r.\ (x_a \poker x_r \land x_r \poker x_c \land \remove(x_r))
+    \implies \\
+    &\qquad \neg \<Matching>(x_r,x_a)
+\end{align*}
+
+\end{itemize}
+
 \end{example}
