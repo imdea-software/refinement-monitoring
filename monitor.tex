@@ -126,7 +126,7 @@ An operation $o\in O$ is called \emph{obsolete} iff there exists no pending oper
 overlaps with $o$, i.e., for all $o'\in O$, $\neg o<o'$ and $\neg o'<o$ implies
 $f(o')\in O_c$. The set of obsolete operations in the history $h$ is denoted by $O_{ob}$.
 
-\begin{lemma}
+\begin{lemma}\label{lemma:pref_obsolete}
 
 Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
 Let $h_1=\tup{O_1,<_1,f_1}\in H(L)$ and $Ob$ a set of obsolete operations in $h_1$. Then, there exists a 
@@ -182,9 +182,9 @@ Moreover, given a formula $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$, wher
 $F$ is defined as in Figure~\ref{fig:logic}, we define the formula $\varphi_{ob}$ that
 restricts the interpretation of the universally quantified variables to obsolete operations
 and the interpretation of the existentially quantified variables to complete operations:
-\[
-\varphi_{ob}::=\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob}\land \bigwedge_{y\in\vec{y}}\ y\in O_c \land F.
-\]
+\begin{align}
+\varphi_{ob}::=\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_c \land F\big).
+\end{align}
 
 %\exists \poker.\ \big( < \subseteq \hspace{-1mm}\poker 
 %    \land \<PO>(\poker)\land \forall \vec{x}\ \exists \vec{y}.\ F
@@ -194,16 +194,82 @@ obtained from $\psi'$ by replacing the sub-formula $\varphi::=\forall \vec{x}\ \
 with $\varphi_{ob}$.
 
 \begin{theorem}\label{th:satisfiability_pending}
+
 Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
 Also, let $\psi::=\exists\poker.\ \psi'$ be a formula as in Figure~\ref{fig:logic} describing the set of 
 complete histories $H_c(L)$. Then,
 \[
 h\in H(L)\mbox{ implies }\varphi_c(h)\land \psi'_{ob}\mbox{ is satisfiable.}
 \]
+
 \end{theorem}
+
 \begin{proof}
 
+Let $h=\tup{O,<,f}$. By Lemma~\ref{lemma:pending_histories}, there exists $h_1=\tup{O_1,<_1,f_1}$  %and~\ref{lemma:kernel_histories}
+a completion of $h$  such that %and $h'\in H(\ker L)$
+$h\preceq_c h_1$ and $h_1\in H(L)$. Also, by Theorem~\ref{th:satisfiability}, we get that
+\[
+\varphi(h_1)\land \<Dom>(O_1)\land \psi'\mbox{ is satisfiable}.
+\]
+
+We show that the following entailment holds
+\begin{align}\label{eq:entailment}
+\big(\varphi(h_1)\land \<Dom>(O_1)\land \psi'\big) => (\varphi_c(h)\land \psi'_{ob}),
+\end{align}
+which implies that the right-hand side of the entailment is also satisfiable.
+
+Let $\tup{h_2,\poker}$ be a model of the left-hand side formula. Since all
+the constraints in $\varphi_c(h)$ are included in $\varphi(h_1)$ (as a completion of $h$, 
+$h_1$ preserves the complete operations in $h$ with the same labeling and the same
+order constraints), $\tup{h_2,\poker}$ is a model of $\varphi_c(h)$. 
+
+Let $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$ and
+$
+\psi'::=< \subseteq \hspace{-1mm}\poker 
+\land \<PO>(\poker)\land \varphi
+$. We prove that 
+\[
+\tup{h_2,\poker}\models \psi'_{ob}::=< \subseteq \hspace{-1mm}\poker 
+\land \<PO>(\poker)\land \varphi_{ob}.
+\]
+The first two conjuncts of $\psi'_{ob}$ are clearly satisfied by $\tup{h_2,\poker}$ since
+they are also included in $\psi'$.
+
+Since $h_2\in H(L)$, by Lemma~\ref{lemma:pref_obsolete}, there exists a prefix $h_3=(O_3,<_3,f_3)$
+of $h_2$ that includes all the obsolete operations of $h$ and no pending operation of $h$
+such that $h_3\in H(L)$. Therefore, there exists $\poker'$ such that $(O_3,\poker',f_3)$ is
+a prefix of $(O_2,\poker,f_2)$ and 
+\[
+\tup{h_3,\poker'}\models \varphi(h_3)\land \<Dom>(O_3)\land \psi',
+\]
+and in particular, $\tup{h_3,\poker'}\models \<Dom>(O_3)\land \varphi$. The latter
+implies that
+\[
+\tup{h_3,\poker'}\models 
+\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_3 => \big(\bigwedge_{y\in\vec{y}}\ y\in O_3 \land F\big).
+\]
+
+Let $O_{ob}$ be the set of obsolete operations of $h$. % and $O_c$ the set of complete operations of $h$. 
+Since $O_{ob}\subseteq O_3$, we get that 
+\[
+\tup{h_3,\poker'}\models 
+\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_3 \land F\big).
+\]
+Now, because $h_3$ is a prefix of $h_2$ and $(O_3,\poker',f_3)$ is a prefix of $(O_2,\poker,f_2)$, we get that
+\[
+\tup{h_2,\poker}\models 
+\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_3 \land F\big).
+\]
+
+Let $O_c$ be the set of complete operations of $h$. Since $O_3\subseteq O_c$, we get that
+\[
+\tup{h_2,\poker}\models 
+\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_c \land F\big).
+\]
+Therefore, $\tup{h_2,\poker}\models \varphi_{ob}$, which concludes the proof.
 \end{proof}
+
 
 \begin{corollary}\label{cor:satisfiability}
 
