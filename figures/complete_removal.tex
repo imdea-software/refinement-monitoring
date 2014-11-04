@@ -1,0 +1,63 @@
+%!TEX root = ../head.tex
+
+\begin{tikzpicture}[node distance=4mm]
+  \footnotesize
+
+  \tikzstyle{node}=[minimum size=0pt]
+  \tikzstyle{nnode}=[minimum size=0pt,inner sep=0pt]
+  \tikzstyle{lnode}=[circle,draw,minimum size=2pt,inner sep=0pt]
+  \tikzstyle{opline}=[line width=2pt]
+
+  % push(1)
+  \node[lnode] (x1)  [] {};
+  \node[lnode] (x2)  [right=of x1] {}; 
+  \draw[opline] (x1) -- node[draw=none,above] {$\<push>(1)$} (x2); 
+    
+  % pop(1)
+  \node[lnode] (x3)  [right = 7mm of x2] {};
+  \node[lnode] (x4)  [right= 6mm of x3] {}; 
+  \draw[opline] (x3) -- node[draw=none,above] {$\<pop>=>1$} (x4); 
+
+  % pop(-)
+  \node[lnode] (x5)  [right = 3mm of x4] {};
+  \node[nnode] (x6)  [right= 30mm of x5] {}; 
+  \draw[opline] (x5) -- node[draw=none,above] {$\<pop>=>\bot$} (x6); 
+
+  % push(2)
+  \node[lnode] (y1)  [below = 7mm of x3,xshift=3mm] {};
+  \node[lnode] (y2)  [right= 10mm of y1] {}; 
+  \draw[opline] (y1) -- node[draw=none,above] {$\<push>(2)$} (y2); 
+
+  % pop(2)
+  \node[lnode] (y3)  [right = 13mm of y2] {};
+  \node[lnode] (y4)  [right=of y3] {}; 
+  \draw[opline] (y3) -- node[draw=none,above] {$\<pop>=>2$} (y4); 
+
+  % push(3)
+  \node[lnode] (z1)  [below = 6mm of y2,xshift=4mm] {};
+  \node[lnode] (z2)  [right=of z1] {}; 
+  \draw[opline] (z1) -- node[draw=none,above] {$\<push>(3)$} (z2); 
+
+  % push(4)
+  \node[lnode] (t1)  [below = 13mm of y1,xshift=2mm] {};
+  \node[lnode] (t2)  [right=35mm of t1] {}; 
+  \draw[opline] (t1) -- node[draw=none,above] {$\<push>(4)$} (t2); 
+
+  % dotted barrier
+  \node[nnode] (b1)  [right = 2mm of x6,yshift = 3mm] {};
+  \node[nnode] (b2)  [right=  2mm of t2,yshift = -3mm] {}; 
+  \node[nnode] (b3)  [above=  2mm of b1] {$h$}; 
+  \draw[dotted] (b1) -- (b2); 
+
+  % pop(3)
+  \node[lnode] (z3)  [right = 24mm of z2] {};
+  \node[lnode] (z4)  [right=of z3] {}; 
+  \draw[opline] (z3) -- node[draw=none,above] {$\<pop>=>3$} (z4); 
+
+  % dotted barrier
+  \node[nnode] (bb1)  [right = 15mm of b1] {};
+  \node[nnode] (bb2)  [right=  15mm of b2] {}; 
+  \node[nnode] (bb3)  [above=  2mm of bb1] {$h'$}; 
+  \draw[dotted] (bb1) -- (bb2); 
+
+\end{tikzpicture}

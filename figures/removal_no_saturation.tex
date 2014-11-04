@@ -1,0 +1,60 @@
+%!TEX root = ../head.tex
+
+\begin{tikzpicture}[node distance=4mm]
+  \footnotesize
+
+  \tikzstyle{node}=[minimum size=0pt]
+  \tikzstyle{nnode}=[minimum size=0pt,inner sep=0pt]
+  \tikzstyle{lnode}=[circle,draw,minimum size=2pt,inner sep=0pt]
+  \tikzstyle{opline}=[line width=2pt]
+
+  % pop(empty)
+  \node[lnode] (x1)  [] {};
+  \node[lnode] (x2)  [right=30mm of x1] {}; 
+  \draw[opline] (x1) -- node[draw=none,above] {$\<pop>=>{\tt Empty}$} (x2); 
+    
+  % push(1)
+  \node[lnode] (y1)  [below = 7mm of x1,xshift=-16mm] {};
+  \node[lnode] (y2)  [right= 10mm of y1] {}; 
+  \draw[opline] (y1) -- node[draw=none,above] {$\<push>(1)$} (y2); 
+
+  % pop(1)
+  \node[lnode] (y3)  [right = 13mm of y2] {};
+  \node[lnode] (y4)  [right=6mm of y3] {}; 
+  \draw[opline] (y3) -- node[draw=none,above] {$\<pop>=>1$} (y4); 
+
+  % push(2)
+  \node[lnode] (z1)  [below = 6mm of y2,xshift=-3mm] {};
+  \node[lnode] (z2)  [right=10mm of z1] {}; 
+  \draw[opline] (z1) -- node[draw=none,above] {$\<push>(2)$} (z2); 
+
+  % pop(2)
+  \node[lnode] (z3)  [right = 25mm of z2] {};
+  \node[lnode] (z4)  [right=20 mm of z3] {}; 
+  \draw[opline] (z3) -- node[draw=none,above,xshift=-4mm] {$\<pop>=>2$} (z4); 
+
+  % dotted barrier
+  \node[nnode] (b1)  [right = 5mm of x2,yshift = 3mm] {};
+  \node[nnode] (b2)  [right=  5mm of x2,yshift = -25mm] {}; 
+  \node[nnode] (b3)  [above=  2mm of b1] {$h$}; 
+  \draw[dotted] (b1) -- (b2); %node[draw=none,above] {$\<push>(4)$} 
+
+  % push(3)
+  \node[lnode] (t1)  [below = 13mm of y4,xshift=4mm] {};
+  \node[lnode] (t2)  [right=of t1] {}; 
+  \draw[opline] (t1) -- node[draw=none,above] {$\<push>(3)$} (t2); 
+
+  % pop(3)
+  \node[lnode] (t3)  [right = 20mm of t2] {};
+  \node[lnode] (t4)  [right=of t3] {}; 
+  \draw[opline] (t3) -- node[draw=none,above] {$\<pop>=>3$} (t4); 
+
+  % dotted barrier
+  \node[nnode] (bb1)  [right = 18mm of b1] {};
+  \node[nnode] (bb2)  [right=  18mm of b2] {}; 
+  \node[nnode] (bb3)  [above=  2mm of bb1] {$h'$}; 
+  \draw[dotted] (bb1) -- (bb2); %node[draw=none,above] {$\<push>(4)$} 
+
+  
+
+\end{tikzpicture}

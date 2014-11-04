@@ -1,0 +1,43 @@
+%!TEX root = head.tex
+\section{Related Work}
+
+\fbox{From POPL'15}
+
+Previous work on automated verification for concurrent objects focuses on the
+\emph{linearizability} criterion~\citep{journals/toplas/HerlihyW90}. While
+folklore has long held that linearizability implies observational refinement,
+Filipovic et al.~\cite{journals/tcs/FilipovicORY10} recently proved this fact;
+they also proved that the two criteria coincide when considering only library
+executions in which all operations have completed. Our results in
+Section~\ref{sec:lin} expound further: we show that the two criteria coincide
+for atomic object specifications, and that in general, observational refinement
+can hold for non-linearizable objects.
+
+The theoretical limits of linearizability are well studied. Gibbons
+and Korach~\cite{journals/siamcomp/GibbonsK97} show NP-completeness for
+checking a single execution. Alur et al.~\cite{journals/iandc/AlurMP00} show
+EXPSPACE membership for checking finite-state implementations against atomic
+specifications, but only when the number of program threads is bounded.
+Bouajjani et al.~\cite{conf/esop/BouajjaniEEH13} show the same problem is
+undecidable with unbounded threads, and introduce a decidable variant for a
+restricted class of executions.
+
+% one can show that this class corresponds to executions whose histories have
+% bounded interval length.
+
+Several semi-automated approaches for proving linearizability, and thus
+observational refinement, have relied on annotating method bodies with
+\emph{linearization points}~\cite{conf/cav/AmitRRSY07, conf/fm/LiuCLS09,
+conf/podc/OHearnRVYY10, conf/cav/Vafeiadis10, conf/icse/Zhang11a}, to reduce the otherwise-exponential
+space of possible history linearizations to one single linearization. These
+methods often rely on programmer annotation, and do not admit conclusive
+evidence of a violation in the case of a failed proof.
+
+Automated approaches for detecting linearizability violations such as
+Line-Up~\cite{conf/pldi/BurckhardtDMT10} enumerate the exponentially-many
+possible history linearizations. This exponential cost effectively limits such
+approaches to executions with few operations, as noted in
+Section~\ref{sec:exp:dynamic}. Colt~\cite{conf/oopsla/ShachamBASVY11}'s
+approach mitigates this cost with programmer-annotated linearization points, as
+in the previously-mentioned approaches, and ultimately suffers from the same
+problem: a failed proof only indicates incorrect annotation.
