@@ -2,7 +2,22 @@
 
 \section{Monitoring History Inclusion}
 
-\subsection{Monitoring complete histories}
+We describe a monitor for detecting refinement violations, which is based on the logical characterizations
+introduced in Section~\ref{sec:logic}. Essentially, it records the history of the monitored execution 
+and continuously checks whether it is included in the set of histories $H(L)$ of a library $L$, using
+the formula $\psi$ describing $H(L)$. When the tracked history $h$ is complete, it can simply check whether
+$h$ satisfies $\psi$. This satisfaction problem can be reduced to propositional satisfiability as we show in Section~\ref{ssec:complete}.
+When $h$ contains pending operations, the membership test is more intricate since $\psi$ describes only complete histories.
+In this case, we rely on the assumption that the operations of any execution in $\ker L$ are completed.
+The membership test performed by the monitor, described in Section~\ref{ssec:pending}, 
+is again based on a reduction to propositional satisfiability. However, in this case, it is sound, i.e., any reported
+violation is real, but incomplete, i.e.,
+there may exist refinement violations which are missed by the monitor.
+Furthermore, in order to reduce space/time consumption, the monitor is allowed to forget completed 
+operations. More precisely, we show in Section~\ref{ssec:removal} that forgetting matching clusters is sound  
+provided that the kernel is $\<Matching>$-closed.
+
+\subsection{Monitoring complete histories}\label{ssec:complete}
 
 Though $\psi$ is a second-order formula, the satisfaction problem of whether a complete history $h$ satisfies
 $\psi$ can be reduced to a propositional satisfiability problem.
@@ -69,7 +84,7 @@ h\models \psi\mbox{ iff }\ \<ToBool>(h,\psi)\mbox{ is satisfiable.}
 
 \end{corollary}
 
-\subsection{Monitoring histories with pending operations}
+\subsection{Monitoring histories with pending operations}\label{ssec:pending}
 
 The formulas $\psi$ defined in Section~\ref{sec:logic} describe only complete histories
 of a library $L$ but, they can be used to check even whether a history $h$ with \emph{pending} operations 
@@ -319,7 +334,7 @@ One hopes that the history is extensible, that all pending operations become com
 
 \end{example}
 
-\subsection{Removing Completed Matching Clusters}
+\subsection{Removing Matching Clusters}\label{ssec:removal}
 
 \begin{theorem}\label{th:removing_matching}
 
