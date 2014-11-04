@@ -27,6 +27,8 @@ A matching relation $\<Matching>$ is called \emph{injective} iff for every histo
 
 \end{definition}
 
+An operation $o$ is called \emph{negative}, resp., \emph{positive}, in a history $h=\tup{O,<,f}$ iff $f(o)\in \<NegLab>$, resp., $f(o)\in \<PosLab>$.
+
 \begin{example}
 
 Examples of relations $\<Matching>$ and how they can be implemented.
@@ -53,10 +55,14 @@ Let $L$ be a library for which $\ker L$ is defined. The set of histories $H(\ker
 
 \end{lemma}
 
-A set of histories $H$ is closed under matched-operations removal iff $H$ contains all the histories
-obtained by removing a pair of matched operations from another history in $H$. We say that 
-a library $L$ is \emph{$\<Matching>$-closed} iff the set of kernel histories is closed under 
-matched-operations removal. Formally, given a history $h=\tup{O,<,f}$ and $O'\subseteq O$, 
+Given a history $h=\tup{O,<,f}$, a set of operations $O'\subseteq O$ is called a \emph{matching cluster}
+iff $O'$ consists of a single negative operation $o$ and all positive operations $o'$ with $\<Matching>(o,o')$.
+A set of histories $H$ is closed under matching cluster removal iff $H$ contains all the histories
+obtained by removing a matching cluster from another history in $H$. 
+%We say that 
+%a library $L$ is \emph{$\<Matching>$-closed} iff the set of kernel histories is closed under 
+%matching cluster removal. 
+Formally, given a history $h=\tup{O,<,f}$ and $O'\subseteq O$, 
 \[
 h\setminus O'=\tup{O\setminus O',<',f'},
 \] 
@@ -64,9 +70,10 @@ where $<'=<|_{O\setminus O'}$, and $f'=f|_{O\setminus O'}$.
 
 \begin{definition}
 
-Let $L$ be a library for which $\ker L$ is defined. $L$ is \emph{$\<Matching>$-closed}
-iff for any history $h\in H(\ker L)$ and $o_1, o_2\in O$ two operations such that $\<Matching>(f(o_1),f(o_2))$,
-the history $h\setminus \{o_1,o_2\}\in H(\ker L)$
+A set of histories $H$ is \emph{closed under matching cluster removal} 
+(for short, $\<Matching>$-closed)
+iff for every matching cluster $O'$ of a history $h\in H$,
+the history $h\setminus O'$ also belongs to $H$.
 
 \end{definition}
 

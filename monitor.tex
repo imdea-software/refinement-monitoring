@@ -104,7 +104,6 @@ $h_c\in H(L)$, which finishes the proof.
 
 ($\Leftarrow$) Since $h\preceq_c h_c$ implies $h\preceq h_c$, then by Lemma~\ref{downward-closed},
 $h_c\in H(L)$ implies $h\in H(L)$.
-
 \end{proof}
 
 Though we seek to develop an efficient monitor that can check whether a history with pending
@@ -164,8 +163,6 @@ $h_2\in H(L)$.
 Assume by contradiction that $O_4$ includes an operation $o$ such that $o' <_1 o$ for each $o'\in Ob$.
 Since $h_1\preceq h_3$, we obtain that $o' <_3 o$ for each $o'\in Ob$, which contradicts the minimality of
 the prefix $h_4$.
-
-
 \end{proof}
 
 
@@ -277,9 +274,49 @@ State the reduction to propositional satisfiability
 
 \end{corollary}
 
-\subsection{Removing Obsolete Operations}
+\begin{example}
 
+Show that the reduction in Theorem 2 is incomplete. A history with pending operations which is not linearizable but
+the formula is satisfiable. 
 
+One hopes that the history is extensible, that all pending operations become completed and then, detect the violation.
+
+\end{example}
+
+\subsection{Removing Completed Matching Clusters}
+
+\begin{theorem}
+
+Let $L$ be a library for which $\ker L$ is defined. If $H(\ker L)$ is $\<Matching>$-closed, 
+then $H(L)$ is also $\<Matching>$-closed.
+
+\end{theorem}
+
+\begin{proof}
+
+Let $h$ be a history of $H(L)$. 
+By Lemmas~\ref{lemma:kernel_histories} and~\ref{lemma:pending_histories}, 
+there exists a completion $h_{c}$ and a kernel history $h'\in H(\ker L)$ such that
+$h\preceq_c h_{c} \preceq h'$. Also, let $O_1$ be a matching cluster of $h$.
+Since all the operations in $O_1$ are completed, they are included in $h'$ with the
+same labeling. By hypothesis, $H(\ker L)$ is $\<Matching>$-closed and therefore, 
+$h'\setminus O_1\in H(\ker L)$. By the definition of $\preceq$, it follows that
+$h_{c}\setminus O_1\preceq h'\setminus O_1$ and since the operations in $O_1$
+are completed, we get that $h\setminus O_1\preceq h_{c}\setminus O_1$. Consequently,
+$h\setminus O_1\in H(L)$.
+\end{proof}
+
+\begin{example}
+
+Incompleteness because of removing complete and not obsolete operations.
+
+\end{example}
+
+\begin{example}
+
+Incompleteness because we don't keep constraints deduced from the presence of the matching cluster.
+
+\end{example}
 
 
 
