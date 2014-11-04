@@ -6,11 +6,42 @@ We define the class of concurrent libraries considered in this paper.
 
 \subsection{Matching Relations}
 
+\newcommand{\domain}{\mathbb{D}}
+
 We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
 
 \begin{example}
 
 Positive and negative labels for different objects.
+
+\begin{itemize}
+
+\item{Queue}
+  \begin{itemize}
+  \item{Positive Labels:} $\set{\<enqueue>(x)\ |\ x \in \domain}$
+  \item{Negative Labels:} $\set{\<dequeue> => x\ |\ x \in \domain}$
+  \end{itemize}
+
+\item{Stack}
+  \begin{itemize}
+  \item{Positive Labels:} $\set{\<push>(x)\ |\ x \in \domain}$
+  \item{Negative Labels:} $\set{\<pop> => x\ |\ x \in \domain}$
+  \end{itemize}
+
+\item{Register}
+  \begin{itemize}
+  \item{Positive Labels:} $\set{\<write>(x)\ |\ x \in \domain}$
+  \item{Negative Labels:} $\set{\<read> => x\ |\ x \in \domain}$
+  \end{itemize}
+  
+\item{Set}
+  \todo{Necessary explanation for the choice we did for the set}
+  \begin{itemize}
+  \item{Positive Labels:} $\<add>$
+  \item{Negative Labels:} $\<remove>$ and $\<contains> => \top$
+  \end{itemize}
+
+\end{itemize}
 
 \end{example}
 
