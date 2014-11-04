@@ -43,15 +43,29 @@ Therefore, $\tup{h,\poker}$ is also a model of $\psi'$, which implies that $h$ i
 \end{proof}
 
 The satisfiability of $\varphi(h)\land \<Dom>(O)\land \psi'$ can be reduced to propositional satisfiability since
-the domain of the operation-identifier variables is fixed and the quantifiers can be replaced by finite 
-conjunctions/disjunctions, e.g., any sub-formula $\exists x.\ \varphi$ can be replaced by
-\[
-\bigvee_{o\in O}\ \varphi[x\mapsto o].
-\]
+the domain of the operation-identifier variables is fixed and the existential quantifiers can be replaced by finite 
+disjunctions, i.e., every sub-formula $\exists x.\ A$ is replaced by 
+$
+\bigvee_{o\in O}\ A[x\mapsto o]
+$.
+The formula obtained by removing the existential quantifiers belongs to the EPR fragment
+(also known as the Bernays-Sch\"{o}nfinkel class),  whose satisfiability is known to be reducible to
+propositional satisfiability in polynomial time, provided that the quantifier count is fixed.
+The EPR fragment consists of first-order
+formulas with no occurrences of function symbols other than constants, and which  
+when written in the prenex normal form have the quantifier prefix $\exists^*\forall^*$.
+The formula $\varphi(h)\land \<Dom>(O)\land \psi'$ has no function symbols other than constants
+and by removing the existential quantifiers, it has a quantifier prefix $\forall^*$.
+Therefore, one can construct a boolean formula $\<ToBool>(h,\psi)$, which
+is equi-satisfiable to $\varphi(h)\land \<Dom>(O)\land \psi'$.
+
 
 \begin{corollary}\label{cor:satisfiability}
 
-State the reduction to propositional satisfiability
+Let $h$ be a complete history and $\psi::=\exists\poker.\ \psi'$ a formula as in Figure~\ref{fig:logic}. Then,
+\[
+h\models \psi\mbox{ iff }\ \<ToBool>(h,\psi)\mbox{ is satisfiable.}
+\]
 
 \end{corollary}
 
@@ -84,6 +98,13 @@ is a \emph{completion} of $h_1$, written $h_1\preceq_c h_2$, when
 Examples of completions.
 
 \end{example}
+
+\begin{example}
+
+Show that the projection of a linearizable history over complete operations is not necessarily linearizable.
+
+\end{example}
+
 
 \begin{lemma}\label{lemma:pending_histories}
 
@@ -267,11 +288,26 @@ Let $O_c$ be the set of complete operations of $h$. Since $O_3\subseteq O_c$, we
 Therefore, $\tup{h_2,\poker}\models \varphi_{ob}$, which concludes the proof.
 \end{proof}
 
+\begin{example}
+
+The reverse of this theorem doesn't hold.
+
+\end{example}
+
+The satisfiability of the formula $\varphi_c(h)\land \psi'_{ob}$ can be reduced to propositional satisfiability
+as it was the case for the formula in Theorem~\ref{th:satisfiability}. Again, the interpretation domain
+of the existentially-quantified variables is fixed, and the existential quantifiers can be replaced with
+finite disjunctions. The obtained formula falls also in the EPR fragment of first-order logic and there
+exists a boolean formula $\<ToBool>_{ob}(h,\psi)$, which is equi-satisfiable to $\varphi_c(h)\land \psi'_{ob}$.
 
 \begin{corollary}\label{cor:satisfiability}
 
-State the reduction to propositional satisfiability
-
+Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
+Also, let $\psi::=\exists\poker.\ \psi'$ be a formula as in Figure~\ref{fig:logic} describing the set of 
+complete histories $H_c(L)$. Then,
+\[
+h\in H(L)\mbox{ implies }\<ToBool>_{ob}(h,\psi)\mbox{ is satisfiable.}
+\]
 \end{corollary}
 
 \begin{example}
@@ -285,7 +321,7 @@ One hopes that the history is extensible, that all pending operations become com
 
 \subsection{Removing Completed Matching Clusters}
 
-\begin{theorem}
+\begin{theorem}\label{th:removing_matching}
 
 Let $L$ be a library for which $\ker L$ is defined. If $H(\ker L)$ is $\<Matching>$-closed, 
 then $H(L)$ is also $\<Matching>$-closed.
@@ -306,15 +342,55 @@ are completed, we get that $h\setminus O_1\preceq h_{c}\setminus O_1$. Consequen
 $h\setminus O_1\in H(L)$.
 \end{proof}
 
-\begin{example}
+\begin{figure}
 
-Incompleteness because of removing complete and not obsolete operations.
+\input figures/complete_removal
+
+\caption{Removing the matching cluster $\{{\tt push}(2),{\tt pop}=>2\}$ with complete but not obsolete operations.}
+\label{fig:complete_removal}
+
+\end{figure}
+
+While the statement of Theorem~\ref{th:removing_matching} implies that a history
+$h\setminus O$, where $O$ is a matching cluster in $h$, belongs to $H(L)$ whenever $h\in H(L)$,
+Example~\ref{ex:complete_removal} shows that the reverse is not true. Consequently, 
+a monitor that eagerly removes all matching clusters from the history it tracks 
+may miss some violations.
+
+\begin{example}\label{ex:complete_removal}
+
+Figure~\ref{fig:complete_removal} pictures two histories $h$ and $h'$, the latter being an
+extension of the former. The history obtained by removing the 
+matching cluster $\{{\tt push}(2),{\tt pop}=>2\}$ from $h'$ belongs to $H(L_{stacks})$ while
+$h'\not\in H(L_{stacks})$. Therefore, a monitor that removes all 
+matching clusters when reading $h$, will miss the violation $h'$. Note that $h$ is not
+a violation since $h\in H(L_{stacks})$.
 
 \end{example}
 
-\begin{example}
+One way to avoid the incompleteness exhibited by Example~\ref{ex:complete_removal}
+is to remove a matching cluster only if it consists of obsolete operations.
+Example~\ref{ex:removal_no_saturation} shows that even this strategy is incomplete.
+Intuitively, this happens because the monitor doesn't remember any constraints
+on the kernel order implied by the presence of the matching cluster.
 
-Incompleteness because we don't keep constraints deduced from the presence of the matching cluster.
+\begin{figure}
+
+\input figures/removal_no_saturation
+
+\caption{Removing the matching cluster $\{{\tt push}(1),{\tt pop}=>1\}$ formed of obsolete operations.}
+\label{fig:complete_removal}
+
+\end{figure}
+
+\begin{example}\label{ex:removal_no_saturation}
+
+Figure~\ref{fig:complete_removal} pictures two histories $h$ and $h'$, the latter being an
+extension of the former. Even though the matching cluster $\{{\tt push}(1),{\tt pop}=>1\}$
+consists only of obsolete operations, removing it from the history $h'\not\in H(L_{stacks})$ 
+results in a history $h$ which is not anymore a violation, since $h\in H(L_{stacks})$.
+In order to detect this violation, the monitor should remember the constraint
+$\<push>(2) \poker \<pop>=>Empty$ implied by the presence of this matching cluster.
 
 \end{example}
 
