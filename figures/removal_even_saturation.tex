@@ -1,0 +1,45 @@
+%!TEX root = ../head.tex
+
+\begin{tikzpicture}[node distance=4mm]
+  \footnotesize
+
+  \tikzstyle{node}=[minimum size=0pt]
+  \tikzstyle{nnode}=[minimum size=0pt,inner sep=0pt]
+  \tikzstyle{lnode}=[circle,draw,minimum size=2pt,inner sep=0pt]
+  \tikzstyle{opline}=[line width=2pt]
+
+  % write(0)
+  \node[lnode] (x1)  [] {};
+  \node[lnode] (x2)  [right=6mm of x1] {}; 
+  \draw[opline] (x1) -- node[draw=none,above] {$\<write>(0)$} (x2); 
+
+  % write(1)
+  \node[lnode] (x3)  [right=6mm of x2] {};
+  \node[lnode] (x4)  [right=6mm of x3] {}; 
+  \draw[opline] (x3) -- node[draw=none,above] {$\<write>(1)$} (x4); 
+
+  % read(1)
+  \node[lnode] (x5)  [right=7mm of x4] {};
+  \node[lnode] (x6)  [right=6mm of x5] {}; 
+  \draw[opline] (x5) -- node[draw=none,above] {$\<read>=>1$} (x6); 
+
+  % dotted barrier
+  \node[nnode] (b1)  [right = 3mm of x6,yshift = 3mm] {};
+  \node[nnode] (b2)  [right=  3mm of x6,yshift = -3mm] {}; 
+  \node[nnode] (b3)  [above=  2mm of b1] {$h$}; 
+  \draw[dotted] (b1) -- (b2); %node[draw=none,above] {$\<push>(4)$} 
+
+  % read(1)
+  \node[lnode] (x7)  [right=6mm of x6] {};
+  \node[lnode] (x8)  [right=6mm of x7] {}; 
+  \draw[opline] (x7) -- node[draw=none,above] {$\<read>=>1$} (x8); 
+
+  % dotted barrier
+  \node[nnode] (bb1)  [right = 15mm of b1] {};
+  \node[nnode] (bb2)  [right=  15mm of b2] {}; 
+  \node[nnode] (bb3)  [above=  2mm of bb1] {$h'$}; 
+  \draw[dotted] (bb1) -- (bb2); %node[draw=none,above] {$\<push>(4)$} 
+
+  
+
+\end{tikzpicture}
