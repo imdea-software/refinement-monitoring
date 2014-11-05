@@ -127,12 +127,6 @@ violation of the LIFO order.
       \<Matching>(y_1,x_1) \implies y_1 \poker y_2
 \end{align*}
 
-\item
-The violations of the Priority Queue are histories where two elements have
-been added, and the element with lower priority has been removed.
-\todo{We don't have a predicate to compare data values. Should we add it
-for the Priority Queue or is it not worth it?}  
-
 
 \item 
 For the Register, we also use the same first two formulas.
@@ -146,6 +140,17 @@ no matching write ($x_2$) in between $y_2$ and the preceding write.
       \neg \<Matching>(y_2,x_2)
 \end{align*}
 
+
+\item
+The violations of the PriorityQueue are histories where two elements have
+been added $x_1,x_2$, and the element with lower priority ($x_1$) has been 
+removed (by $y_1$), while $x_2$ has not yet been removed (by $y_2$).
+\todo{We don't have a predicate to compare data values.}  
+
+\begin{align*}
+\exists x_1,x_2,y_1.& \<Matching>(y_1,x_1) \land x_2 \poker y_1 \land \\
+& \forall y_2.\ y_2 \poker y_1.\ \neg \<Matching>(y_2,x_2)
+\end{align*}
 
 
 \item
@@ -205,16 +210,37 @@ parametrized by $\capacity$.
 
 
 \item
+\newcommand{\rval}[1]{{\sf rval}({#1})}
+\newcommand{\cval}[1]{{\sf cval}({#1})}
+\newcommand{\noexc}{-1}
+\todo{We here to compare data values of calls with data values of returns. 
+We also need to compare data values of returns with -1}
 The Exchanger is a special case. First of all, we drop the formula stating
 that $\poker$ is a total order. Moreover, the \<exchange> label can be both
-positive and negative. There are three kinds of violations. The first one 
-states that every positive operation can be matched only once (an operation
+positive and negative. We use three formulas to recognize violations of the 
+Exchanger. 
+
+The first one states that there exists an operation which was 
+matched twice (an operation
 can exchange its value with only one operation).
+\begin{align*}
+\exists x,y_1,y_2.\ \<Matching>(y_1,x) \land \<Matching>(y_2,x)
+\end{align*}
 
 The second one says 
-that there exists an operation which was matched, but which still returned 
-$-1$. The last one says that there exists one operation which was matched,
+that there exists an operation which was not matched, but which returned 
+something different than the expected $\noexc$
+\begin{align*}
+\exists x,y.&\ \rval{x} \neq \noexc \land \\
+& \forall y.\ \neg \<Matching>(y,x) \land \neg \<Matching>(x,y)
+\end{align*}
+
+The last one says that there exists one operation which was matched,
 but which did not return the value of the corresponding operation.
+\begin{align*}
+\exists x,y.\ (\<Matching>(y,x) \lor \<Matching>(x,y)) \land \rval{x} \neq
+\cval{y}
+\end{align*}
 
 \end{itemize}
 
