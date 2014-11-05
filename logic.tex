@@ -75,10 +75,8 @@ Examples of formulas $\psi_L$ for the most common objects.
 
 \newcommand{\ispositive}[1]{L_+({#1})}
 \newcommand{\isnegative}[1]{L_{-}({#1})}
-\newcommand{\remove}{Rem}
-\newcommand{\add}{Add}
-\newcommand{\containstrue}{CT}
-\newcommand{\containsfalse}{CF}
+\newcommand{\containstrue}{{\sf CT}}
+\newcommand{\containsfalse}{{\sf CF}}
 
 \begin{itemize}
 \item
@@ -111,9 +109,11 @@ $x_1$ ($y_1$), if any:
 \end{align*}
 
 
+The remaining objects all use the first two formulas (the one recognizing
+total order violations, and the one recognizing matching violations).
 
 \item 
-For the Stack, we use the same first two formulas as the Queue. To
+For the Stack, in order to
 recognize LIFO violations, we use a formula similar to the formula recognizing
 FIFO violations. 
 Note though that we need one more constraint ($x_1 \poker y_2$), since the 
@@ -127,6 +127,11 @@ violation of the LIFO order.
       \<Matching>(y_1,x_1) \implies y_1 \poker y_2
 \end{align*}
 
+\item
+The violations of the Priority Queue are histories where two elements have
+been added, and the element with lower priority has been removed.
+\todo{We don't have a predicate to compare data values. Should we add it
+for the Priority Queue or is it not worth it?}  
 
 
 \item 
@@ -144,15 +149,14 @@ no matching write ($x_2$) in between $y_2$ and the preceding write.
 
 
 \item
-Concerning the set, we still use the same first two formulas. Then we use
-two more formulas, one for $\tt contains => true$ violations, 
+For the Set, we use two formulas, one for $\tt contains => true$ violations, 
 and one for $\tt contains => false$ violations.
 
 The first one says that there is a $\tt contains => true$ (abbreviated $CT$
 for better readability) and a remove, so that there is no add in between.
 \begin{align*}
 \exists x_r,x_c.\ &
-  \remove(x_r) \land \containstrue(x_c)
+  \<remove>(x_r) \land \containstrue(x_c)
   \land x_r \poker x_c \land\\
     &\forall x_a.\ x_r \poker x_a \land x_a \poker x_c \implies 
       \neg \<Matching>(x_c,x_a)
@@ -162,12 +166,43 @@ The second one says that there is a $\tt contains => false$ (abbreviated $CF$)
 and an add, so that there is no remove in between.
 \begin{align*}
 \exists x_a,x_c.\ &
-  \add(x_a) \land \containsfalse(x_c)
+  \<add>(x_a) \land \containsfalse(x_c)
   \land x_a \poker x_c \land\\
-   & \forall x_r.\ (x_a \poker x_r \land x_r \poker x_c \land \remove(x_r))
+   & \forall x_r.\ (x_a \poker x_r \land x_r \poker x_c \land \<remove>(x_r))
     \implies \\
     &\qquad \neg \<Matching>(x_r,x_a)
 \end{align*}
+
+\item
+For the Lock, we use a formula which recognizes 
+histories where two lock methods follow each other, or where two unlock
+methods follow each other.
+
+\begin{align*} 
+\exists x_1,x_2.&\ 
+  x_1 \poker x_2 \land \\
+  &((\<lock>(x_1) \land \<lock>(x_2)) \lor \\
+   & (\<unlock>(x_1) \land \<unlock>(x_2))) \land
+  \\
+  &\forall y. \neg (x_1 \poker y \land y \poker x_2)
+\end{align*}
+
+\item
+\newcommand{\capacity}{c}
+The violations of a Semaphore of capacity $\capacity$ are histories where
+at some point ($x_\capacity$), there are strictly more than $\capacity$ 
+\<acquire>'s ($x_0,\dots,x_\capacity$) which are 
+not matched by a corresponding \<release> ($y$). The corresponding formula is 
+parametrized by $\capacity$.
+
+\begin{align*}
+\exists x_0,\dots,x_\capacity.&\ 
+  \bigwedge_{0 \leq i < \capacity} x_i \poker x_\capacity \land
+  \bigwedge_{0 \leq i \leq \capacity} \<acquire>(x_i) \land\\
+  &(\forall y.\ y \poker x_\capacity \implies 
+    \bigwedge_{0 \leq i \leq \capacity} \neg \<Matching>(y,x_i))
+\end{align*}
+
 
 \end{itemize}
 

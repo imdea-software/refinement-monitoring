@@ -37,8 +37,20 @@ Positive and negative labels for different objects.
 \item{Set}
   \todo{Necessary explanation for the choice we did for the set}
   \begin{itemize}
-  \item{Positive Labels:} $\<add>$
+  \item{Positive Label:} $\<add>$
   \item{Negative Labels:} $\<remove>$ and $\<contains> => \top$
+  \end{itemize}
+  
+\item{Lock}
+  \begin{itemize}
+  \item{Positive Label:} $\<lock>$
+  \item{Negative Label:} $\<unlock>$
+  \end{itemize}
+  
+\item{Semaphore}
+  \begin{itemize}
+  \item{Positive Label:} $\<acquire>$
+  \item{Negative Label:} $\<release>$
   \end{itemize}
 
 \end{itemize}
@@ -62,7 +74,16 @@ An operation $o$ is called \emph{negative}, resp., \emph{positive}, in a history
 
 \begin{example}
 
-Examples of relations $\<Matching>$ and how they can be implemented.
+We here give some examples of relations $\<Matching>$ and how they can be 
+implemented. For usual implementations of objects which can be seen as 
+containers, such as the Stack, the Queue, the Set, the Register, it is 
+straightforward to instrument an implementation in order the get the matching 
+relation. 
+
+Each positive method (\<push>,\<enqueue>,\<add>,\<write>) is going to 
+use a unique tag. When a negative method succeeds -- for instance pops an 
+element from the stack -- it is also going to return the unique tag associated
+with the element, thus giving us the relation $\<Matching>$.
 
 \end{example}
 
