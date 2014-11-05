@@ -146,7 +146,6 @@ The violations of the PriorityQueue are histories where two elements have
 been added $x_1,x_2$, and the element with lower priority ($x_1$) has been 
 removed (by $y_1$), while $x_2$ has not yet been removed (by $y_2$).
 \todo{We don't have a predicate to compare data values.}  
-
 \begin{align*}
 \exists x_1,x_2,y_1.& \<Matching>(y_1,x_1) \land x_2 \poker y_1 \land \\
 & \forall y_2.\ y_2 \poker y_1.\ \neg \<Matching>(y_2,x_2)
@@ -179,27 +178,20 @@ and an add, so that there is no remove in between.
 \end{align*}
 
 \item
-For the Lock, we use a formula which recognizes 
-histories where two lock methods follow each other, or where two unlock
-methods follow each other.
-
+For the Lock, we use a formula which recognizes histories where two lock 
+operations follow each other
 \begin{align*} 
 \exists x_1,x_2.&\ 
-  x_1 \poker x_2 \land \\
-  &((\<lock>(x_1) \land \<lock>(x_2)) \lor \\
-   & (\<unlock>(x_1) \land \<unlock>(x_2))) \land
-  \\
+  x_1 \poker x_2 \land \<lock>(x_1) \land \<lock>(x_2) \land\\
   &\forall y. \neg (x_1 \poker y \land y \poker x_2)
 \end{align*}
 
 \item
-\newcommand{\capacity}{c}
 The violations of a Semaphore of capacity $\capacity$ are histories where
 at some point ($x_\capacity$), there are strictly more than $\capacity$ 
 \<acquire>'s ($x_0,\dots,x_\capacity$) which are 
 not matched by a corresponding \<release> ($y$). The corresponding formula is 
 parametrized by $\capacity$.
-
 \begin{align*}
 \exists x_0,\dots,x_\capacity.&\ 
   \bigwedge_{0 \leq i < \capacity} x_i \poker x_\capacity \land

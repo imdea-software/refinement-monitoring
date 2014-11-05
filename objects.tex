@@ -97,6 +97,22 @@ use a unique tag. When a negative method succeeds -- for instance pops an
 element from the stack -- it is also going to return the unique tag associated
 with the element, thus giving us the relation $\<Matching>$.
 
+\todo{What about \<unlock>'s which are called before any lock?}
+For Lock objects, the implementations usually have two states, one where the
+object is unlocked, and one where it is locked. We can thus instrument the 
+implementation in the following way. When a \<lock> operation succeeds, the
+implementation stores a unique tag corresponding to that operation. Then, when
+an \<unlock> operation happens, it returns the tag of the last successful 
+\<lock>, which defines \<Matching>
+
+\todo{What about \<release>'s which don't release anything?}
+Semaphore objects are usually implemented using a counter, which counts the 
+number of \<acquire> operations which successfully entered the Semaphore and
+which are not yet released. We can instrument the implementation by keeping
+a map which maps each \emph{slot} (from $1$ to $\capacity$) to a unique tag 
+corresponding to the \<acquire> operation which has the slot, if any.
+When a \<release> succeeds in decrementing the counter, it returns the unique 
+tag of the \<acquire> which had the slot.
 \end{example}
 
 \subsection{Kernel Closure Properties}
