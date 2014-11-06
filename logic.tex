@@ -177,6 +177,31 @@ and an add, so that there is no remove in between.
     &\qquad \neg \<Matching>(x_r,x_a)
 \end{align*}
 
+
+\item
+For the Set (alternative with add positive/rem negatie), we use two formulas,
+one for $\sf contains => true$ violations, 
+and one for $\sf contains => false$ violations.
+
+The first one says that there is a $\sf contains => true$ (abbreviated $CT$
+for better readability) so that all matching pairs of \<add>/\<remove> are
+either completely before or completely after it.
+\begin{align*}
+\exists x_c.\ &
+  \containstrue(x_c) \land
+    \forall x_a,x_r.\ \<Matching>(x_r,x_a) \implies\\
+	&((x_a \poker x_c \land x_r \poker x_c)
+ 	\lor (x_c \poker x_a \land x_c \poker x_r))
+\end{align*}
+
+The second one says that there is a $\sf contains => false$ (abbreviated $CF$)
+and a matching pair of \<add>/\<remove> so that the \<add> and \<remove>
+are respectively before and after it.
+\begin{align*}
+\exists x_a,x_c,x_r.\ &
+  \containsfalse(x_c) \land x_a \poker x_c \land x_c \poker x_r \land \<Matching>(x_r,x_a)
+\end{align*}
+
 \item
 For the Lock, we use a formula which recognizes histories where two lock 
 operations follow each other
