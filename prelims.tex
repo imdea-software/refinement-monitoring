@@ -110,10 +110,19 @@ invocations to its methods made by \emph{some} program.
 \noindent
 We write $e_1 ~> e_2$ when $e_2$ can be derived from $e_1$ by applying zero or
 more of the above rules. The \emph{closure} of a set $E$ of executions under
-$~>$ is denoted $\overline{E}$. If there exists a unique set of executions $E$ such that 
-$L = \overline{E}$, then $E$ is called \emph{the kernel of $L$}
-and it is denoted by $\ker L$. Note that $\ker L$ contains only completed operations since $e_1
-\cdot e_2 ~> e_1 \cdot c \cdot e_2$, for any unmatched call $c$.
+$~>$ is denoted $\overline{E}$. 
+
+\begin{definition}
+A minimal set of executions $\basis{L}\subseteq L$ such that 
+$L = \overline{\basis{L}}$ is called a \emph{basis} of $L$. 
+%and it is denoted by $\basis{L}$. 
+\end{definition}
+
+%If there exists a unique set of executions $E$ such that 
+%$L = \overline{E}$, then $E$ is called \emph{the kernel of $L$}
+%and it is denoted by $\ker L$. 
+
+
 
 %The set of complete executions in $L$ is denoted by $L_c$.
 
@@ -151,8 +160,13 @@ parameters.
   
 \end{example}
 
-A library $L$ is called \emph{atomic} if $\ker L$ is defined and it consists only of
-sequential executions. Atomic libraries are often considered as specifications 
+A library $L$ is called \emph{atomic} if there exists a basis $B$ of $L$ that consists only of
+sequential executions (a basis that consists only of sequential executions is also unique). 
+Note that $B$ contains only completed operations since $e_1
+\cdot e_2 ~> e_1 \cdot e_2 \cdot c$, for any unmatched call $c$,
+and $e_1 \cdot e_2 \cdot c\in L$ implies $e_1 \cdot e_2$ by the prefix closure of $L$.
+
+Atomic libraries are often considered as specifications 
 for concurrent objects.
 
 \begin{example}

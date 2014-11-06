@@ -1,18 +1,48 @@
 %!TEX root = head.tex
 
-\section{Concurrent collections ??}
+\section{Matching relations}
 
-We define the class of concurrent libraries considered in this paper. 
+The objects implemented in existing concurrent libraries~\footnote{For instance, {\tt java.util.concurrency} or Intel Thread Building Blocks}
+behave like a collection with methods for adding and removing values from the collection, for testing the presence 
+of a value or the emptiness of the collection. Even locks and semaphores can be viewed as bounded collections. For instance, a lock is 
+a collection of size 1, where the methods {\tt lock} and {\tt unlock} overwrite the value in the collection. 
 
-\subsection{Matching Relations}
+Every execution of a collection defines a correlation between operations that effectively add or remove the same value,
+called \emph{matching relation}.
+As we show in this section, this relation can be made explicit by essentially, tagging
+the values added to the collection with unique identifiers. Therefore, in this work, we assume that
+every execution of a library is enhanced with such a relation.
+
+Intuitively, the first argument of a matching relation is an operation effectively deleting a value from the collection or 
+testing the presence of a value in the collection, while the second argument is an operation adding 
+that value to the collection. To simplify the exposition, we assume that an operation can remove only one 
+occurrence of a certain value from the collection. By this assumption and since testing the presence
+of a value requires finding only one occurrence of that value in the collection, we assume that
+the matching relation is functional in the first argument.
+
+\begin{definition}
+
+Let $e$ be an execution over a set of operations $O$.
+A \emph{matching relation} for $e$ is a relation $\<Matching>\subseteq O\times O$, which is functional in the first argument, % library $L$ iff for every history $h=\tup{O,<,f}$ in $H(L)$, the following holds:
+i.e., for every $o\in O$ there exists an unique $o'\in O$ such that $\<Matching>(o,o')$.
+
+\end{definition}
+
+A matching relation $\<Matching>$ is called \emph{injective} iff it is injective in the first argument, i.e., 
+for every $o_1\neq o_2\in O$, there exist two different operations $o_1'\neq o_2'\in O$ such that $\<Matching>(o_1,o_1')$ 
+and $\<Matching>(o_2,o_2')$.
+
+%\subsection{Matching Relations}\label{ssec:matching}
 
 \newcommand{\domain}{\mathbb{D}}
 
-We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
+%We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
 
 \begin{example}
 
-Positive and negative labels for different objects.
+%Positive and negative labels for different objects.
+
+
 
 \begin{itemize}
 
@@ -69,18 +99,8 @@ Positive and negative labels for different objects.
 
 \end{example}
 
-We assume that each concurrent library comes with a matching relation $\<Matching>$ between negative and positive labels such that for every history $h$ of that library, each negative operation label in $h$ is matched to a unique positive label in $h$. Sometimes it is also required that every two different negative operation labels are matched to different positive labels.
+%We assume that each concurrent library comes with a matching relation $\<Matching>$ between negative and positive labels such that for every history $h$ of that library, each negative operation label in $h$ is matched to a unique positive label in $h$. Sometimes it is also required that every two different negative operation labels are matched to different positive labels.
 
-\begin{definition}
-
-A relation $\<Matching>\subseteq \<NegLab>\times \<PosLab>$ is a \emph{matching relation} for a library $L$ iff for every history $h=\tup{O,<,f}$ in $H(L)$, the following holds:
-\begin{itemize}
-	\item for every $o\in O$ such that $f(o)\in \<NegLab>$, there exists an unique $o'\in O$ such that $\<Matching>(f(o),f(o'))$.
-\end{itemize}
-
-A matching relation $\<Matching>$ is called \emph{injective} iff for every history $h=\tup{O,<,f}$ in $H(L)$ and $o_1\neq o_2\in O$ with $\{f(o_1),f(o_2)\}\in \<NegLab>$, there exist two different operations $o_1'\neq o_2'\in O$ such that $\<Matching>(f(o_1),f(o_1'))$ and $\<Matching>(f(o_2),f(o_2'))$.
-
-\end{definition}
 
 An operation $o$ is called \emph{negative}, resp., \emph{positive}, in a history $h=\tup{O,<,f}$ iff $f(o)\in \<NegLab>$, resp., $f(o)\in \<PosLab>$.
 
