@@ -70,32 +70,38 @@ h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$
 \begin{example}
 
 Examples of formulas $\psi_L$ for the most common objects.
-
-\todo{add predicates to recognize negative/positive labels}
-
-\newcommand{\ispositive}[1]{L_+({#1})}
-\newcommand{\isnegative}[1]{L_{-}({#1})}
-\newcommand{\containstrue}{{\sf CT}}
-\newcommand{\containsfalse}{{\sf CF}}
+\newcommand{\emptyval}{\bot}
+\newcommand{\noexc}{-1}
 
 \begin{itemize}
 \item
 We define a formula of the form $\exists \forall$ which recognizes histories
-which are not in the kernel of the Queue specification. When negated, it can
-thus be plugged in place of $\forall \vec{x}\ \exists \vec{y}.\ F$. 
+which are not in the kernel of the Queue specification. When negated, it 
+becomes of the form $\forall \exists$, as we wish.
 
-There are three ways a history can violate the Queue specification.
+There are five ways a history can violate the Queue specification.
 Either it does not form a total order:
 \[
   \exists x_1,x_2.
   \ x_1 != x_2 \land \neg (x_1 \poker x_2) \land \neg (x_2 \poker x_1) 
 \]
-or there is a dequeue operation with no matching enqueue operation which 
-precedes it:
+or the \<Matching> relation doesn't relate \<dequeue> to \<enqueue>'s
 \[
-  \exists y.\ \isnegative{y} \land 
+	\exists x,y.\ \<Matching>(y,x) \land \neg (\<dequeue>(y) \land \<enqueue>(x))
+\]
+or there is a \<dequeue> operation which didn't return $\emptyval$ ($y$) but which
+has no matching \<enqueue> operation ($x$) which precedes it:
+\[
+  \exists y.\ \<dequeue>(y) \land \rval{y} \neq \emptyval \land
   \forall x.\ \<Matching>(y,x) \implies y \poker x
 \]
+or there is dequeue which returned $\emptyval$ ($x_e$) while there was some \<enqueue> 
+($x$) which was not dequeued by a corresponding \<dequeue> ($y$).
+\begin{align*}
+\exists x, x_e.&\ x \poker x_e \land \<dequeue>(x_e) \land \rval{x_e} = \emptyval \land \\&
+\<enqueue>(x) \land
+\forall y.\ y \poker x_e \implies \neg \<Matching>(y,x)
+\end{align*}
 or there is a violation of the FIFO order -- that is, there is some enqueue
 ($x_1$) which happened before another enqueue ($x_2$) such that the dequeue
 corresponding to $x_2$ ($y_2$) happened before any dequeue corresponding to
@@ -103,7 +109,7 @@ $x_1$ ($y_1$), if any:
 \begin{align*}
 \exists x_1,x_2,y_2.
   &\ x_1 \poker x_2 \land \<Matching>(y_2,x_2) 
-    \land \ispositive{x_1} \land\\
+    \land \<enqueue>(x_1) \land\\
   &\forall y_1.\ 
     \<Matching>(y_1,x_1) \implies y_2 \poker y_1
 \end{align*}
@@ -113,98 +119,113 @@ The remaining objects all use the first two formulas (the one recognizing
 total order violations, and the one recognizing matching violations).
 
 \item 
-For the Stack, in order to
-recognize LIFO violations, we use a formula similar to the formula recognizing
-FIFO violations. 
-Note though that we need one more constraint ($x_1 \poker y_2$), since the 
-order of operations $x_2 \poker y_2 \land y_2 \poker x_1$ does not yield a
+For the Stack, the first four formulas are similar to the Queue, except we change
+\<dequeue> to \<pop>, and \<enqueue> to \<push>. Then, in order to
+recognize LIFO violations, we use a formula slightly different than the formula 
+recognizing FIFO violations.  We need one more constraint ($x_1 \poker y_2$), since 
+the order of operations $x_2 \poker y_2 \land y_2 \poker x_1$ does not yield a
 violation of the LIFO order.
 \begin{align*}
 \exists x_2,x_1,y_2.
   &\ x_2 \poker x_1 \land x_1 \poker y_2 
-    \land \<Matching>(y_2,x_2) \land \ispositive{x_1} \land \\
+    \land \<Matching>(y_2,x_2) \land \<push>(x_1) \land \\
   &\forall y_1.\ 
-      \<Matching>(y_1,x_1) \implies y_1 \poker y_2
+      \<Matching>(y_1,x_1) \implies y_2 \poker y_1
 \end{align*}
 
 
 \item 
-For the Register, we also use the same first two formulas.
-The third formula recognize histories where there is a read ($y_2$) with 
-no matching write ($x_2$) in between $y_2$ and the preceding write.
+For the Register, we use the same first three formulas (total order, matching \<read>
+to \<write>, and each \<read> has a matching \<write> which precedes it).
+The fourth formula recognize histories where there is a read ($y_2$) with 
+no matching write ($x_2$) in between $y_2$ and the preceding write ($x_1$).
 \begin{align*}
   \exists x_1,y_2.
-    &\ x_1 \poker y_2 \land \ispositive{x_1} \land
-      \isnegative{y_2} \land \neg \<Matching>(y_2,x_1) \land\\
+    &\ x_1 \poker y_2 \land \<write>(x_1) \land
+      \<read>(y_2) \land \neg \<Matching>(y_2,x_1) \land\\
     &\forall x_2.\ x_1 \poker x_2 \land x_2 \poker y_1 \implies 
       \neg \<Matching>(y_2,x_2)
 \end{align*}
 
 
 \item
-The violations of the PriorityQueue are histories where two elements have
-been added $x_1,x_2$, and the element with lower priority ($x_1$) has been 
+The PriorityQueue uses the same first four formulas as the Queue. The fifth formulas
+is changed so as not to detect FIFO violations, but priority violations. A history has 
+a priority violation if two elements have
+been added ($x_1,x_2$), and the element with lower priority ($x_1$) has been 
 removed (by $y_1$), while $x_2$ has not yet been removed (by $y_2$).
 \todo{We don't have a predicate to compare data values.}  
 \begin{align*}
-\exists x_1,x_2,y_1.& \<Matching>(y_1,x_1) \land x_2 \poker y_1 \land \\
-& \forall y_2.\ y_2 \poker y_1.\ \neg \<Matching>(y_2,x_2)
+\exists x_1,x_2,y_1.& \<Matching>(y_1,x_1) \land x_2 \poker y_1 \land \<add>(x_2) \land\\
+& \cval{x_1} < \cval{x_2} \land \forall y_2.\ y_2 \poker y_1.\ \neg \<Matching>(y_2,x_2)
 \end{align*}
+
+
+%\item
+%For the Set, we use two formulas, one for $\tt contains => true$ violations, 
+%and one for $\tt contains => false$ violations.
+%
+%The first one says that there is a $\tt contains => true$  ($x_c$)
+%and a remove, so that there is no add in between.
+%\begin{align*}
+%\exists x_r,x_c.\ &
+%  \<remove>(x_r) \land \<contains>(x_c) \land \rval{x_c} = \<true>
+%  \land x_r \poker x_c \land\\
+%    &\forall x_a.\ x_r \poker x_a \land x_a \poker x_c \implies 
+%      \neg \<Matching>(x_c,x_a)
+%\end{align*}
+%
+%The second one says that there is a $\tt contains => false$ (abbreviated $CF$)
+%and an add, so that there is no remove in between.
+%\begin{align*}
+%\exists x_a,x_c.\ &
+%  \<add>(x_a) \land \containsfalse(x_c)
+%  \land x_a \poker x_c \land\\
+%   & \forall x_r.\ (x_a \poker x_r \land x_r \poker x_c \land \<remove>(x_r))
+%    \implies \\
+%    &\qquad \neg \<Matching>(x_r,x_a)
+%\end{align*}
 
 
 \item
-For the Set, we use two formulas, one for $\tt contains => true$ violations, 
-and one for $\tt contains => false$ violations.
+For the Set, we use the formula which detects total order violations as for 
+the previous objects. We also use a formula which says that only \<remove>
+and \<add> operations can be matched. 
 
-The first one says that there is a $\tt contains => true$ (abbreviated $CT$
-for better readability) and a remove, so that there is no add in between.
-\begin{align*}
-\exists x_r,x_c.\ &
-  \<remove>(x_r) \land \containstrue(x_c)
-  \land x_r \poker x_c \land\\
-    &\forall x_a.\ x_r \poker x_a \land x_a \poker x_c \implies 
-      \neg \<Matching>(x_c,x_a)
-\end{align*}
-
-The second one says that there is a $\tt contains => false$ (abbreviated $CF$)
-and an add, so that there is no remove in between.
-\begin{align*}
-\exists x_a,x_c.\ &
-  \<add>(x_a) \land \containsfalse(x_c)
-  \land x_a \poker x_c \land\\
-   & \forall x_r.\ (x_a \poker x_r \land x_r \poker x_c \land \<remove>(x_r))
-    \implies \\
-    &\qquad \neg \<Matching>(x_r,x_a)
-\end{align*}
-
-
-\item
-For the Set (alternative with add positive/rem negatie), we use two formulas,
+However, as opposed to
+the multiset objects (Stack, Queue), we do not 
+require every \<remove> operation to match some \<add> operation, as 
+a remove can succeed even though the element was already removed from 
+the set. We use then use two formulas,
 one for $\sf contains => true$ violations, 
 and one for $\sf contains => false$ violations.
 
-The first one says that there is a $\sf contains => true$ (abbreviated $CT$
-for better readability) so that all matching pairs of \<add>/\<remove> are
-either completely before or completely after it.
+The first one says that there is a $\sf contains => true$ ($x_c$) so that all 
+matching pairs of \<add>/\<remove> are either completely before or 
+completely after it (so this \<contains> was supposed to return \<false>).
 \begin{align*}
 \exists x_c.\ &
-  \containstrue(x_c) \land
-    \forall x_a,x_r.\ \<Matching>(x_r,x_a) \implies\\
-	&((x_a \poker x_c \land x_r \poker x_c)
+  \<contains>(x_c) \land \rval{x_c} = \<true> \land\\
+   & \forall x_a,x_r.\ \<Matching>(x_r,x_a) \implies \\
+&	((x_a \poker x_c \land x_r \poker x_c)
  	\lor (x_c \poker x_a \land x_c \poker x_r))
 \end{align*}
 
-The second one says that there is a $\sf contains => false$ (abbreviated $CF$)
-and a matching pair of \<add>/\<remove> so that the \<add> and \<remove>
-are respectively before and after it.
+The second one says that there is a $\sf contains => false$ ($x_c$)
+and a matching pair of \<add>/\<remove> ($x_a/x_r$) so that the \<add> and \<remove>
+are respectively before and after $x_c$ (so this \<contains> was supposed
+to return \<true>).
 \begin{align*}
 \exists x_a,x_c,x_r.\ &
-  \containsfalse(x_c) \land x_a \poker x_c \land x_c \poker x_r \land \<Matching>(x_r,x_a)
+  \<contains>(x_c) \land \rval{x_c} = \<false> \\
+&\land x_a \poker x_c \land x_c \poker x_r \land \<Matching>(x_r,x_a)
 \end{align*}
 
 \item
-For the Lock, we use a formula which recognizes histories where two lock 
-operations follow each other
+For the Lock, just like the set, we do not require every \<unlock> to be matched
+with a \<lock>, as the \<unlock> method can be called by a client even though the Lock
+is already free. We then use a formula which recognizes histories where two lock 
+operations follow each other:
 \begin{align*} 
 \exists x_1,x_2.&\ 
   x_1 \poker x_2 \land \<lock>(x_1) \land \<lock>(x_2) \land\\
@@ -212,10 +233,12 @@ operations follow each other
 \end{align*}
 
 \item
+Likewise, for the Semaphore, we do not require every \<release> to be matched
+with an \<acquire>.
 The violations of a Semaphore of capacity $\capacity$ are histories where
-at some point ($x_\capacity$), there are strictly more than $\capacity$ 
+at some point, there are strictly more than $\capacity$ 
 \<acquire>'s ($x_0,\dots,x_\capacity$) which are 
-not matched by a corresponding \<release> ($y$). The corresponding formula is 
+not matched by corresponding \<release>'s ($y$). The corresponding formula is 
 parametrized by $\capacity$.
 \begin{align*}
 \exists x_0,\dots,x_\capacity.&\ 
@@ -227,11 +250,6 @@ parametrized by $\capacity$.
 
 
 \item
-\newcommand{\rval}[1]{{\sf rval}({#1})}
-\newcommand{\cval}[1]{{\sf cval}({#1})}
-\newcommand{\noexc}{-1}
-\todo{We here to compare data values of calls with data values of returns. 
-We also need to compare data values of returns with -1}
 The Exchanger is a special case. First of all, we drop the formula stating
 that $\poker$ is a total order. Moreover, the \<exchange> label can be both
 positive and negative. We use three formulas to recognize violations of the 

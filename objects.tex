@@ -29,8 +29,9 @@ i.e., for every $o,o_1,o_2\in O$ if $\<Matching>(o,o_1)$ and $\<Matching>(o,o_2)
 \end{definition}
 
 A matching relation $\<Matching>$ is called \emph{injective} iff it is injective in the first argument, i.e., 
-for every $o_1\neq o_2\in O$, there exist two different operations $o_1'\neq o_2'\in O$ such that $\<Matching>(o_1,o_1')$ 
-and $\<Matching>(o_2,o_2')$.
+ for every $o,o_1,o_2\in O$ if $\<Matching>(o_1,o)$ and $\<Matching>(o_2,o)$, then $o_1=o_2$.	
+%for every $o_1\neq o_2\in O$, there exist two different operations $o_1'\neq o_2'\in O$ such that $\<Matching>(o_1,o_1')$ 
+%and $\<Matching>(o_2,o_2')$.
 
 An operation occurring as the first, resp., second, argument of a matching relation is called negative, resp., positive.
 
@@ -42,64 +43,81 @@ An operation occurring as the first, resp., second, argument of a matching relat
 
 \begin{example}
 
-%Positive and negative labels for different objects.
+Positive/negative labels for different objects.\\
 
-
-
-\begin{itemize}
-
-\item{Queue}
-  \begin{itemize}
-  \item{Positive Labels:} $\set{\<enqueue>(x)\ |\ x \in \domain}$
-  \item{Negative Labels:} $\set{\<dequeue> => x\ |\ x \in \domain}$
-  \end{itemize}
-
-\item{Stack}
-  \begin{itemize}
-  \item{Positive Labels:} $\set{\<push>(x)\ |\ x \in \domain}$
-  \item{Negative Labels:} $\set{\<pop> => x\ |\ x \in \domain}$
-  \end{itemize}
-
-\item{Register}
-  \begin{itemize}
-  \item{Positive Labels:} $\set{\<write>(x)\ |\ x \in \domain}$
-  \item{Negative Labels:} $\set{\<read> => x\ |\ x \in \domain}$
-  \end{itemize}
-
-\item{PriorityQueue}
-  \begin{itemize}
-  \item{Positive Labels:} $\set{\<add>(x)\ |\ x \in \domain}$
-  \item{Negative Labels:} $\set{\<removeMax> => x\ |\ x \in \domain}$
-  \end{itemize}
-  
-\item{Set}
-  \todo{Necessary explanation for the choice we did for the set}
-  \begin{itemize}
-  \item{Positive Label:} $\<add>$
-  \item{Negative Labels:} $\<remove>$ and $\<contains> => \top$
-  \end{itemize}
-  
-\item{Lock}
-  \begin{itemize}
-  \item{Positive Label:} $\<lock>$
-  \item{Negative Label:} $\<unlock>$
-  \end{itemize}
-  
-\item{Semaphore}
-  \begin{itemize}
-  \item{Positive Label:} $\<acquire>$
-  \item{Negative Label:} $\<release>$
-  \end{itemize}
-
-\item{Exchanger}
-  \begin{itemize}
-  \item{Positive Label:} $\<exchange>$
-  \item{Negative Label:} $\<exchange>$
-  \end{itemize}
-  
-\end{itemize}
+%\begin{table}
+%\begin{center}
+\begin{tabular}{l | l | l}
+Object &  Positive & Negative \\\hline
+Queue & \<enqueue> & \<dequeue> \\
+Stack & \<push> & \<pop> \\
+Register & \<write> & \<read> \\
+PriorityQueue & \<add> & \<removeMax> \\
+Set & \<add> & \<remove> \\
+Lock & \<lock> & \<unlock> \\
+Semaphore & \<acquire> & \<release> \\
+Exchanger & \<exchange> & \<exchange>\\
+\end{tabular}
 
 \end{example}
+%\end{center}
+%\caption{Positive and negative labels for different objects}
+%\end{table}
+
+%\begin{itemize}
+%
+%\item{Queue}
+%  \begin{itemize}
+%  \item{Positive Labels:} $\set{\<enqueue>(x)\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<dequeue> => x\ |\ x \in \domain}$
+%  \end{itemize}
+%
+%\item{Stack}
+%  \begin{itemize}
+%  \item{Positive Labels:} $\set{\<push>(x)\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<pop> => x\ |\ x \in \domain}$
+%  \end{itemize}
+%
+%\item{Register}
+%  \begin{itemize}
+%  \item{Positive Labels:} $\set{\<write>(x)\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<read> => x\ |\ x \in \domain}$
+%  \end{itemize}
+%
+%\item{PriorityQueue}
+%  \begin{itemize}
+%  \item{Positive Labels:} $\set{\<add>(x)\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<removeMax> => x\ |\ x \in \domain}$
+%  \end{itemize}
+%  
+%\item{Set}
+%  \todo{Necessary explanation for the choice we did for the set}
+%  \begin{itemize}
+%  \item{Positive Label:} $\<add>$
+%  \item{Negative Labels:} $\<remove>$ and $\<contains> => \top$
+%  \end{itemize}
+%  
+%\item{Lock}
+%  \begin{itemize}
+%  \item{Positive Label:} $\<lock>$
+%  \item{Negative Label:} $\<unlock>$
+%  \end{itemize}
+%  
+%\item{Semaphore}
+%  \begin{itemize}
+%  \item{Positive Label:} $\<acquire>$
+%  \item{Negative Label:} $\<release>$
+%  \end{itemize}
+%
+%\item{Exchanger}
+%  \begin{itemize}
+%  \item{Positive Label:} $\<exchange>$
+%  \item{Negative Label:} $\<exchange>$
+%  \end{itemize}
+%  
+%\end{itemize}
+
+%\end{example}
 
 %We assume that each concurrent library comes with a matching relation $\<Matching>$ between negative and positive labels such that for every history $h$ of that library, each negative operation label in $h$ is matched to a unique positive label in $h$. Sometimes it is also required that every two different negative operation labels are matched to different positive labels.
 
@@ -116,8 +134,8 @@ is the tuple $\tup{O,<,f,\<Matching>}$, where $\tup{O,<,f}$ is the history of $e
 
 \begin{example}
 
-We here give some examples of relations $\<Matching>$ and how they can be 
-implemented. For usual implementations of objects which can be seen as 
+We here give some examples of how to obtain tagged executions from 
+standard libraries. For usual implementations of objects which can be seen as 
 containers, such as the Stack, the Queue, the Set, the Register, it is 
 straightforward to instrument an implementation in order the get the matching 
 relation. 
@@ -127,15 +145,13 @@ use a unique tag. When a negative method succeeds -- for instance pops an
 element from the stack -- it is also going to return the unique tag associated
 with the element, thus giving us the relation $\<Matching>$.
 
-\todo{What about \<unlock>'s which are called before any lock?}
 For Lock objects, the implementations usually have two states, one where the
 object is unlocked, and one where it is locked. We can thus instrument the 
 implementation in the following way. When a \<lock> operation succeeds, the
 implementation stores a unique tag corresponding to that operation. Then, when
-an \<unlock> operation happens, it returns the tag of the last successful 
+an \<unlock> operation succeeds, it returns the tag of the last successful 
 \<lock>, which defines \<Matching>
 
-\todo{What about \<release>'s which don't release anything?}
 Semaphore objects are usually implemented using a counter, which counts the 
 number of \<acquire> operations which successfully entered the Semaphore and
 which are not yet released. We can instrument the implementation by keeping
@@ -143,6 +159,7 @@ a map which maps each \emph{slot} (from $1$ to $\capacity$) to a unique tag
 corresponding to the \<acquire> operation which has the slot, if any.
 When a \<release> succeeds in decrementing the counter, it returns the unique 
 tag of the \<acquire> which had the slot.
+
 \end{example}
 
 
