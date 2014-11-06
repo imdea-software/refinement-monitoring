@@ -24,7 +24,7 @@ the matching relation is functional in the first argument.
 
 Let $e$ be an execution over a set of operations $O$.
 A \emph{matching relation} for $e$ is a relation $\<Matching>\subseteq O\times O$, which is functional in the first argument, % library $L$ iff for every history $h=\tup{O,<,f}$ in $H(L)$, the following holds:
-i.e., for every $o_1,o_2\in O$ there exists an unique $o'\in O$ such that $\<Matching>(o,o')$.
+i.e., for every $o,o_1,o_2\in O$ if $\<Matching>(o,o_1)$ and $\<Matching>(o,o_2)$, then $o_1=o_2$.
 
 \end{definition}
 
@@ -32,7 +32,7 @@ A matching relation $\<Matching>$ is called \emph{injective} iff it is injective
 for every $o_1\neq o_2\in O$, there exist two different operations $o_1'\neq o_2'\in O$ such that $\<Matching>(o_1,o_1')$ 
 and $\<Matching>(o_2,o_2')$.
 
-The operations occurring as the first, resp., second, argument of a matching relation are called negative, resp., positive.
+An operation occurring as the first, resp., second, argument of a matching relation is called negative, resp., positive.
 
 %\subsection{Matching Relations}\label{ssec:matching}
 
@@ -104,7 +104,15 @@ The operations occurring as the first, resp., second, argument of a matching rel
 %We assume that each concurrent library comes with a matching relation $\<Matching>$ between negative and positive labels such that for every history $h$ of that library, each negative operation label in $h$ is matched to a unique positive label in $h$. Sometimes it is also required that every two different negative operation labels are matched to different positive labels.
 
 
-An operation $o$ is called \emph{negative}, resp., \emph{positive}, in a history $h=\tup{O,<,f}$ iff $f(o)\in \<NegLab>$, resp., $f(o)\in \<PosLab>$.
+%An operation $o$ is called \emph{negative}, resp., \emph{positive}, in a history $h=\tup{O,<,f}$ iff $f(o)\in \<NegLab>$, resp., $f(o)\in \<PosLab>$.
+
+\begin{definition}
+
+A \emph{tagged execution} is a pair $\tup{e,\<Matching>}$, where $e$ is an execution and $\<Matching>$
+is a matching relation for $e$. The \emph{history} of a tagged execution $\tup{e,\<Matching>}$
+is the tuple $\tup{O,<,f,\<Matching>}$, where $\tup{O,<,f}$ is the history of $e$.
+
+\end{definition}
 
 \begin{example}
 
@@ -137,18 +145,13 @@ When a \<release> succeeds in decrementing the counter, it returns the unique
 tag of the \<acquire> which had the slot.
 \end{example}
 
-\begin{definition}
 
-A \emph{tagged execution} is a pair $\tup{e,\<Matching>}$, where $e$ is an execution and $\<Matching>$
-is a matching relation for $e$. The \emph{history} of a tagged execution $\tup{e,\<Matching>}$
-is the tuple $\tup{O,<,f,\<Matching>}$, where $\tup{O,<,f}$ is the history of $e$.
-
-\end{definition}
 
 In the following we assume that a library $L$ is a set of tagged executions 
 (still satisfying the closure properties in Defintion~\ref{def:library}) and also, that
 the matching relation for an execution is unique, i.e., for every two tagged executions 
-$\tup{e,\<Matching>}$ and $\tup{e,\<Matching>}$ of $L$, $e$ is different from $e'$.
+$\tup{e,\<Matching>_1}$ and $\tup{e,\<Matching>_2}$ of $L$, $\<Matching>_1$ is the
+same as $\<Matching>_2$.
 
 
 \subsection{Kernel Closure Properties}
