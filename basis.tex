@@ -1,0 +1,48 @@
+%!TEX root = head.tex
+\section{Basis Closure Properties}
+
+In this work, we consider the problem of checking refinement with respect to libraries $L$ for which $\ker L$ is defined.
+The histories of executions in $\ker L$ are $H(\ker L)=\set{H(e) : e\in \ker L}$.
+
+A \emph{prefix} of a history $h=\tup{O,<,f}$ is a history $h'=\tup{O',<',f'}$, that contains a subset of the operations in $h$,
+i.e., $O'\subseteq O$, $<'=<|_{O'}$, and $f'=f|_{O'}$, and that is downward closed w.r.t. $<$, i.e., $o\in O'$ and $o'<o$ implies $o'\in O'$.
+
+\begin{example}
+
+Prefix of a history.
+
+\end{example}
+
+\begin{lemma}\label{lemma:kernel_histories_prefix}
+
+Let $L$ be a library for which $\ker L$ is defined. The set of histories $H(\ker L)$ is prefix-closed.
+
+\end{lemma}
+
+Given a history $h=\tup{O,<,f}$, a set of operations $O'\subseteq O$ is called a \emph{matching cluster}
+iff $O'$ consists of a single negative operation $o$ and all positive operations $o'$ with $\<Matching>(o,o')$.
+A set of histories $H$ is closed under matching cluster removal iff $H$ contains all the histories
+obtained by removing a matching cluster from another history in $H$. 
+%We say that 
+%a library $L$ is \emph{$\<Matching>$-closed} iff the set of kernel histories is closed under 
+%matching cluster removal. 
+Formally, given a history $h=\tup{O,<,f}$ and $O'\subseteq O$, 
+\[
+h\setminus O'=\tup{O\setminus O',<',f'},
+\] 
+where $<'=<|_{O\setminus O'}$, and $f'=f|_{O\setminus O'}$.
+
+\begin{definition}
+
+A set of histories $H$ is \emph{closed under matching cluster removal} 
+(for short, $\<Matching>$-closed)
+iff for every matching cluster $O'$ of a history $h\in H$,
+the history $h\setminus O'$ also belongs to $H$.
+
+\end{definition}
+
+\begin{example}
+
+Show that all objects we know satisfy this property.
+
+\end{example}
