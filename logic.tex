@@ -27,21 +27,21 @@ h\in H(L)\mbox{ iff there exists }h'\in H(\ker L)\mbox{ s.t. }h\preceq h'.
     o,o' & \in \<Ops>
       \qquad \text{operation-identifier constants} \\
      x & : \<Ops>
-      \qquad \text{operation-identifier variables} \\
+      \qquad \,\text{\ operation-identifier variables} \\
      \vec{x},\vec{y} & : \<Ops>^*
       \qquad \text{tuples of operation-identifier variables} \\
-    @l & \in \<Labels>
-      \qquad \text{operation labels} \\[2mm]
+    m & \in \<Methods>
+      \qquad \text{methods} \\[2mm]
     X & ::= o \mid x \\
 %    T & ::= i \mid \#(X, i, j) \mid T + T \\
-    F & ::= @l(X)\mid X=X\mid \<Matching>(X,X) \mid X \poker X \mid \neg F \mid F \land F \\
-    \<PO>(\poker) & ::= \forall x.\ \neg x \poker x  \\
-    &\land\,\forall x_1,x_2,x_3.\ (x_1\poker x_2\land x_2 \poker x_3) => x_1 \poker x_3 \\
-    < \subseteq \hspace{-1mm}\poker & ::= \forall x_1,x_2.\ x_1 < x_2 => x_1 \poker x_2  \\
-    \psi  & ::= \exists \poker.\ \big( < \subseteq \hspace{-1mm}\poker 
-    \land \<PO>(\poker)\land \forall \vec{x}\ \exists \vec{y}.\ F\, \big)
+    F & ::= m(X)\mid \<Val>(X,X)\mid X=X\mid \<Matching>(X,X) \\
+    &\hspace{6mm}\mid X \poker X \mid \neg F \mid F \land F \\
+%    \<PO>(\poker) & ::= \forall x.\ \neg x \poker x  \\
+%    &\land\,\forall x_1,x_2,x_3.\ (x_1\poker x_2\land x_2 \poker x_3) => x_1 \poker x_3 \\
+%    < \subseteq \hspace{-1mm}\poker & ::= \forall x_1,x_2.\ x_1 < x_2 => x_1 \poker x_2  \\
+    \psi  & ::= \forall \vec{x}\ \exists \vec{y}.\ F
   \end{align*}
-  \caption{The syntax of $\psi_L$.}
+  \caption{The syntax of $\psi$.}
   \label{fig:logic}
 \end{figure}
 
