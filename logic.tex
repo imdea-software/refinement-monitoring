@@ -1,14 +1,44 @@
 %!TEX root = head.tex
 
-\section{Logical Characterizations of Complete Histories}~\label{sec:logic}
+\section{Logical Characterizations of Library Bases}~\label{sec:logic}
 
-We introduce logical characterizations of complete history sets using existentially-quantified
-second-order formulas. Essentially, such a formula expresses the fact that the modeled history
-is weaker than another history characterized using a first-order formula. When it describes
-the set of complete histories $H_c(L)$ of a library $L$ it states that the modeled history is
-weaker than another history in the kernel of $L$.
-By the following lemma, this is equivalent
-to the fact that the modeled history belongs to $H(L)$.
+We introduce logical characterizations of history sets using quantified
+formulas in the first-order theory of partial orders. The syntax of these
+formulas is defined in Figure~\ref{fig:logic}. Essentially, the formulas
+have a $\forall^*\exists^*$ quantifier prefix, they use several 
+predicates on operation labels, a symbol $\poker$ denoting
+the partial order from the modeled history, and a symbol 
+$\<Matching>$ denoting the matching relation. By an abuse of notation,
+every method is also a unary predicate denoting the fact that an operation
+is an instance of that method. Also, $\<Val>(o_1,o_2)$ holds iff the
+output value of $o_1$ equals the input value of $o_2$.
+%The semantics of $\psi$ is defined as usual. 
+%In particular, 
+Formally, given $h=(O,<,f)$~\footnote{We omit the obvious cases from the definition of $\models$.}
+%The satisfaction relation $\models$ for some of the operators is defined by:
+\begin{align*}
+h\models m(o) &\mbox{ iff $f(o)=m(u)=>v$, for some $u$ and $v$}\\
+h\models \<Val>(o,o') &\mbox{ iff $f(o)=m(u)=>v$, $f(o')=m'(u')=>v'$} \\
+&\hspace{6mm}\mbox{and $v=u'$}\\
+h\models o\poker o' &\mbox{ iff $o<o'$} \\
+%h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$ s.t. }\tup{h,\poker}\models \psi' \\
+h\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
+\end{align*}
+
+%
+
+
+We say that such a formula $\psi$
+represents a library $L$ iff every history of $L$ is weaker than a history satisfying the formula $\psi$.
+
+\begin{definition}
+
+A formula $\psi$ \emph{represents} $L$ iff for every history $h\in H(L)$ there exists a history $h'$
+such that $h\preceq h'$ and $h'\models \psi$.
+
+\end{definition}
+
+Throughout this work, these formulas describe library bases. 
 
 \begin{lemma}\label{lemma:kernel_histories}
 
@@ -18,7 +48,6 @@ h\in H(L)\mbox{ iff there exists }h'\in H(\ker L)\mbox{ s.t. }h\preceq h'.
 \]
 
 \end{lemma}
-
 
 %, it uses another symbol $<_{\sf k}$.
 
@@ -63,7 +92,7 @@ The semantics of $\psi$ is defined as usual. The satisfaction relation $\models$
 is defined by:
 \begin{align*}
 h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$ s.t. }\tup{h,\poker}\models \psi' \\
-\tup{h,\poker}\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
+%\tup{h,\poker}\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
 \end{align*}
 
 
