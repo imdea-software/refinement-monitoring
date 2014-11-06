@@ -75,9 +75,30 @@ such that $h\in H(B)$ iff $h\models \psi$.
 an execution $e'\in B$ such that $e' ~> e$. From the definition of $~>$ it follows that $H(e)\preceq H(e')$.
 Since $\psi$ represents $L$, $H(e')\models\psi$ which concludes the proof.
 
+%($\Leftarrow$) Since $h'\models\psi$, $h'$ is the history of an execution $e\in B$. Furthermore,
+% $h\preceq h'$ implies that $h$ is the history of an execution $e'$ such that $e~>e'$. Therefore,
+% since $B$ is a basis of $L$, we get that $e'\in L$ and $h\in H(L)$.
+
 ($\Leftarrow$) Since $h'\models\psi$, $h'$ is the history of an execution $e\in B$. Furthermore,
- $h\preceq h'$ implies that $h$ is the history of an execution $e'$ such that $e~>e'$. Therefore,
- since $B$ is a basis of $L$, we get that $e'\in L$ and $h\in H(L)$.
+ $h\preceq h'$ implies that there exists an injection $g: O_h' \rightarrow O_h$ with the 
+properties of Definition~\ref{def:weaker_than}. 
+
+Let $O_p$ be the set of operations which were pending in $h$ but are completed in $h'$.
+Using the closure properties of Definition~\ref{def:library}, we move all the return
+events of the operations in $O_p$ to the end of the execution $e'$ to get an 
+execution $e'_1 \in L$.
+Then, using the prefix closure, we get rid of these return events, to obtain an 
+execution $e'_2$.
+
+Some operations were pending in $h$ and do not appear in $h'$. The closure
+properties of Definition~\ref{def:library} allow us to add the call events corresponding
+to these operations in $e'_2$ in order to obtain an execution $e'_3 \in L$.
+
+Finally, we have an execution $e'_3$ whose operations are exactly the ones of $h$.
+However $h$ might still be weaker than the history of $e'_3$. Still using the same 
+closure properties, we can move call events to the left, and return events to the right
+in order to obtain a history $e \in L$ corresponding exactly to $h$, which shows
+that $h \in H(L)$.
 \end{proof}
 
 %%, it uses another symbol $<_{\sf k}$.
