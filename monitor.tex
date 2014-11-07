@@ -10,19 +10,23 @@ can be reduced to propositional satisfiability. The crux of this reduction
 is the fact that a complete history $h$ is weaker than another history $h'$ iff
 the two histories consist of exactly the same set of 
 operations~\footnote{More precisely, there exists a bijection between the set of operations in $h$ and respectively $h'$.}
-(this includes the fact that the operation labels are the same in both histories) 
+(this includes the fact that the operation labels and the matching relation are the same in both histories) 
 and the order constraints of $h$ are included in the order constraints of $h'$.
+Therefore, given $h$, checking that there exists a stronger history $h'$ which satisfies $\psi$ 
+can be reduced to checking that $\psi$ is consistent with a formula $\varphi(h)$
+describing the labels, the matching relation, and the order constraints in $h$.
 
 Thus, given a complete history $h=\tup{O,<,f,\<Matching>}$, let $\varphi(h)$ be a history formula 
 describing the order constraints, the labels, and the matching relation of $h$:
 \begin{align*}
-\varphi(h)::= & \hspace{-6mm}\bigwedge_{\scriptsize \begin{array}{c} m\in\<Methods>, o\in O\\f(o)=m(u)=>v\end{array}} \hspace{-4mm} m(o)\quad \land
-		   \bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-6mm} \<Val>(o,o') \\
+\varphi(h)::= & \forall x.\ x\in O\ \ \land \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} m\in\<Methods>, o\in O\\f(o)=m(u)=>v\end{array}} \hspace{-4mm} m(o)\ \ \land
+		   \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-7mm} \<Val>(o,o') \\
 		   & \land\ \bigwedge_{o,o'\in O, \<Matching>(o,o')} \<Matching>(o,o')\quad \land\ \bigwedge_{o,o'\in O, o<o'} o< o'%\land \<PO>(<)
 \end{align*}
 
-Also, let $\<Dom>(O)::=\forall x. x\in O$ be a formula restricting the interpretation domain of every 
-operation-identifier variable to the elements of $O$. The formula $x\in O$ is a syntactic sugar for 
+%Also, let $\<Dom>(O)::=\forall x. x\in O$ be a
+The first sub-formula of $\varphi(h)$ restricts the interpretation domain of every 
+operation-identifier variable to $O$. The formula $x\in O$ is a syntactic sugar for 
 $
 \bigvee_{o\in O} x=o
 $.
@@ -38,7 +42,7 @@ $.
 Let $h$ be a complete history and $\psi$ a history formula representing a library $L$.
 Then,
 \[
-h\in H(L)\mbox{ iff }\varphi(h)\land \<Dom>(O)\land \psi\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff }\varphi(h)\land \psi\mbox{ is satisfiable.}
 \]
 \end{theorem}
 \begin{proof}
