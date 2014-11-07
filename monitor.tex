@@ -1,31 +1,25 @@
 %!TEX root = head.tex
 
-\section{Monitoring History Inclusion}
+%\section{Monitoring History Inclusion}
 
-We describe a monitor for detecting refinement violations, which is based on the logical characterizations
-introduced in Section~\ref{sec:logic}. Essentially, it records the history of the monitored execution 
-and continuously checks whether it is included in the set of histories $H(L)$ of a library $L$, using
-the formula $\psi$ describing $H(L)$. When the tracked history $h$ is complete, it can simply check whether
-$h$ satisfies $\psi$. This satisfaction problem can be reduced to propositional satisfiability as we show in Section~\ref{ssec:complete}.
-When $h$ contains pending operations, the membership test is more intricate since $\psi$ describes only complete histories.
-In this case, we rely on the assumption that the operations of any execution in $\ker L$ are completed.
-The membership test performed by the monitor, described in Section~\ref{ssec:pending}, 
-is again based on a reduction to propositional satisfiability. However, in this case, it is sound, i.e., any reported
-violation is real, but incomplete, i.e.,
-there may exist refinement violations which are missed by the monitor.
-Furthermore, in order to reduce space/time consumption, the monitor is allowed to forget completed 
-operations. More precisely, we show in Section~\ref{ssec:removal} that forgetting matching clusters is sound  
-provided that the kernel is $\<Matching>$-closed.
+\section{Reducing complete history membership to propositional SAT}\label{ssec:complete}
 
-\subsection{Monitoring complete histories}\label{ssec:complete}
+Given a formula $\psi$ representing a library $L$, 
+checking whether a complete history $h$ belongs to $H(L)$ 
+can be reduced to propositional satisfiability. The crux of this reduction
+is the fact that a complete history $h$ is weaker than another history $h'$ iff
+the two histories consist of exactly the same set of 
+operations~\footnote{More precisely, there exists a bijection between the set of operations in $h$ and respectively $h'$.}
+(this includes the fact that the operation labels are the same in both histories) 
+and the order constraints of $h$ are included in the order constraints of $h'$.
 
-Though $\psi$ is a second-order formula, the satisfaction problem of whether a complete history $h$ satisfies
-$\psi$ can be reduced to a propositional satisfiability problem.
-Thus, given a complete history $h=\tup{O,<,f}$, let $\varphi(h)$ be a formula describing the order constraints
-and the labels in $h$:
-\[
-\varphi(h)::= \bigwedge_{o\in O} f(o)\land \bigwedge_{o,o'\in O, o<o'} o< o'\land \<PO>(<)
-\]
+Thus, given a complete history $h=\tup{O,<,f,\<Matching>}$, let $\varphi(h)$ be a history formula 
+describing the order constraints, the labels, and the matching relation of $h$:
+\begin{align*}
+\varphi(h)::= & \hspace{-6mm}\bigwedge_{\scriptsize \begin{array}{c} m\in\<Methods>, o\in O\\f(o)=m(u)=>v\end{array}} \hspace{-4mm} m(o)\quad \land
+		   \bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-6mm} \<Val>(o,o') \\
+		   & \land\ \bigwedge_{o,o'\in O, \<Matching>(o,o')} \<Matching>(o,o')\quad \land\ \bigwedge_{o,o'\in O, o<o'} o< o'%\land \<PO>(<)
+\end{align*}
 
 Also, let $\<Dom>(O)::=\forall x. x\in O$ be a formula restricting the interpretation domain of every 
 operation-identifier variable to the elements of $O$. The formula $x\in O$ is a syntactic sugar for 
@@ -41,13 +35,14 @@ $.
 %\]
 
 \begin{theorem}\label{th:satisfiability}
-Let $h$ be a complete history and $\psi::=\exists\poker.\ \psi'$ a formula as in Figure~\ref{fig:logic}. Then,
+Let $h$ be a complete history and $\psi$ a history formula representing a library $L$.
+Then,
 \[
-h\models \psi\mbox{ iff }\varphi(h)\land \<Dom>(O)\land \psi'\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff }\varphi(h)\land \<Dom>(O)\land \psi\mbox{ is satisfiable.}
 \]
 \end{theorem}
 \begin{proof}
-($=>$) Let $h=\tup{O,<,f}$. Since $h\models \psi$, there exists a relation $\poker\subseteq O\times O$
+($=>$) Let $h=\tup{O,<,f,\<Matching>}$. Since $h\models \psi$, there exists a relation $\poker\subseteq O\times O$
 such that $\tup{h,\poker}\models\psi'$, which implies that $\tup{h,\poker}$ is a model of $\varphi(h)\land \psi'$.
 
 ($\Leftarrow$) Let $\tup{h',\poker}$ be a model of $\varphi(h)\land \<Dom>(O)\land \psi'$. By the definition of $\varphi(h)$, 
@@ -84,7 +79,7 @@ h\models \psi\mbox{ iff }\ \<ToBool>(h,\psi)\mbox{ is satisfiable.}
 
 \end{corollary}
 
-\subsection{Monitoring histories with pending operations}\label{ssec:pending}
+\section{Handling pending operations}\label{ssec:pending}
 
 The formulas $\psi$ defined in Section~\ref{sec:logic} describe only complete histories
 of a library $L$ but, they can be used to check even whether a history $h$ with \emph{pending} operations 

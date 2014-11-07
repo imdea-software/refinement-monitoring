@@ -1,10 +1,14 @@
 %!TEX root = head.tex
 
-\section{Logical Characterizations of Library Bases}~\label{sec:logic}
+\section{Logical Characterizations of History Sets}~\label{sec:logic}
 
-We introduce logical characterizations of history sets using quantified
-formulas $\psi$ in the first-order theory of partial orders. The syntax of these
-formulas is defined in Figure~\ref{fig:logic}. Essentially, the formulas
+History sets can be characterized using the fragment of the
+FO theory of partial orders 
+%We introduce logical characterizations of history sets using quantified
+%formulas $\psi$ in the first-order theory of partial orders. 
+%The syntax of these
+%formulas is 
+defined in Figure~\ref{fig:logic}, called \emph{history logic}. Essentially, history formulas
 have a $\forall^*\exists^*$ quantifier prefix, they use several 
 predicates on operation labels, a symbol $\poker$ denoting
 the partial order from the modeled history, and a symbol 
@@ -48,6 +52,11 @@ h\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\
   \label{fig:logic}
 \end{figure}
 
+A history formula describing the set of histories $H(B)$ 
+of a library basis $B$ is considered a specification for the entire library.
+%
+%Since every execution of a library $L$ can be obtained through the $~>$ rewriting 
+%from an execution of a given basis $B$, 
 
 \begin{definition}
 

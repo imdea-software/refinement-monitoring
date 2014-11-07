@@ -167,7 +167,8 @@ tag of the \<acquire> which had the slot.
 In the following we assume that a library $L$ is a set of tagged executions 
 (still satisfying the closure properties in Defintion~\ref{def:library}) and also, that
 the matching relation for an execution is unique, i.e., for every two tagged executions 
-$\tup{e,\<Matching>_1}$ and $\tup{e,\<Matching>_2}$ of $L$, $\<Matching>_1$ is the
-same as $\<Matching>_2$.
+$\tup{e,\<Matching>_1}$ and $\tup{e,\<Matching>_2}$ of $L$, $\<Matching>_1=\<Matching>_2$.
+Moreover, we assume that the history $H(e)$ of a tagged execution $\tup{e,\<Matching>}$
+is the tuple $\tup{O,<,f,\<Matching>}$, where $\tup{O,<,f}$ is defined as for untagged executions.
 
 
