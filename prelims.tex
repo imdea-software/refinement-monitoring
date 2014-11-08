@@ -14,9 +14,9 @@ parameter/return values.
 \begin{example}
   \label{ex:methods}
 
-  The method and value sets for the stack implementation in
-  Figure~\ref{fig:treiber} are $\<Methods> = \set{ \<push>, \<pop> }$ and
-  $\<Vals> = \<Nats> \u \set{ {\tt EMPTY} }$.
+  The method and value sets for collections storing a (multi)set of values, e.g., sets, stacks and queues,
+  are $\<Methods> = \set{ \<add>, \<rem> }$ and
+  $\<Vals> = \<Nats> \u \set{ \<empty> }$.
   
   Give a table like in the Example 3.1. which shows positive/negative labels.
 
@@ -241,8 +241,8 @@ can be either omitted or completed in $h_2$.
 \begin{definition}\label{def:weaker_than}
 
   Let $h_1 = \tup{O_1,<_1,f_1}$ and $h_2 = \tup{O_2,<_2,f_2}$. We say $h_1$ is
-  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
-  injection $g: O_2 -> O_1$ such that
+  \emph{weaker than} $h_2$ w.r.t. an injection $g: O_2 -> O_1$, written $h_1 \preceq_g h_2$,
+  iff
   \begin{itemize}
 
     \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
@@ -253,10 +253,13 @@ can be either omitted or completed in $h_2$.
 
   \end{itemize}
   where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
-  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
+  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say that $h_1$ is weaker than $h_2$
+  iff $h_1 \preceq_g h_2$, for some $g$. 
+  Furthermore, $h_1$ and $h_2$ are
   \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
 
 \end{definition}
+
 
 \begin{example}
 
@@ -270,6 +273,15 @@ Throughout this work we do not distinguish between equivalent histories, and we
 assume every set $H$ of histories is closed under inclusion of equivalent
 histories, i.e.,~if $h_1$ and $h_2$ are equivalent and $h_1 \in H$, then $h_2
 \in H$ as well.
+
+\begin{lemma}\label{lemma:history_derivations}
+
+Let $e$, $e'$ be two executions such that $H(e)=H(e')$. Then, $e~>e'$.
+
+\end{lemma}
+
+
+Therefore, the set of histories $H(B)$ of a basis $B$ of $L$ is called also a \emph{basis} of $L$.
 
 \subsection{Refinement between Libraries}
 

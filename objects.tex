@@ -7,8 +7,9 @@ concurrent libraries~\footnote{For instance, {\tt java.util.concurrency} or Inte
 are \emph{collections} with methods for adding and removing values from the collection, for testing the presence 
 of a value or the emptiness of the collection. Besides obvious examples like stacks and queues, 
 synchronization objects like locks and semaphores are also collections, in this case of bounded size. 
-For instance, a lock is a collection of size 1, where the methods $\<lock>$ and $\<unlock>$ overwrite 
-the only value stored in the collection. 
+For instance, a semaphore is a collection, where the methods $\<acquire>$ and $\<release>$
+remove and respectively add elements to the collection. In this case, the collection cannot 
+increase over an a-priori fixed size.
 
 Every low-level execution of a collection defines a correlation between operations that effectively add 
 and respectively remove the same value, or the same version of a value if we consider collections
@@ -39,25 +40,27 @@ The operations in the domain, resp., the image, of $\<Matching>(e)$ are called n
 
 %We distinguish two sets of operation labels $\<PosLab> \subseteq \<Labels>$ and $\<NegLab> \subseteq \<Labels>$, called \emph{positive}, resp., \emph{negative}, operations labels.
 
-\begin{example}
+%Without Example environment. Describe for each object the mapping and how it is implemented at the same time
 
-Positive/negative labels for different objects.\\
+%\begin{example}
+%
+%Positive/negative labels for different objects.\\
+%
+%%\begin{table}
+%%\begin{center}
+%\begin{tabular}{l | l | l}
+%Object &  Positive & Negative \\\hline
+%Queue & \<enqueue> & \<dequeue> \\
+%Stack & \<push> & \<pop> \\
+%Register & \<write> & \<read> \\
+%PriorityQueue & \<add> & \<removeMax> \\
+%Set & \<add> & \<remove> \\
+%Lock & \<lock> & \<unlock> \\
+%Semaphore & \<acquire> & \<release> \\
+%Exchanger & \<exchange> & \<exchange>\\
+%\end{tabular}
 
-%\begin{table}
-%\begin{center}
-\begin{tabular}{l | l | l}
-Object &  Positive & Negative \\\hline
-Queue & \<enqueue> & \<dequeue> \\
-Stack & \<push> & \<pop> \\
-Register & \<write> & \<read> \\
-PriorityQueue & \<add> & \<removeMax> \\
-Set & \<add> & \<remove> \\
-Lock & \<lock> & \<unlock> \\
-Semaphore & \<acquire> & \<release> \\
-Exchanger & \<exchange> & \<exchange>\\
-\end{tabular}
-
-\end{example}
+%\end{example}
 %\end{center}
 %\caption{Positive and negative labels for different objects}
 %\end{table}
@@ -130,31 +133,50 @@ Exchanger & \<exchange> & \<exchange>\\
 %
 %\end{definition}
 
-\begin{example}
+\begin{example}[Collections]
 
-We here give some examples of how to obtain tagged executions from 
-standard libraries. For usual implementations of objects which can be seen as 
-containers, such as the Stack, the Queue, the Set, the Register, it is 
-straightforward to instrument an implementation in order the get the matching 
-relation. 
+We here give some examples of how to construct executions of  
+standard libraries with unique matching functions. 
+For usual implementations of collections 
+such as stacks, queues, and sets, 
+%it is 
+%straightforward to instrument an implementation in order the get the matching 
+%relation. 
+each operation adding a value to the collection is going to 
+receive as input a value which is uniquely identified by a tag. When a method removing 
+an element from the collection succeeds 
+%succeeds -- for instance pops an 
+%element from the stack -- 
+it is also going to return the unique tag associated
+with that element, thus defining a unique matching function
+from remove operations to add operations. The same strategy can be adapted to 
+implementations of a register: the inputs to write operations are tagged 
+and the read operations return tagged values.
 
-Each positive method (\<push>,\<enqueue>,\<add>,\<write>) is going to 
-use a unique tag. When a negative method succeeds -- for instance pops an 
-element from the stack -- it is also going to return the unique tag associated
-with the element, thus giving us the relation $\<Matching>$.
+\end{example}
 
-For Lock objects, the implementations usually have two states, one where the
-object is unlocked, and one where it is locked. We can thus instrument the 
-implementation in the following way. When a \<lock> operation succeeds, the
-implementation stores a unique tag corresponding to that operation. Then, when
-an \<unlock> operation succeeds, it returns the tag of the last successful 
-\<lock>, which defines \<Matching>
+\begin{example}[Locks]
+
+The implementations of a lock object usually have two abstract states, one where the
+object is unlocked, and one where it is locked. 
+%We can thus instrument the 
+%implementation in the following way. 
+The \<lock> operations can be modified to receive as input a value which is unique
+for every \<lock> operation in an execution and every successful execution
+of a $\<lock>$ operation results in an object state that stores that input value.
+When
+an \<unlock> operation succeeds, it returns the value stored in the object state.
+Therefore, the matching function maps $\<unlock>=>v$ operations to $\<lock>(v)$ operations.
+
+\end{example}
+
+\begin{example}[Semaphores]
 
 Semaphore objects are usually implemented using a counter, which counts the 
-number of \<acquire> operations which successfully entered the Semaphore and
+number of \<acquire> operations which successfully entered the semaphore and
 which are not yet released. We can instrument the implementation by keeping
-a map which maps each \emph{slot} (from $1$ to $\capacity$) to a unique tag 
-corresponding to the \<acquire> operation which has the slot, if any.
+a map which maps each \emph{slot} (from $1$ to the capacity $\capacity$) to a unique tag 
+which was received as input by the \<acquire> operation which has that slot, if any.
 When a \<release> succeeds in decrementing the counter, it returns the unique 
 tag of the \<acquire> which had the slot.
 
@@ -166,19 +188,16 @@ We assume that the matching functions satisfy the following sanity conditions:
 \item for every execution $e$, if $\<Matching>(e)(o)=o'$, then the call action of $o'$
 occurs before the return action of $o$ in $e$,
 
+\item $\<Matching>(e)=\<Matching>(e')$ for each execution $e'$ obtained by 
+isomorphic renaming of operation identifiers from $e$, 
+
+\item for every executions $e$ and $e'$, if $e~>e'$  then $\<Matching>(e)=\<Matching>(e')$.
+
 \item for every prefix $e$ of an execution $e'$, the domain of $\<Matching>(e)$ is
 included in the domain of $\<Matching>(e')$ and $\<Matching>(e)(o)=\<Matching>(e')(o)$
 for each $o$ in the domain of $\<Matching>(e)$,
 
-\item for every two executions $e$ and $e'$, if $e~>e'$ then $\<Matching>(e)=\<Matching>(e')$.
-
 \end{itemize}
-
-\begin{lemma}\label{lemma:history_derivations}
-
-Let $e$, $e'$ be two executions such that $H(e)=H(e')$. Then, $e~>e'$.
-
-\end{lemma}
 
 By Lemma~\ref{lemma:history_derivations}, every history $h$ corresponds to a 
 unique matching function denoted by $\<Matching>(h)$.
@@ -190,27 +209,27 @@ unique matching function denoted by $\<Matching>(h)$.
 %Moreover, we assume that the history $H(e)$ of a tagged execution $\tup{e,\<Matching>}$
 %is the tuple $\tup{O,<,f,\<Matching>}$, where $\tup{O,<,f}$ is defined as for untagged executions.
 %
-%\begin{definition}\label{def:weaker_than}
-%
-%  Let $h_1 = \tup{O_1,<_1,f_1,\<Matching>_1}$ and $h_2 = \tup{O_2,<_2,f_2,\<Matching>_2}$. We say $h_1$ is
-%  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
-%  injection $g: O_2 -> O_1$ such that
-%  \begin{itemize}
-%
-%    \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
-%
-%    \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
-%
-%    %therefore, R_2 can say more only about pending ops 
-%    \item for every two completed operations $o_1, o_2\in O_1$, $\<Matching>_1(o_1,o_2)$ iff $\<Matching>_2(g^{-1}(o_1),g^{-1}(o_2))$,
-%
-%    \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
-%
-%  \end{itemize}
-%  where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
-%  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
-%  \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
-%
-%\end{definition}
+\begin{definition}\label{def:weaker_than}
+
+  Let $h_1 = \tup{O_1,<_1,f_1,\<Matching>_1}$ and $h_2 = \tup{O_2,<_2,f_2,\<Matching>_2}$. We say $h_1$ is
+  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
+  injection $g: O_2 -> O_1$ such that
+  \begin{itemize}
+
+    \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
+
+    \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
+
+    %therefore, R_2 can say more only about pending ops 
+    \item for every two completed operations $o_1, o_2\in O_1$, $\<Matching>_1(o_1,o_2)$ iff $\<Matching>_2(g^{-1}(o_1),g^{-1}(o_2))$,
+
+    \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
+
+  \end{itemize}
+  where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
+  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
+  \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
+
+\end{definition}
 
 

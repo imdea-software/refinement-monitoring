@@ -1,239 +1,80 @@
 %!TEX root = head.tex
 
+\newcommand{\noexc}{\<null>}
+
 \section{Logical Characterizations of Library Bases}~\label{sec:logic}
 
-We show that sets of histories 
+For the common reference implementations used in practice, e.g., atomic objects,
+their library bases can be naturally described in 
+first-order logic. The language used by these logical characterizations contains  
+variables interpreted as operation identifiers, several function symbols that return
+the method or the arguments of an operation, a binary predicate $\<match>$
+interpreted as the matching function, and a binary predicate $\<hb>$ interpreted
+as the order relation in the modeled history. The  function symbols $\<meth>$, $\<arg>$, and $\<ret>$
+return the method, the argument, and respectively the return value of
+an operation.
 
-History sets can be characterized using the fragment of the
-FO theory of partial orders 
-%We introduce logical characterizations of history sets using quantified
-%formulas $\psi$ in the first-order theory of partial orders. 
-%The syntax of these
-%formulas is 
-defined in Figure~\ref{fig:logic}, called \emph{history logic}. Essentially, history formulas
-have a $\forall^*\exists^*$ quantifier prefix, they use several 
-predicates on operation labels, a symbol $\poker$ denoting
-the partial order from the modeled history, and a symbol 
-$\<Matching>$ denoting the matching relation. By an abuse of notation,
-every method name is also a unary predicate denoting the fact that an operation
-is an instance of that method. Also, $\<Val>(o_1,o_2)$ holds iff the
-output value of $o_1$ equals the input value of $o_2$.
-%The semantics of $\psi$ is defined as usual. 
-%In particular, 
-Formally, given $h=(O,<,f)$~\footnote{We omit the obvious cases from the definition of $\models$.}
-%The satisfaction relation $\models$ for some of the operators is defined by:
+\begin{figure*}
+{\small
 \begin{align*}
-h\models m(o) &\mbox{ iff $f(o)=m(u)=>v$, for some $u$ and $v$}\\
-h\models \<Val>(o,o') &\mbox{ iff $f(o)=m(u)=>v$, $f(o')=m'(u')=>v'$} \\
-&\hspace{6mm}\mbox{and $v=u'$}\\
-h\models o\poker o' &\mbox{ iff $o<o'$} \\
-%h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$ s.t. }\tup{h,\poker}\models \psi' \\
-h\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
+\<Sequential> & \triangleq \forall x_1,x_2.\ \<hb>(x_1,x_2)\oplus \<hb>(x_2,x_1) \land \forall x.\ \<ret>(x)\neq \bot \\
+\<Match>(\<rem>,\<add>) & \triangleq \forall x_r,x_a.\ \<match>(x_r,x_a) => (\<meth>(x_r)=\<rem>\land \<meth>(x_a)=\<add>) \\ %\land \<ret>(x_1)=\<arg>(x_2)
+\<Remove>& \triangleq \forall x_r.\ (\<meth>(x_r)=\<rem> \land \<ret>(x_r)\neq \<empty>)=> \exists y_a.\ \<match>(x_r,y_a)\land \<hb>(y_a,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_a)
+\<Empty>& \triangleq \forall x_e,x_a.\ (\<meth>(x_e)=\<rem> \land \<ret>(x_e)=\<empty>\land \<meth>(x_a)=\<add>\land \<hb>(x_a,x_e)) \\
+&\hspace{9cm}=> \exists y_r.\ \<match>(y_r,x_a)\land \<hb>(y_r,x_e) \\
+\<Multiset> & \triangleq \<Sequential>\land \<Match>(\<rem>,\<add>)\land \<Remove>\land \<Empty> \\
+\<Fifo>& \triangleq \forall x_a,x'_a,x_r'.\ (\<meth>(x_a)=\<add> \land \<match>(x_r',x_a') \land \<hb>(x_a,x_a')) => \exists y_r.\ \<match>(y_r,x_a)\land \<hb>(y_r,x_r') \\
+\<Lifo>& \triangleq \forall x_a,x_a',x_r.\ (\<meth>(x_a')=\<add> \land \<match>(x_r,x_a)\land \<hb>(x_a,x_a') \land \<hb>(x_a',x_r)) => \exists y_r.\ \<match>(y_r,x_a')\land \<hb>(y_r,x_r) \\
+\<Max>& \triangleq \forall x_a,x_a',x_r.\ (\<meth>(x_a')=\<add> \land \<match>(x_r,x_a) \land \<hb>(x_a',x_r)\land \<arg>(x_a)<\<arg>(x_a')) 
+=> \exists y_r.\ \<match>(y_r,x_a')\land \<hb>(y_r,x_r) \\
+\<IsContained>& \triangleq  \forall x_c.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<true>)=> \exists y_a.\ \<meth>(y_a)=\<add>\land \<arg>(y_a)=\<arg>(x_c)\land \<hb>(y_a,x_c) \\
+& \hspace{4mm}\land\ \forall x_c,x_r.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<true>\land \<meth>(x_r)=\<rem>\land \<arg>(x_c)=\<arg>(x_r)\land \<hb>(x_r,x_c)) \\
+&\hspace{5cm}=> \exists y_a.\ \<meth>(y_a)=\<add>\land\<arg>(x_c)=\<arg>(y_a)\land \<hb>(x_r,y_a)\land \<hb>(y_a,x_c) \\
+\<IsNotContained>&\triangleq \forall x_c,x_a.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<false>\land \<meth>(x_a)=\<add>\land \<arg>(x_c)=\<arg>(x_a)\land \<hb>(x_a,x_c)) \\
+&\hspace{5cm}=> \exists y_r.\ \<meth>(y_r)=\<remove>\land\<arg>(x_c)=\<arg>(y_r)\land \<hb>(y_r,x_c) \\
+\<Set> & \triangleq \<Sequential>\land \<Match>(\<rem>,\<add>)\land \<IsContained>\land \<IsNotContained> \\
+%\<Match(reg)> & \triangleq \forall x_r,x_w.\ \<match>(x_r,x_w) => (\<meth>(x_r)=\<read>\land \<meth>(x_w)=\<write>\land \<ret>(x_r)=\<arg>(x_w)) \\
+\<Read>& \triangleq \forall x_r.\ \<meth>(x_r)=\<read> => \exists y_w.\ \<match>(x_r,y_w)\land \<hb>(y_w,x_r) \\
+\<ReadFrom>& \triangleq \forall x_w,x_r.\ (\<meth>(x_w)=\<write> \land \<meth>(x_r)=\<read>\land \neg \<match>(x_r,x_w)\land \<hb>(x_w,x_r)) \\
+&\hspace{5cm}=> \exists y_w.\ \<match>(x_r,y_w)\land \<hb>(x_w,y_w)\land \<hb>(y_w,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_w)
+\<Register> & \triangleq \<Sequential>\land \<Match>(\<read>,\<write>)\land \<Read>\land \<ReadFrom> \\
+\<Lock> & \triangleq \<Sequential>\land \<Match>(\<unlock>,\<lock>)\land \forall x_l,x_l'.\ (\<meth>(x_l)=\<lock>\land \<meth>(x_l')=\<lock>\land \<hb>(x_l,x_l')) \\
+  &\hspace{9cm}=> \exists y.\ \<hb>(x_l,y)\land \<hb>(y,x_l') \\
+\<Semaphore> & \triangleq \<Sequential>\land \<Match>(\<release>,\<acquire>)\land \forall x_0,\dots,x_\capacity.\ 
+  \big(\bigwedge_{0 \leq i < \capacity} \<hb>(x_i,x_\capacity) \land
+  \bigwedge_{0 \leq i \leq \capacity} \<meth>(x_i)=\<acquire> \big) \\
+  &\hspace{9cm}=>
+   \exists y.\ y \poker x_\capacity \land 
+    \bigvee_{0 \leq i \leq \capacity} \<match>(y,x_i) \\
+\<Exchanger> & \triangleq \big(\forall x.\ \<ret>(x)\neq \bot\big) \land \big(\forall x_1,x_2.\ \<match>(x_1,x_2) => \neg \<hb>(x_1,x_2)\land \neg \<hb>(x_2,x_1)\big)  \\
+				& \land \big(\forall x,x_1,x_2.\ \neg (\<match>(x_1,x) \land \<match>(x_2,x))\big)
+				\land\ \big(\forall x.\ \<ret>(x) \neq \<null> =>  \exists y.\ \<match>(y,x) \vee \<match>(x,y)\big) \\
+				& \land \big(\forall x,y.\ (\<match>(y,x) \lor \<match>(x,y)) => \<ret>(x) =\<arg>(y)\big)			
 \end{align*}
+}
+\caption{Logical characterizations of library bases.}
+\label{fig:examples_formulas}
+\end{figure*}
 
-\begin{figure}
-  \begin{align*}
-    o,o' & \in \<Ops>
-      \qquad \text{operation-identifier constants} \\
-     x & : \<Ops>
-      \qquad \,\text{\ operation-identifier variables} \\
-     \vec{x},\vec{y} & : \<Ops>^*
-      \qquad \text{tuples of operation-identifier variables} \\
-    m & \in \<Methods>
-      \qquad \text{methods} \\[2mm]
-    X & ::= o \mid x \\
-%    T & ::= i \mid \#(X, i, j) \mid T + T \\
-    F & ::= m(X)\mid \<Val>(X,X)\mid X=X\mid \<Matching>(X,X) \\
-    &\hspace{6mm}\mid X \poker X \mid \neg F \mid F \land F \\
-%    \<PO>(\poker) & ::= \forall x.\ \neg x \poker x  \\
-%    &\land\,\forall x_1,x_2,x_3.\ (x_1\poker x_2\land x_2 \poker x_3) => x_1 \poker x_3 \\
-%    < \subseteq \hspace{-1mm}\poker & ::= \forall x_1,x_2.\ x_1 < x_2 => x_1 \poker x_2  \\
-    \psi  & ::= \forall \vec{x}\ \exists \vec{y}.\ F
-  \end{align*}
-  \caption{The syntax of $\psi$.}
-  \label{fig:logic}
-\end{figure}
+\begin{example}[Atomic multisets]
 
-A history formula describing the set of histories $H(B)$ 
-of a library basis $B$ is considered a specification for the entire library.
-%
-%Since every execution of a library $L$ can be obtained through the $~>$ rewriting 
-%from an execution of a given basis $B$, 
+The bases of atomic collections that store a multiset of values, e.g., queues, priority queues, and stacks, 
+can be characterized using conjunctions of formulas
+in Figure~\ref{fig:examples_formulas}. Thus, the basis of an atomic queue is described by the formula
+$\<Multiset>\land \<Fifo>$, which states that it consists of complete sequential histories ($\<Sequential>$),
+the matching function maps remove operations to add operations ($\<Match>(\<rem>,\<add>)$), 
+for every remove returning $v\neq \<empty>$ there exists a preceding matching add with input $v$ ($\<Remove>$),
+for every remove $x_e$ returning $\<empty>$ and every preceding $\<add>$ $x_a$ there exists a $\<remove>$ matching 
+$x_a$ which precedes $x_e$ ($\<Empty>$),
+and the values are removed in the lifo order ($\<Fifo>$), i.e., for every two adds $x_a$ ordered before $x_a'$ and 
+every remove $x_r'$ matching the second add $x_a'$,
+there exists a remove $x_r$ matching $x_a$ which is ordered before $x_r'$ .
 
-\begin{definition}
+For atomic stacks, the sub-formula $\<Fifo>$ is replaced with $\<Lifo>$ which states that the values
+are removed in the lifo order while for atomic priority queues, the sub-formula $\<Fifo>$ is replaced
+with $\<Max>$ which states that a remove returns the maximal value in the collection.
 
-A formula $\psi$ \emph{represents} $L$ iff there exists a basis $B$ of $L$ such that 
-for every history $h$, $h\in H(B)$ iff $h\models \psi$.
-
-\end{definition}
-
-Since $\psi$ is required to characterize only histories of a basis of $L$, there are
-histories of $L$ that don't satisfy $\psi$. However, for every history of $L$ there
-exists a stronger history which satisfies $\psi$.
-
-%The following result follows easily from definitions.
-
-\begin{theorem}\label{lemma:kernel_histories}
-
-Let $h$ be a history and $\psi$ a formula representing a library $L$. Then, 
-\[
-h\in H(L)\mbox{ iff there exists a history $h'$ s.t. }h\preceq h'\mbox{ and }h'\models\psi.
-\]
-
-\end{theorem}
-
-\begin{proof}
-Let $B$ be the basis of $L$
-such that $h\in H(B)$ iff $h\models \psi$.
-
-($=>$) By hypothesis, $h$ is the history of an execution $e\in L$.  By definition, there exists
-an execution $e'\in B$ such that $e' ~> e$. From the definition of $~>$ it follows that $H(e)\preceq H(e')$.
-Since $\psi$ represents $L$, $H(e')\models\psi$ which concludes the proof.
-
-%($\Leftarrow$) Since $h'\models\psi$, $h'$ is the history of an execution $e\in B$. Furthermore,
-% $h\preceq h'$ implies that $h$ is the history of an execution $e'$ such that $e~>e'$. Therefore,
-% since $B$ is a basis of $L$, we get that $e'\in L$ and $h\in H(L)$.
-
-($\Leftarrow$) Since $h'\models\psi$, $h'$ is the history of an execution $e\in B$. Furthermore,
- $h\preceq h'$ implies that there exists an injection $g: O_h' \rightarrow O_h$ with the 
-properties of Definition~\ref{def:weaker_than}. 
-
-Let $O_p$ be the set of operations which were pending in $h$ but are completed in $h'$.
-Using the closure properties of Definition~\ref{def:library}, we move all the return
-events of the operations in $O_p$ to the end of the execution $e'$ to get an 
-execution $e'_1 \in L$.
-Then, using the prefix closure, we get rid of these return events, to obtain an 
-execution $e'_2$.
-
-Some operations were pending in $h$ and do not appear in $h'$. The closure
-properties of Definition~\ref{def:library} allow us to add the call events corresponding
-to these operations in $e'_2$ in order to obtain an execution $e'_3 \in L$.
-
-Finally, we have an execution $e'_3$ whose operations are exactly the ones of $h$.
-However $h$ might still be weaker than the history of $e'_3$. Still using the same 
-closure properties, we can move call events to the left, and return events to the right
-in order to obtain a history $e \in L$ corresponding exactly to $h$, which shows
-that $h \in H(L)$.
-\end{proof}
-
-%%, it uses another symbol $<_{\sf k}$.
-%
-%
-%The syntax of the formulas $\psi$ we consider for describing sets of complete histories 
-%is given in Figure~\ref{fig:logic}. Thus, $\psi$ is a second-order
-%formula that existentially quantifies over a relation $\poker$ and that is a conjunction of:
-%\begin{itemize}
-%  \item a formula $\<PO>(\poker)$ expressing the fact that $\poker$ is a strict
-%  partial order,
-%  \item a formula expressing the fact that the order relation $<$ in the modeled history 
-%  is weaker than the order relation $\poker$,
-%  \item a formula expressing the fact that the set of operations in the modeled history
-%ordered by $\poker$ forms a history in the kernel of $L$.
-%\end{itemize} 
-%The latter sub-formula is a \emph{closed} formula (i.e., without free variables) 
-%with $\forall^*\exists^*$ quantifier prefix.
-%
-%The semantics of $\psi$ is defined as usual. The satisfaction relation $\models$ for quantified formulas
-%is defined by:
-%\begin{align*}
-%h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$ s.t. }\tup{h,\poker}\models \psi' \\
-%%\tup{h,\poker}\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
-%\end{align*}
-
-
-\begin{example}
-
-Examples of formulas $\psi_L$ for the most common objects.
-\newcommand{\emptyval}{\bot}
-\newcommand{\noexc}{-1}
-
-\begin{itemize}
-\item
-We define a formula of the form $\exists \forall$ which recognizes histories
-which are not in the kernel of the Queue specification. When negated, it 
-becomes of the form $\forall \exists$, as we wish.
-
-There are five ways a history can violate the Queue specification.
-Either it does not form a total order:
-\[
-  \exists x_1,x_2.
-  \ x_1 != x_2 \land \neg (x_1 \poker x_2) \land \neg (x_2 \poker x_1) 
-\]
-or the \<Matching> relation doesn't relate \<dequeue> to \<enqueue>'s
-\[
-	\exists x,y.\ \<Matching>(y,x) \land \neg (\<dequeue>(y) \land \<enqueue>(x))
-\]
-or there is a \<dequeue> operation which didn't return $\emptyval$ ($y$) but which
-has no matching \<enqueue> operation ($x$) which precedes it:
-\[
-  \exists y.\ \<dequeue>(y) \land \rval{y} \neq \emptyval \land
-  \forall x.\ \<Matching>(y,x) \implies y \poker x
-\]
-or there is dequeue which returned $\emptyval$ ($x_e$) while there was some \<enqueue> 
-($x$) which was not dequeued by a corresponding \<dequeue> ($y$).
-\begin{align*}
-\exists x, x_e.&\ x \poker x_e \land \<dequeue>(x_e) \land \rval{x_e} = \emptyval \land \\&
-\<enqueue>(x) \land
-\forall y.\ y \poker x_e \implies \neg \<Matching>(y,x)
-\end{align*}
-or there is a violation of the FIFO order -- that is, there is some enqueue
-($x_1$) which happened before another enqueue ($x_2$) such that the dequeue
-corresponding to $x_2$ ($y_2$) happened before any dequeue corresponding to
-$x_1$ ($y_1$), if any:
-\begin{align*}
-\exists x_1,x_2,y_2.
-  &\ x_1 \poker x_2 \land \<Matching>(y_2,x_2) 
-    \land \<enqueue>(x_1) \land\\
-  &\forall y_1.\ 
-    \<Matching>(y_1,x_1) \implies y_2 \poker y_1
-\end{align*}
-
-
-The remaining objects all use the first two formulas (the one recognizing
-total order violations, and the one recognizing matching violations).
-
-\item 
-For the Stack, the first four formulas are similar to the Queue, except we change
-\<dequeue> to \<pop>, and \<enqueue> to \<push>. Then, in order to
-recognize LIFO violations, we use a formula slightly different than the formula 
-recognizing FIFO violations.  We need one more constraint ($x_1 \poker y_2$), since 
-the order of operations $x_2 \poker y_2 \land y_2 \poker x_1$ does not yield a
-violation of the LIFO order.
-\begin{align*}
-\exists x_2,x_1,y_2.
-  &\ x_2 \poker x_1 \land x_1 \poker y_2 
-    \land \<Matching>(y_2,x_2) \land \<push>(x_1) \land \\
-  &\forall y_1.\ 
-      \<Matching>(y_1,x_1) \implies y_2 \poker y_1
-\end{align*}
-
-
-\item 
-For the Register, we use the same first three formulas (total order, matching \<read>
-to \<write>, and each \<read> has a matching \<write> which precedes it).
-The fourth formula recognize histories where there is a read ($y_2$) with 
-no matching write ($x_2$) in between $y_2$ and the preceding write ($x_1$).
-\begin{align*}
-  \exists x_1,y_2.
-    &\ x_1 \poker y_2 \land \<write>(x_1) \land
-      \<read>(y_2) \land \neg \<Matching>(y_2,x_1) \land\\
-    &\forall x_2.\ x_1 \poker x_2 \land x_2 \poker y_1 \implies 
-      \neg \<Matching>(y_2,x_2)
-\end{align*}
-
-
-\item
-The PriorityQueue uses the same first four formulas as the Queue. The fifth formulas
-is changed so as not to detect FIFO violations, but priority violations. A history has 
-a priority violation if two elements have
-been added ($x_1,x_2$), and the element with lower priority ($x_1$) has been 
-removed (by $y_1$), while $x_2$ has not yet been removed (by $y_2$).
-\todo{We don't have a predicate to compare data values.}  
-\begin{align*}
-\exists x_1,x_2,y_1.& \<Matching>(y_1,x_1) \land x_2 \poker y_1 \land \<add>(x_2) \land\\
-& \cval{x_1} < \cval{x_2} \land \forall y_2.\ y_2 \poker y_1.\ \neg \<Matching>(y_2,x_2)
-\end{align*}
-
+\end{example}
 
 %\item
 %For the Set, we use two formulas, one for $\tt contains => true$ violations, 
@@ -261,96 +102,79 @@ removed (by $y_1$), while $x_2$ has not yet been removed (by $y_2$).
 %\end{align*}
 
 
-\item
-For the Set, we use the formula which detects total order violations as for 
-the previous objects. We also use a formula which says that only \<remove>
-and \<add> operations can be matched. 
+\begin{example}[Atomic sets]
 
-However, as opposed to
-the multiset objects (Stack, Queue), we do not 
-require every \<remove> operation to match some \<add> operation, as 
+The basis of an atomic set is characterized by the formula $\<Set>$ in Figure~\ref{fig:examples_formulas}.
+As opposed to the atomic multisets, $\<Set>$ doesn't 
+require that every remove operation matches an add operation, as 
 a remove can succeed even though the element was already removed from 
-the set. We use then use two formulas,
-one for $\sf contains => true$ violations, 
-and one for $\sf contains => false$ violations.
-
-The first one says that there is a $\sf contains => true$ ($x_c$) so that all 
-matching pairs of \<add>/\<remove> are either completely before or 
-completely after it (so this \<contains> was supposed to return \<false>).
-\begin{align*}
-\exists x_c.\ &
-  \<contains>(x_c) \land \rval{x_c} = \<true> \land\\
-   & \forall x_a,x_r.\ \<Matching>(x_r,x_a) \implies \\
-&	((x_a \poker x_c \land x_r \poker x_c)
- 	\lor (x_c \poker x_a \land x_c \poker x_r))
-\end{align*}
-
-The second one says that there is a $\sf contains => false$ ($x_c$)
-and a matching pair of \<add>/\<remove> ($x_a/x_r$) so that the \<add> and \<remove>
-are respectively before and after $x_c$ (so this \<contains> was supposed
-to return \<true>).
-\begin{align*}
-\exists x_a,x_c,x_r.\ &
-  \<contains>(x_c) \land \rval{x_c} = \<false> \\
-&\land x_a \poker x_c \land x_c \poker x_r \land \<Matching>(x_r,x_a)
-\end{align*}
-
-\item
-For the Lock, just like the set, we do not require every \<unlock> to be matched
-with a \<lock>, as the \<unlock> method can be called by a client even though the Lock
-is already free. We then use a formula which recognizes histories where two lock 
-operations follow each other:
-\begin{align*} 
-\exists x_1,x_2.&\ 
-  x_1 \poker x_2 \land \<lock>(x_1) \land \<lock>(x_2) \land\\
-  &\forall y. \neg (x_1 \poker y \land y \poker x_2)
-\end{align*}
-
-\item
-Likewise, for the Semaphore, we do not require every \<release> to be matched
-with an \<acquire>.
-The violations of a Semaphore of capacity $\capacity$ are histories where
-at some point, there are strictly more than $\capacity$ 
-\<acquire>'s ($x_0,\dots,x_\capacity$) which are 
-not matched by corresponding \<release>'s ($y$). The corresponding formula is 
-parametrized by $\capacity$.
-\begin{align*}
-\exists x_0,\dots,x_\capacity.&\ 
-  \bigwedge_{0 \leq i < \capacity} x_i \poker x_\capacity \land
-  \bigwedge_{0 \leq i \leq \capacity} \<acquire>(x_i) \land\\
-  &(\forall y.\ y \poker x_\capacity \implies 
-    \bigwedge_{0 \leq i \leq \capacity} \neg \<Matching>(y,x_i))
-\end{align*}
-
-
-\item
-The Exchanger is a special case. First of all, we drop the formula stating
-that $\poker$ is a total order. Moreover, the \<exchange> label can be both
-positive and negative. We use three formulas to recognize violations of the 
-Exchanger. 
-
-The first one states that there exists an operation which was 
-matched twice (an operation
-can exchange its value with only one operation).
-\begin{align*}
-\exists x,y_1,y_2.\ \<Matching>(y_1,x) \land \<Matching>(y_2,x)
-\end{align*}
-
-The second one says 
-that there exists an operation which was not matched, but which returned 
-something different than the expected $\noexc$
-\begin{align*}
-\exists x,y.&\ \rval{x} \neq \noexc \land \\
-& \forall y.\ \neg \<Matching>(y,x) \land \neg \<Matching>(x,y)
-\end{align*}
-
-The last one says that there exists one operation which was matched,
-but which did not return the value of the corresponding operation.
-\begin{align*}
-\exists x,y.\ (\<Matching>(y,x) \lor \<Matching>(x,y)) \land \rval{x} \neq
-\cval{y}
-\end{align*}
-
-\end{itemize}
+the set. The formula $\<IsContained>$, resp., $\<IsNotContained>$, states that a contains operation 
+returns $\<true>$, resp., $\<false>$, only if the element is present, resp., absent from the set.
 
 \end{example}
+
+\begin{example}[Atomic register]
+
+The basis of an atomic register is characterized by the formula $\<Register>$ in Figure~\ref{fig:examples_formulas},
+which states that the matching function maps read operations to write operations (\<Match>(\<read>,\<write>)), 
+for every read there exists a preceding matching write ($\<Read>$),
+for every read $x_r$ preceded by a non-matching write $x_w$ there exists a preceding matching write $y_w$
+which occurs after $x_w$ ($\<ReadFrom>$).
+
+\end{example}
+
+\begin{example}[Synchronization objects]
+
+The formula $\<Lock>$ in Figure~\ref{fig:examples_formulas} describing the basis of a lock object
+states that the matching function maps unlock operations to lock operations ($\<Match>(\<unlock>,\<lock>)$)
+and that there are no two successive $\<lock>$ operations. The basis of a semaphore of fixed capacity $\capacity$
+is characterized by the formula $\<Semaphore>$ in Figure~\ref{fig:examples_formulas}. It states that 
+$\<release>$ operations are matched with $\<acquire>$ operations and that every sequence
+of $c+1$ $\<acquire>$ operations is interrupted by at least a $\<release>$ operation.
+
+\end{example}
+
+\begin{example}[Exchanger]
+
+Exchanger objects are used to pair up threads so they can atomically swap values. The only 
+method of this object is $\<exchange>$ which receives as input a value $v$ that a thread it offers to swap
+and returns a value $v'\neq \<null>$ if it has paired up with an $\<exchange>(v')$ operation. The
+latter operation will return the value $v$.
+Since the time spans of $\<exchange>$ operations that pair up overlap in time, the basis of this object contains complete histories which are not
+necessarily sequential. They are described by the formula $\<Exchanger>$ in Figure~\ref{fig:examples_formulas}
+which states that the matching function defines a one to one correspondence between overlapping 
+$\<exchange>$ operations, that every operation returning a value different from $\<null>$ must match another
+operation, and that every two matched operations must return the argument of their counterpart.
+
+\end{example}
+
+
+
+%The following result follows easily from definitions.
+
+
+%%, it uses another symbol $<_{\sf k}$.
+%
+%
+%The syntax of the formulas $\psi$ we consider for describing sets of complete histories 
+%is given in Figure~\ref{fig:logic}. Thus, $\psi$ is a second-order
+%formula that existentially quantifies over a relation $\poker$ and that is a conjunction of:
+%\begin{itemize}
+%  \item a formula $\<PO>(\poker)$ expressing the fact that $\poker$ is a strict
+%  partial order,
+%  \item a formula expressing the fact that the order relation $<$ in the modeled history 
+%  is weaker than the order relation $\poker$,
+%  \item a formula expressing the fact that the set of operations in the modeled history
+%ordered by $\poker$ forms a history in the kernel of $L$.
+%\end{itemize} 
+%The latter sub-formula is a \emph{closed} formula (i.e., without free variables) 
+%with $\forall^*\exists^*$ quantifier prefix.
+%
+%The semantics of $\psi$ is defined as usual. The satisfaction relation $\models$ for quantified formulas
+%is defined by:
+%\begin{align*}
+%h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$ s.t. }\tup{h,\poker}\models \psi' \\
+%%\tup{h,\poker}\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
+%\end{align*}
+
+

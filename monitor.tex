@@ -4,32 +4,135 @@
 
 \section{Reducing complete history membership to propositional SAT}\label{ssec:complete}
 
-Given a formula $\psi$ representing a library $L$, 
-checking whether a complete history $h$ belongs to $H(L)$ 
-can be reduced to propositional satisfiability. The crux of this reduction
-is the fact that a complete history $h$ is weaker than another history $h'$ iff
+%A history formula describing the set of histories $H(B)$ 
+%of a library basis $B$ is considered a specification for the entire library.
+%
+%Since every execution of a library $L$ can be obtained through the $~>$ rewriting 
+%from an execution of a given basis $B$, 
+
+%\begin{definition}
+%
+%A formula $\psi$ \emph{represents} $L$ iff there exists a basis $B$ of $L$ such that 
+%for every history $h$, $h\in H(B)$ iff $h\models \psi$.
+%
+%\end{definition}
+
+%Since $\psi$ is required to characterize only histories of a basis of $L$, there are
+%histories of $L$ that don't satisfy $\psi$. However, for every history of $L$ there
+%exists a stronger history which satisfies $\psi$.
+Given a formula $\psi$ describing a basis of $L$, 
+checking whether a \emph{complete} history $h$ belongs to $H(L)$ 
+can be reduced to propositional satisfiability. 
+Thus, a history $h$ belongs to $H(L)$ iff 
+it is weaker than a history $h'$ in a basis of $L$, or equivalently, weaker than a history
+$h'$ satisfying $\psi$.
+Then, a complete history $h$ is weaker than another history $h'$ iff
 the two histories consist of exactly the same set of 
-operations~\footnote{More precisely, there exists a bijection between the set of operations in $h$ and respectively $h'$.}
-(this includes the fact that the operation labels and the matching relation are the same in both histories) 
+operations~\footnote{More precisely, there exists a bijection between the set of operations in $h$ and respectively $h'$.},
+with identical operation labels and matching functions, 
 and the order constraints of $h$ are included in the order constraints of $h'$.
+%This relationship between two histories can be expressed as a universally-quantified formula
 Therefore, given $h$, checking that there exists a stronger history $h'$ which satisfies $\psi$ 
-can be reduced to checking that $\psi$ is consistent with a formula $\varphi(h)$
-describing the labels, the matching relation, and the order constraints in $h$.
+can be reduced to checking whether $\psi$ is consistent with a formula $\mathit{Hist}(h)\land \mathit{Weaker}$,
+where $\mathit{Hist}(h)$ describes the labels, the matching function, and the order constraints in $h$ 
+using different versions $\<hb>_h$, $\<match>_h$, $\ldots$ of the predicates $\<hb>$, $\<match>$, $\ldots$, 
+and $\mathit{Weaker}$ is a formula expressing the fact that $\<hb>_h$ is included in $\<hb>$, 
+$\<match>_h$ is exactly $\<match>$, etc.
 
-Thus, given a complete history $h=\tup{O,<,f,\<Matching>}$, let $\varphi(h)$ be a history formula 
-describing the order constraints, the labels, and the matching relation of $h$:
+\begin{lemma}\label{lemma:kernel_histories}
+
+Let $h$ be a history and $B$ a basis of a library $L$. Then, 
+$h\in H(L)$ iff there exists a history $h'$ s.t. $h\preceq h'$  and $h'\in H(B)$.
+
+\end{lemma}
+
+\begin{proof}
+%Let $B$ be the basis of $L$
+%such that $h\in H(B)$ iff $h\models \psi$.
+($=>$) By hypothesis, $h$ is the history of an execution $e\in L$.  By definition, there exists
+an execution $e'\in B$ such that $e' ~> e$. 
+From the definition of $~>$ it follows that $H(e)\preceq H(e')$, 
+which concludes the proof.
+
+%($\Leftarrow$) Since $h'\models\psi$, $h'$ is the history of an execution $e\in B$. Furthermore,
+% $h\preceq h'$ implies that $h$ is the history of an execution $e'$ such that $e~>e'$. Therefore,
+% since $B$ is a basis of $L$, we get that $e'\in L$ and $h\in H(L)$.
+
+($\Leftarrow$) Since $h'\in H(B)$, $h'$ is the history of an execution $e\in B$. Furthermore,
+ $h\preceq h'$ implies that there exists an injection $g: O_h' \rightarrow O_h$ with the 
+properties of Definition~\ref{def:weaker_than}. 
+
+Let $O_p$ be the set of operations which were pending in $h$ but are completed in $h'$.
+Using the closure properties of Definition~\ref{def:library}, we move all the return
+events of the operations in $O_p$ to the end of the execution $e'$ to get an 
+execution $e'_1 \in L$.
+Then, using the prefix closure, we get rid of these return events, to obtain an 
+execution $e'_2$.
+
+Some operations were pending in $h$ and do not appear in $h'$. The closure
+properties of Definition~\ref{def:library} allow us to add the call events corresponding
+to these operations in $e'_2$ in order to obtain an execution $e'_3 \in L$.
+
+Finally, we have an execution $e'_3$ whose operations are exactly the ones of $h$.
+However $h$ might still be weaker than the history of $e'_3$. Still using the same 
+closure properties, we can move call events to the left, and return events to the right
+in order to obtain a history $e \in L$ corresponding exactly to $h$, which shows
+that $h \in H(L)$.
+\end{proof}
+
+\begin{lemma}
+
+Let $h_1=\tup{O_1,<_1,f_1}$ and $h_2=\tup{O_2,<_2,f_2}$ be two histories. If $h_1\preceq_g h_2$ then
+for every two completed operations $o_1, o_2\in O_1$, 
+\[
+\<Matching>(h_1)(o_1,o_2)\text{ iff }\<Matching>(h_2)(g^{-1}(o_1),g^{-1}(o_2)).
+\]
+
+\end{lemma}
+
+\begin{lemma}\label{lemma:complete_history}
+
+A complete history $h_1=\tup{O_1,<_1,f_1}$ is weaker than another history $h_2=\tup{O_2,<_2,f_2}$ 
+iff there exists a bijection $g:O_2->O_1$ such that: %for every two operations $o, o'\in O_1$, 
+\begin{itemize}
+
+	\item operations related by $g$ have the same label, i.e., for each $o\in O_1$, $f_1(o)=f_2(g^{-1}(o))$,
+
+	\item order constraints are preserved from $h_1$ to $h_2$, i.e., for each $o,o'\in O_1$, $o<_1 o'$ implies $g^{-1}(o)<_2 g^{-1}(o')$, and
+
+	\item the matching function is the same for the two histories, i.e., for each $o,o'\in O_1$, $\<Matching>(h_1)(o)=o'$ iff $\<Matching>(h_2)(g^{-1}(o))=g^{-1}(o')$.
+
+\end{itemize}
+
+
+\end{lemma}
+
+Thus, given a complete history $h=\tup{O,<,f}$, let $\mathit{Hist}(h)$ be a history formula 
+describing the order constraints, the labels, and the matching function of $h$:
 \begin{align*}
-\varphi(h)::= & \forall x.\ x\in O\ \ \land \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} m\in\<Methods>, o\in O\\f(o)=m(u)=>v\end{array}} \hspace{-4mm} m(o)\ \ \land
-		   \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-7mm} \<Val>(o,o') \\
-		   & \land\ \bigwedge_{o,o'\in O, \<Matching>(o,o')} \<Matching>(o,o')\quad \land\ \bigwedge_{o,o'\in O, o<o'} o< o'%\land \<PO>(<)
+\mathit{Hist}(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \bigwedge_{\<Matching>(h)(o,o')} \<match>_h(o,o') \\
+		    & \hspace{-8mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-7mm} \<meth>_h(o)=m\land \<arg>_h(o)=u\land \<ret>_h(o)=v \\
+%		   \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-7mm} \<Val>(o,o') \\
+		   & \hspace{-8mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-1.3mm}\<hb>_h(o,o')%\land \<PO>(<)
 \end{align*}
-
-%Also, let $\<Dom>(O)::=\forall x. x\in O$ be a
-The first sub-formula of $\varphi(h)$ restricts the interpretation domain of every 
+The first sub-formula restricts the interpretation domain of every 
 operation-identifier variable to $O$. The formula $x\in O$ is a syntactic sugar for 
 $
 \bigvee_{o\in O} x=o
-$.
+$. 
+%It uses indexed versions of the predicate and function symbols introduced in Section~\ref{sec:logic}
+%The last sub-formula uses a relation symbol $\<hb>(o,o')$
+
+Also, let $\mathit{Weaker}$ be a formula expressing the weaker than relation between $h$ and another history 
+described using the standard symbols $\<hb>$, $\<meth>$, $\ldots$
+\begin{align*}
+\mathit{Weaker}\ \triangleq\ &\bigwedge_{F\in\{\<meth>,\<arg>,\<ret>\}} \forall x.\ F_h(x)=F(x) \\
+& \land\ \forall x,x'.\ \<hb>_h(x,x') => \<hb>(x,x')\\
+& \land\  \forall x,x'.\ \<match>_h(x,x') <=> \<match>(x,x')
+\end{align*}
+
+%Also, let $\<Dom>(O)::=\forall x. x\in O$ be a
+
 
 %Also, given $h$, let $F[h]$ be the HL formula $F$ where the relation symbol $<_k$ is replaced by $<$
 %and the quantifiers are instantiated on the set of operations $O$, 
@@ -39,46 +142,56 @@ $.
 %\]
 
 \begin{theorem}\label{th:satisfiability}
-Let $h$ be a complete history and $\psi$ a history formula representing a library $L$.
+Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$.
 Then,
 \[
-h\in H(L)\mbox{ iff }\varphi(h)\land \psi\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff }\mathit{Hist}(h)\land\mathit{Weaker}\land \psi\mbox{ is satisfiable.}
 \]
 \end{theorem}
 \begin{proof}
-($=>$) Let $h=\tup{O,<,f,\<Matching>}$. Since $h\models \psi$, there exists a relation $\poker\subseteq O\times O$
-such that $\tup{h,\poker}\models\psi'$, which implies that $\tup{h,\poker}$ is a model of $\varphi(h)\land \psi'$.
+($=>$) This direction is a direct consequence of Lemmas~\ref{lemma:kernel_histories} and~\ref{lemma:complete_history}.
 
-($\Leftarrow$) Let $\tup{h',\poker}$ be a model of $\varphi(h)\land \<Dom>(O)\land \psi'$. By the definition of $\varphi(h)$, 
-we obtain that $h\preceq h'$. Since $\psi'$ requires that $\poker$ is stronger than the order relation in $h'$,
-we obtain that $\poker$ is also stronger than the order relation in $h$. Moreover, since $\tup{h',\poker}$ is a model
-of $ \<Dom>(O)$, we get that $\poker$ is an order relation between elements of $O$.
-Therefore, $\tup{h,\poker}$ is also a model of $\psi'$, which implies that $h$ is a model of $\psi$.
+%Let $h=\tup{O,<,f}$. Since $h\models \psi$, there exists a relation $\poker\subseteq O\times O$
+%such that $\tup{h,\poker}\models\psi'$, which implies that $\tup{h,\poker}$ is a model of $\varphi(h)\land \psi'$.
+
+($\Leftarrow$) The interpretation of $\<match>_h$, $\<hb>_h$, and $F_h$ with $F\in \{\<meth>,\<arg>,\<ret>\}$ 
+from a model of $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$ defines a history $h'$ such that $h\preceq h'$.
+On the other hand, the interpretation of $\<match>$, $\<hb>$, $\<meth>$, $\<arg>$, $\<ret>$ defines a history
+$h''$ such that $h'\preceq h''$ and $h''\models \psi$. Therefore, $h\preceq h''$ and $h''\models \psi$, which 
+by Lemma~\ref{lemma:kernel_histories} imply that $h\in H(L)$.
 \end{proof}
 
-The satisfiability of $\varphi(h)\land \<Dom>(O)\land \psi'$ can be reduced to propositional satisfiability since
-the domain of the operation-identifier variables is fixed and the existential quantifiers can be replaced by finite 
-disjunctions, i.e., every sub-formula $\exists x.\ A$ is replaced by 
+The satisfiability of $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$ can be reduced to propositional satisfiability 
+since the domain of the operation-identifier variables is fixed and every quantifier can be replaced by a 
+finite conjunction/disjunction, e.g., every sub-formula $\exists x.\ A$ is replaced by 
 $
 \bigvee_{o\in O}\ A[x\mapsto o]
 $.
-The formula obtained by removing the existential quantifiers belongs to the EPR fragment
-(also known as the Bernays-Sch\"{o}nfinkel class),  whose satisfiability is known to be reducible to
-propositional satisfiability in polynomial time, provided that the quantifier count is fixed.
-The EPR fragment consists of first-order
-formulas with no occurrences of function symbols other than constants, and which  
-when written in the prenex normal form have the quantifier prefix $\exists^*\forall^*$.
-The formula $\varphi(h)\land \<Dom>(O)\land \psi'$ has no function symbols other than constants
-and by removing the existential quantifiers, it has a quantifier prefix $\forall^*$.
-Therefore, one can construct a boolean formula $\<ToBool>(h,\psi)$, which
-is equi-satisfiable to $\varphi(h)\land \<Dom>(O)\land \psi'$.
+Before eliminating the quantifiers, one also needs to add some universally-quantified axioms to 
+express the fact that $\<hb>$ and $\<hb>_h$ are partial orders and that $\<match>$ and $\<match>_h$
+are functions.
+%existential quantifiers can be replaced by finite 
+%disjunctions, i.e., every sub-formula $\exists x.\ A$ is replaced by 
+%$
+%\bigvee_{o\in O}\ A[x\mapsto o]
+%$.
+%The formula obtained by removing the existential quantifiers belongs to the EPR fragment
+%(also known as the Bernays-Sch\"{o}nfinkel class),  whose satisfiability is known to be reducible to
+%propositional satisfiability in polynomial time, provided that the quantifier count is fixed.
+%The EPR fragment consists of first-order
+%formulas with no occurrences of function symbols other than constants, and which  
+%when written in the prenex normal form have the quantifier prefix $\exists^*\forall^*$.
+%The formula $\varphi(h)\land \<Dom>(O)\land \psi'$ has no function symbols other than constants
+%and by removing the existential quantifiers, it has a quantifier prefix $\forall^*$.
+Therefore, one can construct a propositional formula $\mathit{ToBool}(h,\psi)$, which
+is equi-satisfiable to $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$.
 
 
 \begin{corollary}\label{cor:satisfiability}
 
-Let $h$ be a complete history and $\psi::=\exists\poker.\ \psi'$ a formula as in Figure~\ref{fig:logic}. Then,
+Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$. Then,
 \[
-h\models \psi\mbox{ iff }\ \<ToBool>(h,\psi)\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff the propositional formula}\ \<ToBool>(h,\psi)\mbox{ is satisfiable.}
 \]
 
 \end{corollary}
