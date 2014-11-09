@@ -162,6 +162,11 @@ h\in H(L)\mbox{ iff the propositional formula}\ \<ToBool>(h,\psi)\mbox{ is satis
 
 \section{Handling pending operations}\label{ssec:pending}
 
+\subsection{History completions}
+
+Checking whether an arbitrary history belongs to the histories of a library $L$
+using the specification of a basis of $L$ 
+
 The formulas $\psi$ defined in Section~\ref{sec:logic} describe only complete histories
 of a library $L$ but, they can be used to check even whether a history $h$ with \emph{pending} operations 
 belongs to $H(L)$. Essentially, one can enumerate all the possible ways of completing or removing
@@ -217,6 +222,8 @@ $h_c\in H(L)$, which finishes the proof.
 ($\Leftarrow$) Since $h\preceq_c h_c$ implies $h\preceq h_c$, then by Lemma~\ref{downward-closed},
 $h_c\in H(L)$ implies $h\in H(L)$.
 \end{proof}
+
+\subsection{Approximating history membership}
 
 Though we seek to develop an efficient monitor that can check whether a history with pending
 operations is a refinement violation, the result in Lemma~\ref{lemma:pending_histories}
