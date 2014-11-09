@@ -23,7 +23,7 @@
 Given a formula $\psi$ describing a basis of $L$, 
 checking whether a \emph{complete} history $h$ belongs to $H(L)$ 
 can be reduced to propositional satisfiability. 
-Thus, a history $h$ belongs to $H(L)$ iff 
+Thus, by Lemma~\ref{lemma:kernel_histories}, a history $h$ belongs to $H(L)$ iff 
 it is weaker than a history $h'$ in a basis of $L$, or equivalently, weaker than a history
 $h'$ satisfying $\psi$.
 Then, a complete history $h$ is weaker than another history $h'$ iff
@@ -39,46 +39,6 @@ using different versions $\<hb>_h$, $\<match>_h$, $\ldots$ of the predicates $\<
 and $\mathit{Weaker}$ is a formula expressing the fact that $\<hb>_h$ is included in $\<hb>$, 
 $\<match>_h$ is exactly $\<match>$, etc.
 
-\begin{lemma}\label{lemma:kernel_histories}
-
-Let $h$ be a history and $B$ a basis of a library $L$. Then, 
-$h\in H(L)$ iff there exists a history $h'$ s.t. $h\preceq h'$  and $h'\in H(B)$.
-
-\end{lemma}
-
-\begin{proof}
-%Let $B$ be the basis of $L$
-%such that $h\in H(B)$ iff $h\models \psi$.
-($=>$) By hypothesis, $h$ is the history of an execution $e\in L$.  By definition, there exists
-an execution $e'\in B$ such that $e' ~> e$. 
-From the definition of $~>$ it follows that $H(e)\preceq H(e')$, 
-which concludes the proof.
-
-%($\Leftarrow$) Since $h'\models\psi$, $h'$ is the history of an execution $e\in B$. Furthermore,
-% $h\preceq h'$ implies that $h$ is the history of an execution $e'$ such that $e~>e'$. Therefore,
-% since $B$ is a basis of $L$, we get that $e'\in L$ and $h\in H(L)$.
-
-($\Leftarrow$) Since $h'\in H(B)$, $h'$ is the history of an execution $e\in B$. Furthermore,
- $h\preceq h'$ implies that there exists an injection $g: O_h' \rightarrow O_h$ with the 
-properties of Definition~\ref{def:weaker_than}. 
-
-Let $O_p$ be the set of operations which were pending in $h$ but are completed in $h'$.
-Using the closure properties of Definition~\ref{def:library}, we move all the return
-events of the operations in $O_p$ to the end of the execution $e'$ to get an 
-execution $e'_1 \in L$.
-Then, using the prefix closure, we get rid of these return events, to obtain an 
-execution $e'_2$.
-
-Some operations were pending in $h$ and do not appear in $h'$. The closure
-properties of Definition~\ref{def:library} allow us to add the call events corresponding
-to these operations in $e'_2$ in order to obtain an execution $e'_3 \in L$.
-
-Finally, we have an execution $e'_3$ whose operations are exactly the ones of $h$.
-However $h$ might still be weaker than the history of $e'_3$. Still using the same 
-closure properties, we can move call events to the left, and return events to the right
-in order to obtain a history $e \in L$ corresponding exactly to $h$, which shows
-that $h \in H(L)$.
-\end{proof}
 
 \begin{lemma}
 
@@ -107,7 +67,7 @@ iff there exists a bijection $g:O_2->O_1$ such that: %for every two operations $
 
 \end{lemma}
 
-Thus, given a complete history $h=\tup{O,<,f}$, let $\mathit{Hist}(h)$ be a history formula 
+Given a complete history $h=\tup{O,<,f}$, let $\mathit{Hist}(h)$ be a history formula 
 describing the order constraints, the labels, and the matching function of $h$:
 \begin{align*}
 \mathit{Hist}(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \bigwedge_{\<Matching>(h)(o,o')} \<match>_h(o,o') \\
@@ -161,6 +121,8 @@ $h''$ such that $h'\preceq h''$ and $h''\models \psi$. Therefore, $h\preceq h''$
 by Lemma~\ref{lemma:kernel_histories} imply that $h\in H(L)$.
 \end{proof}
 
+\textcolor{red}{Say that there are no function symbols on input and output values, only = and $\leq$}
+
 The satisfiability of $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$ can be reduced to propositional satisfiability 
 since the domain of the operation-identifier variables is fixed and every quantifier can be replaced by a 
 finite conjunction/disjunction, e.g., every sub-formula $\exists x.\ A$ is replaced by 
@@ -184,7 +146,9 @@ are functions.
 %The formula $\varphi(h)\land \<Dom>(O)\land \psi'$ has no function symbols other than constants
 %and by removing the existential quantifiers, it has a quantifier prefix $\forall^*$.
 Therefore, one can construct a propositional formula $\mathit{ToBool}(h,\psi)$, which
-is equi-satisfiable to $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$.
+is equi-satisfiable to $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$. The construction of
+$\mathit{ToBool}(h,\psi)$ can be done in polynomial time provided that the number of
+quantifiers in $\psi$ is fixed, which is the case for all the formulas in Figure~\ref{fig:examples_formulas}.
 
 
 \begin{corollary}\label{cor:satisfiability}
