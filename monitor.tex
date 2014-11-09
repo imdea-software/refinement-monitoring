@@ -164,30 +164,21 @@ h\in H(L)\mbox{ iff the propositional formula}\ \<ToBool>(h,\psi)\mbox{ is satis
 
 \subsection{History completions}
 
-Checking whether an arbitrary history belongs to the histories of a library $L$
-using the specification of a basis of $L$ 
-
-The formulas $\psi$ defined in Section~\ref{sec:logic} describe only complete histories
-of a library $L$ but, they can be used to check even whether a history $h$ with \emph{pending} operations 
-belongs to $H(L)$. Essentially, one can enumerate all the possible ways of completing or removing
-pending operations of $h$ and check whether the obtained histories satisfy the formula $\psi$. 
-In general, this works if the kernel of $L$ is defined and it contains only executions with completed operations.
+Since the basis of common reference implementations $L$ contains only complete histories,
+checking whether an arbitrary history $h$ (with pending operations) belongs to $H(L)$ can 
+be reduced to the complete history case. Essentially, one can enumerate all the possible ways 
+of completing or dropping pending operations of $h$ and check whether the obtained histories 
+are weaker than a history in the basis of $L$.
+%In general, this works if the kernel of $L$ is defined and it contains only executions with completed operations.
 
 \begin{definition}
 
-Let $h_1=\tup{O_1,<_1,f_1}$ and $h_2=\tup{O_2,<_2,f_2}$ be two histories. We say $h_2$ 
-is a \emph{completion} of $h_1$, written $h_1\preceq_c h_2$, when
-
-\begin{itemize}
-
-  \item $h_2$ consists only of completed operations, i.e., for all $o\in O_2$, $f_2(o)=m(u)=>v$ and $v\neq \bot$, and 
-  
-  \item there exists an injection $g:O_2 -> O_1$ satisfying the properties in Definition~\ref{def:weaker_than}
-  and $o_1<_2 o_2$ implies $g(o_1)<_2 g(o_2)$ for each $o_1,o_2\in O_2$.
-
-\end{itemize}
+A \emph{completion} of a history $h$ is a complete history $h'$ such that $h'$ is 
+minimal w.r.t. the weaker than relation $\preceq$ and $h\preceq h'$. 
 
 \end{definition}
+
+%When $h'$ is a completion of $h$ we write $h\preceq_c h'$.
 
 \begin{example}
 
@@ -195,33 +186,48 @@ Examples of completions.
 
 \end{example}
 
-\begin{example}
-
-Show that the projection of a linearizable history over complete operations is not necessarily linearizable.
-
-\end{example}
+%\begin{example}
+%
+%Show that the projection of a linearizable history over complete operations is not necessarily linearizable.
+%
+%\end{example}
 
 
 \begin{lemma}\label{lemma:pending_histories}
 
-Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
-A history $h$ belongs to the histories $H(L)$ of a library $L$ iff there exists 
-a history $h_c$ such that $h\preceq_c h_c$ and $h_c\in H(L)$.
+Let $L$ be a library with a basis that contains only complete histories. Then, given a history $h$,
+\[
+h\in H(L)\mbox{ iff there exists a completion $h'$ of $h$ s.t. $h'\in H(L)$}
+\]
 
 \end{lemma}
 
 \begin{proof}
 
-($=>$) Let $h=\tup{O,<,f}$. By Lemma~\ref{lemma:kernel_histories}, $h\in H(L)$ implies that there exists 
-a complete history $h'=\tup{O',<',f'}$ such that $h'\in H(\ker L)$ and $h\preceq h'$. 
-Then, there exists an injection $g:O' -> O$ 
-satisfying the properties in Definition~\ref{def:weaker_than}. We define $h_c=\tup{O',<_c,f'}$ 
-such that $o<_c o'$ iff $g(o) < g(o')$. Clearly, $h\preceq_c h_c$ and $h_c\preceq h'$. The latter implies
-$h_c\in H(L)$, which finishes the proof.
+($=>$) Let $h=\tup{O,<,f}$ and $B$ a basis of $L$ that contains only complete histories. 
+By Lemma~\ref{lemma:kernel_histories}, $h\in H(L)$ implies that there exists 
+a complete history $h''=\tup{O'',<'',f''}$ such that $h''\in H(B)$ and $h\preceq h''$. 
+Then, there exists an injection $g:O''-> O$ 
+satisfying the properties in Definition~\ref{def:weaker_than}. We define $h'=\tup{O'',<',f''}$ 
+such that $o<' o'$ iff $g(o) < g(o')$. Clearly, $h'$ is a completion of $h$ and $h'\preceq h''$. 
+The latter implies $h'\in H(L)$, which finishes the proof.
 
-($\Leftarrow$) Since $h\preceq_c h_c$ implies $h\preceq h_c$, then by Lemma~\ref{downward-closed},
-$h_c\in H(L)$ implies $h\in H(L)$.
+($\Leftarrow$) Since $h\preceq h'$, by Lemma~\ref{lemma:lib:downward_closed},
+$h'\in H(L)$ implies $h\in H(L)$.
 \end{proof}
+
+\begin{corollary}\label{cor:completions}
+Let $h$ be a history and $\psi$ a formula describing a basis of $L$ with only complete
+histories. Then,
+\[
+\begin{array}{l}
+h\in H(L)\mbox{ iff there exists a completion $h'$ of $h$ s.t. }\\
+\hspace{5cm} \<ToBool>(h',\psi)\mbox{ is satisfiable.}
+\end{array}
+\]
+\end{corollary}
+
+
 
 \subsection{Approximating history membership}
 

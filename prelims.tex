@@ -272,7 +272,18 @@ Note that $h'$ contains two pending $\<pop>=>\bot$ operations, one of them is co
 Throughout this work we do not distinguish between equivalent histories, and we
 assume every set $H$ of histories is closed under inclusion of equivalent
 histories, i.e.,~if $h_1$ and $h_2$ are equivalent and $h_1 \in H$, then $h_2
-\in H$ as well.
+\in H$ as well. Also, we consider only histories of well-formed executions 
+without explicit qualification.
+
+The first property is that libraries are closed under the weakening relation
+$\preceq$.
+
+\begin{lemma}
+  \label{lemma:lib:downward_closed}
+
+  If $h_1 \in H(L)$ and $h_2 \preceq h_1$ then $h_2 \in H(L)$.
+
+\end{lemma}
 
 \begin{lemma}\label{lemma:history_derivations}
 
