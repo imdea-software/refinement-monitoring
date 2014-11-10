@@ -30,8 +30,9 @@ a unique matching function $\<Matching>(e):O/-> O$, where $O$ is the set of oper
 ($/->$ denotes a partial function).
 Typically, the domain of $\<Matching>(e)$ consists of operations deleting a value from the collection or 
 testing the presence of a value while the image of $\<Matching>(e)$ consists of operations  
-adding a value to the collection~\footnote{For simplicity, we assume that an operation can remove only one 
-occurrence of a certain value from the collection.}.
+adding a value to the collection~\footnote{For collections where a remove operation can delete 
+several occurrences of a value at once, remove operations should be matched with a \emph{set} 
+of add operations. For simplicity, this case is not considered in this paper.}.
 The operations in the domain, resp., the image, of $\<Matching>(e)$ are called negative, resp., positive, operations.
 
 %\subsection{Matching Relations}\label{ssec:matching}
