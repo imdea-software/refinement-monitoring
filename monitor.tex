@@ -287,9 +287,14 @@ h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}(h,\psi)\mbox{ is satisfiable.}
 
 \section{Removing Matched Operations}\label{ssec:removal}
 
-An obvious way of speeding up the history membership test for large histories
-(which from a theoretical point of view, is NP-complete~\cite{journals/siamcomp/GibbonsK97}) is to remove operations
-from the tested history. However, deleting arbitrary operations from a history $h\in H(L)$
+%Since from a theoretical point of view, testing history membership is NP-complete~\cite{journals/siamcomp/GibbonsK97},
+
+Checking history membership for large histories using the reduction to propositional SAT 
+from Corollary~\ref{cor:satisfiability_pending} can still be quite inefficient. 
+One way of dealing with this inefficiency is to check history membership for a fragment
+of the given history provided that the smaller history being a violation to
+history inclusion implies that the initial history is also a violation. 
+However, deleting arbitrary operations from a history $h\in H(L)$
 may result in a history $h'\not\in H(L)$. For example, removing the $\<write>(1)$ operation
 from the history of the atomic register pictured in Figure~\ref{fig:removal_even_saturation}
 results in a history which is not anymore admitted by this object. To identify the
@@ -299,13 +304,114 @@ A \emph{match} of a history $h$ is a completed operation $o$ together with a max
 set of completed operations mapped by $\<Matching>(h)$ to $o$. Formally, a match of a 
 history $h=\tup{O,<,f}$ is a set of operations $m=o\cup \<Matching>^{-1}(h)(o)$ such 
 that $o\in O$, $\<Matching>^{-1}(h)(o)\neq \emptyset$, and all the operations in $m$
-are completed in $h$.
+are completed.
 
 \begin{example}
 
 Example of a match.
 
 \end{example}
+
+A set of histories $H$ is \emph{match-removal closed} iff for every history $h\in H$
+and every match $m$ of $h$, $H$ contains the history obtained from $h$ by deleting the 
+operations in $m$.
+
+The bases of all the reference implementations described in Figure~\ref{fig:examples_formulas} are 
+match-removal closed. For instance, consider a sequential history in the basis of an atomic queue
+$\sigma_1\cdot \<add>(1)\cdot\sigma_2\cdot \<rem>=>1\cdot\sigma_3$ 
+(the history is written as a sequence of operation labels) such that the matching function 
+maps the $\<rem>=>1$ operation to the $\<add>(1)$ operation. 
+These two operations form a match
+because the matching function for queue histories is injective (there is only one
+operation mapped to $\<add>(1)$).
+The history $\sigma_1\cdot \sigma_2\cdot \sigma_3$ obtained by removing the match 
+is also a valid sequential queue history: the order between the remaining adds and 
+removes is not affected by this removal.
+
+\fbox{Need a general explanation for this closure}
+
+\begin{theorem}
+
+The bases of the atomic stacks, queues, priority queues, sets, locks, semaphores, and of the
+exchanger are match-removal closed.
+
+\end{theorem}
+
+The match-removal closure property extends from a basis to the entire library.
+Therefore, if by deleting matches from a history we get a history which is not admitted
+by a library $L$ then the initial history is also not admitted by $L$.
+
+\begin{theorem}\label{th:match_closure}
+
+If a basis of a library $L$ is match-removal closed, then $H(L)$ is also match-removal closed.
+
+\end{theorem}
+
+\begin{proof}
+
+Let $H(B)$ be a basis of $L$, $h$ a history in $H(L)$, and $m$
+a match of $h$.
+By Lemma~\ref{lemma:kernel_histories}, %and~\ref{lemma:pending_histories}, 
+there exists a history $h'\in H(B)$ such that $h\preceq h'$. 
+Since all the operations in $m$ are completed, they are included in $h'$ with the
+same labeling. Moreover, the matching function projected over completed
+operations is preserved from $h$ to $h'$. 
+By hypothesis, $H(B)$ is match-removal closed which implies 
+that the history $h_1'$ obtained from $h'$ by deleting the operations in $m$ 
+is also in $H(B)$. From the definition of $\preceq$ it follows that
+the history $h_1$ obtained from $h$ by deleting the operations in $m$ 
+is weaker than $h_1'$ which implies $h_1\in H(L)$.
+\end{proof}
+
+\section{Efficient runtime monitoring}
+
+We describe a monitor for detecting refinement violations, which is based on the logical characterizations
+introduced in Section~\ref{sec:logic}. Essentially, it records the history of the monitored execution 
+and continuously checks whether it is included in the set of histories $H(L)$ of a library $L$, using
+the formula $\psi$ describing $H(L)$. When the tracked history $h$ is complete, it can simply check whether
+$h$ satisfies $\psi$. This satisfaction problem can be reduced to propositional satisfiability as we show in Section~\ref{ssec:complete}.
+When $h$ contains pending operations, the membership test is more intricate since $\psi$ describes only complete histories.
+In this case, we rely on the assumption that the operations of any execution in $\ker L$ are completed.
+The membership test performed by the monitor, described in Section~\ref{ssec:pending}, 
+is again based on a reduction to propositional satisfiability. However, in this case, it is sound, i.e., any reported
+violation is real, but incomplete, i.e.,
+there may exist refinement violations which are missed by the monitor.
+Furthermore, in order to reduce space/time consumption, the monitor is allowed to forget completed 
+operations. More precisely, we show in Section~\ref{ssec:removal} that forgetting matching clusters is sound  
+provided that the kernel is $\<Matching>$-closed.
+
+
+When continuously checking membership on a history that keeps extending 
+with new operations, forgetting matches from the history would provide
+an important efficiency gain. Theorem~\ref{th:match_closure} alone doesn't guarantee
+that by forgetting operations, we cannot derive a violation at later times  although
+the tracked history is always admitted by the library we are interested in.
+
+doesn't prove completely the soundness of this 
+
+One must prove prefix closure
+
+This holds for injective matching functions
+
+\begin{theorem}
+
+Let $L$ be a library with a closed basis.
+Let $h$ be a history of $L$ and $h'\leq_{pref} h$. If $\<Matching>(h)$ is injective for all $h$,
+then for every match $m$ of $h$, $h\setminus m$ is a history of $L$.
+
+\end{theorem}
+
+
+
+When $\<Matching>(h)$ is not injective, e.g., for histories of a register and set, the problem is
+that ...
+
+Removing operations not in the matching relation, e.g. $\<pop>=>\<empty>$.
+
+\newpage
+
+
+
 
 Given a history $h=\tup{O,<,f}$, a set of operations $O'\subseteq O$ is called a \emph{matching cluster}
 iff $O'$ consists of a single negative operation $o$ and all positive operations $o'$ with $\<Matching>(o,o')$.
