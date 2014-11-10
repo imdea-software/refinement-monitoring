@@ -141,7 +141,7 @@ h\preceq h'\text{ iff }h'\models \mathit{Stronger}_c(h).
 Lemmas~\ref{lemma:kernel_histories} and~\ref{lem:stronger_form_complete} enable the following 
 reduction from history membership to first-order satisfiability.
 
-\begin{theorem}\label{th:satisfiability}
+\begin{theorem}\label{th:satisfiability_pending}
 Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$.
 Then,
 \[
@@ -256,7 +256,7 @@ Lemmas~\ref{lemma:kernel_histories} and~\ref{lem:stronger_form_pending}
 together with the guarded quantification added to $\psi$ imply that 
 history membership can be reduced to first-order satisfiability.
 
-\begin{theorem}\label{th:satisfiability}
+\begin{theorem}\label{th:satisfiability_complete}
 Let $h$ be a history and $\psi=\forall \vec{x}\ \exists \vec{x}'.\ F$ a formula describing a basis of $L$.
 Then,
 \[
@@ -285,7 +285,56 @@ h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}(h,\psi)\mbox{ is satisfiable.}
 
 
 
-\section{Removing Matching Clusters}\label{ssec:removal}
+\section{Removing Matched Operations}\label{ssec:removal}
+
+An obvious way of speeding up the history membership test for large histories
+(which from a theoretical point of view, is NP-complete~\cite{journals/siamcomp/GibbonsK97}) is to remove operations
+from the tested history. However, deleting arbitrary operations from a history $h\in H(L)$
+may result in a history $h'\not\in H(L)$. For example, removing the $\<write>(1)$ operation
+from the history of the atomic register pictured in Figure~\ref{fig:removal_even_saturation}
+results in a history which is not anymore admitted by this object. To identify the
+removable operations that preserve history membership we rely on the matching function.
+
+A \emph{match} of a history $h$ is a completed operation $o$ together with a maximal non-empty 
+set of completed operations mapped by $\<Matching>(h)$ to $o$. Formally, a match of a 
+history $h=\tup{O,<,f}$ is a set of operations $m=o\cup \<Matching>^{-1}(h)(o)$ such 
+that $o\in O$, $\<Matching>^{-1}(h)(o)\neq \emptyset$, and all the operations in $m$
+are completed in $h$.
+
+\begin{example}
+
+Example of a match.
+
+\end{example}
+
+Given a history $h=\tup{O,<,f}$, a set of operations $O'\subseteq O$ is called a \emph{matching cluster}
+iff $O'$ consists of a single negative operation $o$ and all positive operations $o'$ with $\<Matching>(o,o')$.
+A set of histories $H$ is closed under matching cluster removal iff $H$ contains all the histories
+obtained by removing a matching cluster from another history in $H$. 
+%We say that 
+%a library $L$ is \emph{$\<Matching>$-closed} iff the set of kernel histories is closed under 
+%matching cluster removal. 
+Formally, given a history $h=\tup{O,<,f}$ and $O'\subseteq O$, 
+\[
+h\setminus O'=\tup{O\setminus O',<',f'},
+\] 
+where $<'=<|_{O\setminus O'}$, and $f'=f|_{O\setminus O'}$.
+
+\begin{definition}
+
+A set of histories $H$ is \emph{closed under matching cluster removal} 
+(for short, $\<Matching>$-closed)
+iff for every matching cluster $O'$ of a history $h\in H$,
+the history $h\setminus O'$ also belongs to $H$.
+
+\end{definition}
+
+\begin{example}
+
+Show that all objects we know satisfy this property.
+
+\end{example}
+
 
 The following result shows that removing a matching cluster from a history 
 $h\in H(L)$ results in a history that also belongs to $H(L)$, 
