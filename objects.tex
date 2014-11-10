@@ -209,27 +209,27 @@ unique matching function denoted by $\<Matching>(h)$.
 %Moreover, we assume that the history $H(e)$ of a tagged execution $\tup{e,\<Matching>}$
 %is the tuple $\tup{O,<,f,\<Matching>}$, where $\tup{O,<,f}$ is defined as for untagged executions.
 %
-\begin{definition}\label{def:weaker_than}
-
-  Let $h_1 = \tup{O_1,<_1,f_1,\<Matching>_1}$ and $h_2 = \tup{O_2,<_2,f_2,\<Matching>_2}$. We say $h_1$ is
-  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
-  injection $g: O_2 -> O_1$ such that
-  \begin{itemize}
-
-    \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
-
-    \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
-
-    %therefore, R_2 can say more only about pending ops 
-    \item for every two completed operations $o_1, o_2\in O_1$, $\<Matching>_1(o_1,o_2)$ iff $\<Matching>_2(g^{-1}(o_1),g^{-1}(o_2))$,
-
-    \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
-
-  \end{itemize}
-  where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
-  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
-  \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
-
-\end{definition}
+%\begin{definition}\label{def:weaker_than}
+%
+%  Let $h_1 = \tup{O_1,<_1,f_1,\<Matching>_1}$ and $h_2 = \tup{O_2,<_2,f_2,\<Matching>_2}$. We say $h_1$ is
+%  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
+%  injection $g: O_2 -> O_1$ such that
+%  \begin{itemize}
+%
+%    \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
+%
+%    \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
+%
+%    %therefore, R_2 can say more only about pending ops 
+%    \item for every two completed operations $o_1, o_2\in O_1$, $\<Matching>_1(o_1,o_2)$ iff $\<Matching>_2(g^{-1}(o_1),g^{-1}(o_2))$,
+%
+%    \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
+%
+%  \end{itemize}
+%  where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
+%  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
+%  \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
+%
+%\end{definition}
 
 

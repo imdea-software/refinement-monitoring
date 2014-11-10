@@ -213,10 +213,12 @@ summary, and orders non-overlapping operations:
 
 \end{itemize}
 An operation of $h$ labeled by $@l\in \<Labels>$ is called an \emph{$@l$
-operation}. The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L}$. 
+operation}. An $m(u)=>v$ operation is called \emph{completed} if $v\neq\bot$ and
+\emph{pending}, otherwise.
+A history with only completed operations is called \emph{complete}. 
+The histories admitted by $L$ are $H(L) = \set{ H(e) : e \in L}$. 
 
-The history of a complete execution is called \emph{complete}. 
-The set of complete histories admitted by $L$ are $H_c(L)=\set{ H(e): e\in L,\mbox{ $e$ is complete}}$.
+%The set of complete histories admitted by $L$ are $H_c(L)=\set{ H(e): e\in L,\mbox{ $e$ is complete}}$.
 
 \begin{example}
 

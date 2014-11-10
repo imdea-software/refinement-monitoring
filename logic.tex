@@ -9,7 +9,7 @@ their library bases can be naturally described in
 first-order logic. The language used by these logical characterizations contains  
 variables interpreted as operation identifiers, several function symbols that return
 the method or the arguments of an operation, a binary predicate $\<match>$
-interpreted as the matching function, and a binary predicate $\<hb>$ interpreted
+interpreted as the matching function, and a binary predicate $\<b>$ interpreted
 as the order relation in the modeled history. The  function symbols $\<meth>$, $\<arg>$, and $\<ret>$
 return the method, the argument, and respectively the return value of
 an operation.
@@ -17,39 +17,39 @@ an operation.
 \begin{figure*}
 {\small
 \begin{align*}
-\<Sequential> & \triangleq \forall x_1,x_2.\ \<hb>(x_1,x_2)\oplus \<hb>(x_2,x_1) \land \forall x.\ \<ret>(x)\neq \bot \\
-\<Match>_{\<mset>}(\<rem>,\<add>) & \triangleq \forall x_r,x_a.\ \<match>(x_r,x_a) => (\<meth>(x_r)=\<rem>\land \<meth>(x_a)=\<add>\land \<ret>(x_1)=\<arg>(x_2)) \\ %\land \<ret>(x_1)=\<arg>(x_2)
+\<Sequential> & \triangleq \forall x_1,x_2.\ \<b>(x_1,x_2)\oplus \<b>(x_2,x_1) \land \forall x.\ \<ret>(x)\neq \bot \\
+\<Match>_1(\<rem>,\<add>) & \triangleq \forall x_r,x_a.\ \<match>(x_r,x_a) => (\<meth>(x_r)=\<rem>\land \<meth>(x_a)=\<add>\land \<ret>(x_1)=\<arg>(x_2)) \\ %
 \<Injective> & \triangleq \forall x_1,x_2,x.\ (\<match>(x_1,x)\land \<match>(x_2,x)) => x_1=x_2 \\ %\land \<ret>(x_1)=\<arg>(x_2)
-\<Remove>& \triangleq \forall x_r.\ (\<meth>(x_r)=\<rem> \land \<ret>(x_r)\neq \<empty>)=> \exists y_a.\ \<match>(x_r,y_a)\land \<hb>(y_a,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_a)
-\<Empty>& \triangleq \forall x_e,x_a.\ (\<meth>(x_e)=\<rem> \land \<ret>(x_e)=\<empty>\land \<meth>(x_a)=\<add>\land \<hb>(x_a,x_e)) \\
-&\hspace{9cm}=> \exists y_r.\ \<match>(y_r,x_a)\land \<hb>(y_r,x_e) \\
-\<Multiset> & \triangleq \<Sequential>\land \<Match>_{\<mset>}(\<rem>,\<add>)\land \<Injective>\land \<Remove>\land \<Empty> \\
-\<Fifo>& \triangleq \forall x_a,x'_a,x_r'.\ (\<meth>(x_a)=\<add> \land \<match>(x_r',x_a') \land \<hb>(x_a,x_a')) => \exists y_r.\ \<match>(y_r,x_a)\land \<hb>(y_r,x_r') \\
-\<Lifo>& \triangleq \forall x_a,x_a',x_r.\ (\<meth>(x_a')=\<add> \land \<match>(x_r,x_a)\land \<hb>(x_a,x_a') \land \<hb>(x_a',x_r)) => \exists y_r.\ \<match>(y_r,x_a')\land \<hb>(y_r,x_r) \\
-\<Max>& \triangleq \forall x_a,x_a',x_r.\ (\<meth>(x_a')=\<add> \land \<match>(x_r,x_a) \land \<hb>(x_a',x_r)\land \<arg>(x_a)<\<arg>(x_a')) 
-=> \exists y_r.\ \<match>(y_r,x_a')\land \<hb>(y_r,x_r) \\
-\<Match>_{\<set>} & \triangleq \forall x_r,x_a.\ \<match>(x_r,x_a) => (\<meth>(x_r)=\<rem>\land \<meth>(x_a)=\<add>\land \<arg>(x_1)=\<arg>(x_2)) \\ %\land \<ret>(x_1)=\<arg>(x_2)
-\<IsContained>& \triangleq  \forall x_c.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<true>)=> \exists y_a.\ \<meth>(y_a)=\<add>\land \<arg>(y_a)=\<arg>(x_c)\land \<hb>(y_a,x_c) \\
-& \hspace{4mm}\land\ \forall x_c,x_r.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<true>\land \<meth>(x_r)=\<rem>\land \<arg>(x_c)=\<arg>(x_r)\land \<hb>(x_r,x_c)) \\
-&\hspace{5cm}=> \exists y_a.\ \<meth>(y_a)=\<add>\land\<arg>(x_c)=\<arg>(y_a)\land \<hb>(x_r,y_a)\land \<hb>(y_a,x_c) \\
-\<IsNotContained>&\triangleq \forall x_c,x_a.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<false>\land \<meth>(x_a)=\<add>\land \<arg>(x_c)=\<arg>(x_a)\land \<hb>(x_a,x_c)) \\
-&\hspace{5cm}=> \exists y_r.\ \<meth>(y_r)=\<remove>\land\<arg>(x_c)=\<arg>(y_r)\land \<hb>(y_r,x_c) \\
-\<Set> & \triangleq \<Sequential>\land \<Match>_{\<set>}(\<rem>,\<add>)\land \<Injective>\land \<IsContained>\land \<IsNotContained> \\
+\<Remove>& \triangleq \forall x_r.\ (\<meth>(x_r)=\<rem> \land \<ret>(x_r)\neq \<empty>)=> \exists y_a.\ \<match>(x_r,y_a)\land \<b>(y_a,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_a)
+\<Empty>& \triangleq \forall x_e,x_a.\ (\<meth>(x_e)=\<rem> \land \<ret>(x_e)=\<empty>\land \<meth>(x_a)=\<add>\land \<b>(x_a,x_e)) \\
+&\hspace{9cm}=> \exists y_r.\ \<match>(y_r,x_a)\land \<b>(y_r,x_e) \\
+\<Multiset> & \triangleq \<Sequential>\land \<Match>_1(\<rem>,\<add>)\land \<Injective>\land \<Remove>\land \<Empty> \\
+\<Fifo>& \triangleq \forall x_a,x'_a,x_r'.\ (\<meth>(x_a)=\<add> \land \<match>(x_r',x_a') \land \<b>(x_a,x_a')) => \exists y_r.\ \<match>(y_r,x_a)\land \<b>(y_r,x_r') \\
+\<Lifo>& \triangleq \forall x_a,x_a',x_r.\ (\<meth>(x_a')=\<add> \land \<match>(x_r,x_a)\land \<b>(x_a,x_a') \land \<b>(x_a',x_r)) => \exists y_r.\ \<match>(y_r,x_a')\land \<b>(y_r,x_r) \\
+\<Max>& \triangleq \forall x_a,x_a',x_r.\ (\<meth>(x_a')=\<add> \land \<match>(x_r,x_a) \land \<b>(x_a',x_r)\land \<arg>(x_a)<\<arg>(x_a')) 
+=> \exists y_r.\ \<match>(y_r,x_a')\land \<b>(y_r,x_r) \\[2mm]
+\<Match>_2(\<rem>,\<add>) & \triangleq \forall x_r,x_a.\ \<match>(x_r,x_a) => (\<meth>(x_r)=\<rem>\land \<meth>(x_a)=\<add>\land \<arg>(x_1)=\<arg>(x_2)) \\ %\land \<ret>(x_1)=\<arg>(x_2)
+\<ContainsTrue>& \triangleq  \forall x_c.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<true>)=> \exists y_a.\ \<meth>(y_a)=\<add>\land \<arg>(y_a)=\<arg>(x_c)\land \<b>(y_a,x_c) \\
+& \hspace{4mm}\land\ \forall x_c,x_r.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<true>\land \<meth>(x_r)=\<rem>\land \<arg>(x_c)=\<arg>(x_r)\land \<b>(x_r,x_c)) \\
+&\hspace{5cm}=> \exists y_a.\ \<meth>(y_a)=\<add>\land\<arg>(x_c)=\<arg>(y_a)\land \<b>(x_r,y_a)\land \<b>(y_a,x_c) \\
+\<ContainsFalse>&\triangleq \forall x_c,x_a.\ (\<meth>(x_c)=\<contains> \land \<ret>(x_c)=\<false>\land \<meth>(x_a)=\<add>\land \<arg>(x_c)=\<arg>(x_a)\land \<b>(x_a,x_c)) \\
+&\hspace{5cm}=> \exists y_r.\ \<meth>(y_r)=\<remove>\land\<arg>(x_c)=\<arg>(y_r)\land \<b>(y_r,x_c) \\
+\<Set> & \triangleq \<Sequential>\land\<Match>_2(\<rem>,\<add>)\land \<Injective>\land \<ContainsTrue>\land \<ContainsFalse> \\[2mm]
 %\<Match(reg)> & \triangleq \forall x_r,x_w.\ \<match>(x_r,x_w) => (\<meth>(x_r)=\<read>\land \<meth>(x_w)=\<write>\land \<ret>(x_r)=\<arg>(x_w)) \\
-\<Read>& \triangleq \forall x_r.\ \<meth>(x_r)=\<read> => \exists y_w.\ \<match>(x_r,y_w)\land \<hb>(y_w,x_r) \\
-\<ReadFrom>& \triangleq \forall x_w,x_r.\ (\<meth>(x_w)=\<write> \land \<meth>(x_r)=\<read>\land \neg \<match>(x_r,x_w)\land \<hb>(x_w,x_r)) \\
-&\hspace{5cm}=> \exists y_w.\ \<match>(x_r,y_w)\land \<hb>(x_w,y_w)\land \<hb>(y_w,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_w)
-\<Register> & \triangleq \<Sequential>\land \<Match>_{\<mset>}(\<read>,\<write>)\land \<Read>\land \<ReadFrom> \\
-\<Match>(\<unlock>,\<lock>) & \triangleq \forall x_u,x_l.\ \<match>(x_u,x_l) => (\<meth>(x_u)=\<unlock>\land \<meth>(x_l)=\<lock>) \\ %\land \<ret>(x_1)=\<arg>(x_2)
-\<Lock> & \triangleq \<Sequential>\land \<Match>(\<unlock>,\<lock>)\land \<Injective>\land \forall x_l,x_l'.\ (\<meth>(x_l)=\<lock>\land \<meth>(x_l')=\<lock>\land \<hb>(x_l,x_l')) \\
-  &\hspace{9cm}=> \exists y.\ \<hb>(x_l,y)\land \<hb>(y,x_l') \\
-\<Semaphore> & \triangleq \<Sequential>\land \<Match>(\<release>,\<acquire>)\land \<Injective> \land \forall x_0,\dots,x_\capacity.\ 
-  \big(\bigwedge_{0 \leq i < \capacity} \<hb>(x_i,x_\capacity) \land
+\<Read>& \triangleq \forall x_r.\ \<meth>(x_r)=\<read> => \exists y_w.\ \<match>(x_r,y_w)\land \<b>(y_w,x_r) \\
+\<ReadFrom>& \triangleq \forall x_w,x_r.\ (\<meth>(x_w)=\<write> \land \<meth>(x_r)=\<read>\land \neg \<match>(x_r,x_w)\land \<b>(x_w,x_r)) \\
+&\hspace{5cm}=> \exists y_w.\ \<match>(x_r,y_w)\land \<b>(x_w,y_w)\land \<b>(y_w,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_w)
+\<Register> & \triangleq \<Sequential>\land \<Match>_1(\<read>,\<write>)\land \<Read>\land \<ReadFrom> \\[2mm]
+\<Match>_3(\<unlock>,\<lock>) & \triangleq \forall x_u,x_l.\ \<match>(x_u,x_l) => (\<meth>(x_u)=\<unlock>\land \<meth>(x_l)=\<lock>) \\ %\land \<ret>(x_1)=\<arg>(x_2)
+\<Lock> & \triangleq \<Sequential>\land \<Match>_3(\<unlock>,\<lock>)\land \<Injective> \land\forall x_l,x_l'.\ (\<meth>(x_l)=\<lock>\land \<meth>(x_l')=\<lock>\land \<b>(x_l,x_l'))\\
+&\hspace{9cm}=> \exists y.\ \<b>(x_l,y)\land \<b>(y,x_l') \\[2mm]
+\<Semaphore> & \triangleq \<Sequential>\land \<Match>_3(\<release>,\<acquire>)\land \<Injective>\land \forall x_0,\dots,x_\capacity.\ 
+  \big(\bigwedge_{0 \leq i < \capacity} \<b>(x_i,x_\capacity) \land
   \bigwedge_{0 \leq i \leq \capacity} \<meth>(x_i)=\<acquire> \big) \\
-  &\hspace{9cm}=>
+   &\hspace{9cm} =>
    \exists y.\ y \poker x_\capacity \land 
     \bigvee_{0 \leq i \leq \capacity} \<match>(y,x_i) \\
-\<Exchanger> & \triangleq \big(\forall x.\ \<ret>(x)\neq \bot\big) \land \big(\forall x_1,x_2.\ \<match>(x_1,x_2) => \neg \<hb>(x_1,x_2)\land \neg \<hb>(x_2,x_1)\big)  \\
+\<Exchanger> & \triangleq \big(\forall x.\ \<ret>(x)\neq \bot\big) \land \big(\forall x_1,x_2.\ \<match>(x_1,x_2) => \neg \<b>(x_1,x_2)\land \neg \<b>(x_2,x_1)\big)  \\
 				& \land \big(\forall x,x_1,x_2.\ \neg (\<match>(x_1,x) \land \<match>(x_2,x))\big)
 				\land\ \big(\forall x.\ \<ret>(x) \neq \<null> =>  \exists y.\ \<match>(y,x) \vee \<match>(x,y)\big) \\
 				& \land \big(\forall x,y.\ (\<match>(y,x) \lor \<match>(x,y)) => \<ret>(x) =\<arg>(y)\big)			
@@ -65,7 +65,7 @@ The bases of atomic collections that store a multiset of values, e.g., queues, p
 can be characterized using conjunctions of formulas
 in Figure~\ref{fig:examples_formulas}. Thus, the basis of an atomic queue is described by the formula
 $\<Multiset>\land \<Fifo>$, which states that it consists of complete sequential histories ($\<Sequential>$),
-the matching function maps remove operations to add operations ($\<Match>_{\<mset>}(\<rem>,\<add>)$),
+the matching function maps remove operations to add operations ($\<Match>_1(\<rem>,\<add>)$),
 no two non-empty removes return the same value ($\<Injective>$),
 for every remove returning $v\neq \<empty>$ there exists a preceding matching add with input $v$ ($\<Remove>$),
 for every remove $x_e$ returning $\<empty>$ and every preceding $\<add>$ $x_a$ there exists a $\<remove>$ matching 
@@ -112,7 +112,7 @@ The basis of an atomic set is characterized by the formula $\<Set>$ in Figure~\r
 As opposed to the atomic multisets, $\<Set>$ doesn't 
 require that every remove operation matches an add operation, as 
 a remove can succeed even though the element was already removed from 
-the set. The formula $\<IsContained>$, resp., $\<IsNotContained>$, states that a contains operation 
+the set. The formula $\<ContainsTrue>$, resp., $\<ContainsFalse>$, states that a contains operation 
 returns $\<true>$, resp., $\<false>$, only if the element is present, resp., absent from the set.
 
 \end{example}
@@ -120,7 +120,7 @@ returns $\<true>$, resp., $\<false>$, only if the element is present, resp., abs
 \begin{example}[Atomic register]
 
 The basis of an atomic register is characterized by the formula $\<Register>$ in Figure~\ref{fig:examples_formulas},
-which states that the matching function maps read operations to write operations ($\<Match>_{\<mset>}(\<read>,\<write>)$), 
+which states that the matching function maps read operations to write operations ($\<Match>_1(\<read>,\<write>)$), 
 for every read there exists a preceding matching write ($\<Read>$),
 for every read $x_r$ preceded by a non-matching write $x_w$ there exists a preceding matching write $y_w$
 which occurs after $x_w$ ($\<ReadFrom>$). In this case the matching function is not necessarily injective
@@ -131,7 +131,7 @@ since two read operations may return the value written by the same write operati
 \begin{example}[Synchronization objects]
 
 The formula $\<Lock>$ in Figure~\ref{fig:examples_formulas} describing the basis of a lock object
-states that the matching function maps unlock operations to lock operations ($\<Match>(\<unlock>,\<lock>)$)
+states that the matching function maps unlock operations to lock operations ($\<Match>_3(\<unlock>,\<lock>)$)
 and that there are no two successive $\<lock>$ operations. The basis of a semaphore of fixed capacity $\capacity$
 is characterized by the formula $\<Semaphore>$ in Figure~\ref{fig:examples_formulas}. It states that 
 $\<release>$ operations are matched with $\<acquire>$ operations and that every sequence

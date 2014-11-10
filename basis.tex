@@ -6,20 +6,6 @@
 In this work, we consider the problem of checking refinement with respect to libraries $L$ for which $\ker L$ is defined.
 The histories of executions in $\ker L$ are $H(\ker L)=\set{H(e) : e\in \ker L}$.
 
-A \emph{prefix} of a history $h=\tup{O,<,f}$ is a history $h'=\tup{O',<',f'}$, that contains a subset of the operations in $h$,
-i.e., $O'\subseteq O$, $<'=<|_{O'}$, and $f'=f|_{O'}$, and that is downward closed w.r.t. $<$, i.e., $o\in O'$ and $o'<o$ implies $o'\in O'$.
-
-\begin{example}
-
-Prefix of a history.
-
-\end{example}
-
-\begin{lemma}\label{lemma:kernel_histories_prefix}
-
-Let $L$ be a library for which $\ker L$ is defined. The set of histories $H(\ker L)$ is prefix-closed.
-
-\end{lemma}
 
 Given a history $h=\tup{O,<,f}$, a set of operations $O'\subseteq O$ is called a \emph{matching cluster}
 iff $O'$ consists of a single negative operation $o$ and all positive operations $o'$ with $\<Matching>(o,o')$.
