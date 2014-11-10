@@ -28,17 +28,19 @@ it is weaker than a history $h'$ in a basis of $L$, or equivalently, weaker than
 $h'$ satisfying $\psi$.
 When $h$ is a complete history, the fact that any stronger history contains exactly the same set of 
 operations~\footnote{More precisely, there exists a bijection between the set of operations in $h$ and respectively $h'$.}
-enables the construction of a formula  $\mathit{Stronger}(h)$ characterizing all the histories
+enables the construction of a formula  $\mathit{Stronger}_c(h)$ characterizing all the histories
 stronger than $h$. This formula conjuncted with $\psi$ describes all the histories stronger than $h$
-that satisfy $\psi$. Therefore, the satisfiability of $\mathit{Stronger}(h)\land \psi$ is
+that satisfy $\psi$. Therefore, the satisfiability of $\mathit{Stronger}_c(h)\land \psi$ is
 equivalent to $h\in H(L)$. 
-When the history $h$ contains pending operations, a stronger history may contain
-less operations (pending operations of $h$ can be omitted in a stronger history). 
-Therefore, the formula $\mathit{Stronger}(h)$ uses a domain predicate $\<Ops>$
-defining the set of operations in the stronger history. The histories stronger
-than $h$ which satisfy $\psi$ are described by the formula $\mathit{Stronger}(h)\land \psi'$
-where $\psi'$ is obtained from $\psi$ by guarding the quantified variables to satisfy
-the domain predicate $\<Ops>$.
+When the history $h$ contains pending operations, a stronger history $h'$ may contain
+less operations (pending operations of $h$ can be omitted in $h'$)
+and some pending operations of $h$ may be completed in $h'$.  
+Therefore, the formula $\mathit{Stronger}_c(h)$ is enhanced with a domain predicate $\<ops>$
+defining the set of operations in the stronger history and the return values of the pending
+operations are left unconstrained. The conjunction between the obtained
+formula and the formula $\psi'$ obtained from $\psi$ by guarding the quantified variables to satisfy
+the domain predicate $\<ops>$ characterizes the histories stronger
+than $h$ which satisfy $\psi$.
 
 %$h\in H(L)$ is equivalent to the fact that $\mathit{Hist}(h)$ is consistent
 %with the formula $\psi$ where the quantifiers are guarded by a domain predicate representing the
@@ -83,12 +85,12 @@ iff there exists a bijection $g:O_2->O_1$ such that: %for every two operations $
 
 \end{lemma}
 
-Given a complete history $h=\tup{O,<,f}$, let $\mathit{Stronger}(h)$ be a formula that characterizes
+Given a complete history $h=\tup{O,<,f}$, let $\mathit{Stronger}_c(h)$ be a formula that characterizes
 the labels, the matching function, and the order of $h$ (the operation identifiers in $O$ are used as constants):
 \begin{align*}
-\mathit{Stronger}(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \<Distinct>(O) \\
-		    & \hspace{-10mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-1.3mm}\<b>(o,o')\land \bigwedge_{\<Matching>(h)(o,o')} \<match>(o,o') \\
-		    & \hspace{-10mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-7mm} \<meth>(o)=m\land \<arg>(o)=u\land \<ret>(o)=v 
+\mathit{Stronger}_c(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \<Distinct>(O) \\
+		    & \hspace{-13mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-2.3mm}\<b>(o,o')\land \bigwedge_{\<Matching>(h)(o,o')} \<match>(o,o') \\
+		    & \hspace{-13mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-8mm} \<meth>(o)=m\land \<arg>(o)=u\land \<ret>(o)=v 
 %		   \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-7mm} \<Val>(o,o') \\
 		   %\land \<PO>(<)
 \end{align*}
@@ -124,14 +126,14 @@ $.
 %\bigvee_{o\in O} G[x\mapsto o].
 %\]
 
-The following result states that $\mathit{Stronger}(h)$ characterizes precisely
+The following result states that $\mathit{Stronger}_c(h)$ characterizes precisely
 all the histories stronger than $h$. It is a direct consequence of Lemma~\ref{lemma:complete_history}.
 
 \begin{lemma}\label{lem:stronger_form_complete}
 
 Let $h$ be a complete history. Then, for every history $h'$,
 \begin{align*}
-h\preceq h'\text{ iff }h'\models \mathit{Stronger}(h).
+h\preceq h'\text{ iff }h'\models \mathit{Stronger}_c(h).
 \end{align*}
 
 \end{lemma}
@@ -143,7 +145,7 @@ reduction from history membership to first-order satisfiability.
 Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$.
 Then,
 \[
-h\in H(L)\mbox{ iff }\mathit{Stronger}(h)\land \psi\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff }\mathit{Stronger}_c(h)\land \psi\mbox{ is satisfiable.}
 \]
 \end{theorem}
 %\begin{proof}
@@ -163,9 +165,9 @@ h\in H(L)\mbox{ iff }\mathit{Stronger}(h)\land \psi\mbox{ is satisfiable.}
 
 Assuming that the formula $\psi$ doesn't contain function symbols on input and output values but only
 a fixed set of predicates, e.g., $=$ and $\leq$, which is the case for all the formulas in Figure~\ref{fig:examples_formulas}, 
-the satisfiability of $\mathit{Stronger}(h)\land \psi$ 
+the satisfiability of $\mathit{Stronger}_c(h)\land \psi$ 
 can be reduced to propositional satisfiability.
-This is based on the fact that $\mathit{Stronger}(h)$ fixes the domain of the operation-identifier variables 
+This is based on the fact that $\mathit{Stronger}_c(h)$ fixes the domain of the operation-identifier variables to $O$
 and every quantifier can be replaced by a finite conjunction/disjunction, e.g., every sub-formula $\exists x.\ A$ is replaced by 
 $
 \bigvee_{o\in O}\ A[x\mapsto o]
@@ -186,343 +188,104 @@ partial function.
 %when written in the prenex normal form have the quantifier prefix $\exists^*\forall^*$.
 %The formula $\varphi(h)\land \<Dom>(O)\land \psi'$ has no function symbols other than constants
 %and by removing the existential quantifiers, it has a quantifier prefix $\forall^*$.
-Therefore, one can construct a propositional formula $\mathit{Bool}(h,\psi)$, which
-is equi-satisfiable to $\mathit{Stronger}(h)\land \psi$. The construction of
-$\mathit{Bool}(h,\psi)$ can be done in polynomial time provided that the number of
+Therefore, one can construct a propositional formula $\mathit{Bool}_c(h,\psi)$, which
+is equi-satisfiable to $\mathit{Stronger}_c(h)\land \psi$. The construction of
+$\mathit{Bool}_c(h,\psi)$ can be done in polynomial time provided that the number of
 quantifiers in $\psi$ is fixed, which is the case for all the formulas in Figure~\ref{fig:examples_formulas}.
 
 
-\begin{corollary}\label{cor:satisfiability}
+\begin{corollary}\label{cor:satisfiability_complete}
 
 Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$. Then,
 \[
-h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}(h,\psi)\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}_c(h,\psi)\mbox{ is satisfiable.}
 \]
 
 \end{corollary}
 
 \subsection{Handling pending operations}\label{ssec:pending}
 
-%\subsection{History completions}
+%The pending operations of a history $h$ may be omitted in a history stronger than $h$.
+In the case of an arbitrary history $h$, the set of histories stronger than $h$ 
+can be characterized by a formula obtained from $\mathit{Stronger}_c(h)$
+by adding a domain predicate $\<ops>$
+that is constrained to contain all the completed operations of $h$
+and by omitting the constraints on the return values of pending operations.
+Moreover, every pending operation of $h$ whose return value is different from $\bot$
+in a model of this formula should satisfy $\<ops>$.
+It can be proved that every history stronger than $h$ corresponds to a 
+model of this formula, projected on the set of operations satisfying $\<ops>$.
 
-Since the basis of common reference implementations $L$ contains only complete histories,
-checking whether an arbitrary history $h$ (with pending operations) belongs to $H(L)$ can 
-be reduced to the complete history case. Essentially, one can enumerate all the possible ways 
-of completing or dropping pending operations of $h$ and check whether the obtained histories 
-are weaker than a history in the basis of $L$.
-%In general, this works if the kernel of $L$ is defined and it contains only executions with completed operations.
+Formally, let $\mathit{Stronger}(h)$ be the following formula:
+\begin{align*}
+\mathit{Stronger}(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \<Distinct>(O) \\
+		    & \hspace{-10mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-1.3mm}\<b>(o,o')\land \bigwedge_{\<Matching>(h)(o,o')} \<match>(o,o') \\
+		    & \hspace{-10mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-7mm} \<meth>(o)=m\land \<arg>(o)=u \\
+		    & \hspace{-10mm}\land \ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\\ v\neq\bot\end{array}} \<ret>(o)=v\land \<ops>(o) \\
+		    & \hspace{-10mm}\land \ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>\bot\end{array}} \<ret>(o)\neq\bot => \<ops>(o)
+\end{align*}
 
-\begin{definition}
+The models of $\mathit{Stronger}(h)$ are histories paired with an interpretation $D$ for the domain
+predicate $\<ops>$. Given such a model $\tup{h',D}$, let $h'_D$ be the history obtained from $h'$
+by removing all operations $o\not\in D$.
 
-A \emph{completion} of a history $h$ is a complete history $h'$ such that $h'$ is 
-minimal w.r.t. the weaker than relation $\preceq$ and $h\preceq h'$. 
+\begin{lemma}\label{lem:stronger_form_pending}
 
-\end{definition}
-
-%When $h'$ is a completion of $h$ we write $h\preceq_c h'$.
-
-\begin{example}
-
-Examples of completions.
-
-\end{example}
-
-%\begin{example}
-%
-%Show that the projection of a linearizable history over complete operations is not necessarily linearizable.
-%
-%\end{example}
-
-
-\begin{lemma}\label{lemma:pending_histories}
-
-Let $L$ be a library with a basis that contains only complete histories. Then, given a history $h$,
-\[
-h\in H(L)\mbox{ iff there exists a completion $h'$ of $h$ s.t. $h'\in H(L)$}
-\]
+For every history $h$,
+\begin{align*}
+\tup{h',D}\models \mathit{Stronger}(h)\mbox{ iff }h\preceq h'_D
+\end{align*}
 
 \end{lemma}
 
-\begin{proof}
+The predicate $\<ops>$ is also used to guard the domain of the quantifiers in 
+the formula $\psi$ defining a basis of the library $L$. For simplicity,
+we assume that $\psi$ is given in prenex normal form and that it has a quantifier prefix 
+of the form $\forall^*\exists^*$ (all the formulas in Figure~\ref{fig:examples_formulas} can 
+be written in such a form). Thus, given $\psi=\forall \vec{x}\ \exists \vec{x}'.\ F$, 
+let $\psi(\<ops>)$ be the formula:
+\begin{align*}
+\psi(\<ops>)\triangleq\forall \vec{x}\ \exists \vec{x}'.\ \bigwedge_{x\in\vec{x}}\ \<ops>(x) => \big(\bigwedge_{x'\in\vec{x}'}\ \<ops>(x') \land F\big)
+\end{align*}
+As usual, universal quantifiers are guarded using implication and existential quantifiers
+using conjunction.
 
-($=>$) Let $h=\tup{O,<,f}$ and $B$ a basis of $L$ that contains only complete histories. 
-By Lemma~\ref{lemma:kernel_histories}, $h\in H(L)$ implies that there exists 
-a complete history $h''=\tup{O'',<'',f''}$ such that $h''\in H(B)$ and $h\preceq h''$. 
-Then, there exists an injection $g:O''-> O$ 
-satisfying the properties in Definition~\ref{def:weaker_than}. We define $h'=\tup{O'',<',f''}$ 
-such that $o<' o'$ iff $g(o) < g(o')$. Clearly, $h'$ is a completion of $h$ and $h'\preceq h''$. 
-The latter implies $h'\in H(L)$, which finishes the proof.
 
-($\Leftarrow$) Since $h\preceq h'$, by Lemma~\ref{lemma:lib:downward_closed},
-$h'\in H(L)$ implies $h\in H(L)$.
-\end{proof}
 
-\begin{corollary}\label{cor:completions}
-Let $h$ be a history and $\psi$ a formula describing a basis of $L$ with only complete
-histories. Then,
+Lemmas~\ref{lemma:kernel_histories} and~\ref{lem:stronger_form_pending}
+together with the guarded quantification added to $\psi$ imply that 
+history membership can be reduced to first-order satisfiability.
+
+\begin{theorem}\label{th:satisfiability}
+Let $h$ be a history and $\psi=\forall \vec{x}\ \exists \vec{x}'.\ F$ a formula describing a basis of $L$.
+Then,
 \[
-\begin{array}{l}
-h\in H(L)\mbox{ iff there exists a completion $h'$ of $h$ s.t. }\\
-\hspace{5cm} \<ToBool>(h',\psi)\mbox{ is satisfiable.}
-\end{array}
+h\in H(L)\mbox{ iff }\mathit{Stronger}(h)\land \psi(\<ops>)\mbox{ is satisfiable.}
 \]
-\end{corollary}
+\end{theorem}
 
 
-
-\subsection{Approximating history membership}
-
-%Though we seek to develop an efficient monitor that can check whether a history with pending
-%operations is a refinement violation, 
-The result in Corollary~\ref{cor:completions} 
-leads to an exponential blow-up when checking history membership:
- the number of possible completions of a given history $h$
-is in general exponential in the number of operations in $h$. Therefore, we introduce
-a sound, but incomplete, decision procedure that avoids enumerating all completions of $h$.
-Essentially, this works by constructing a formula which soundly approximates the ``weaker than''
-relation between histories and the membership of a history to a basis.
-%is weaker than all the first-order formulas
-%corresponding to completions of $h$ via Theorem~\ref{th:satisfiability}. 
-Therefore, if this formula
-is unsatisfiable, then there exists no history stronger than $h$ which is included in the basis
-and $h\not\in H(L)$.
-
-\subsubsection{Prefix-closed history sets}
-
-The soundness of this approximation relies on a prefix-closure property of the basis. When the
-basis consists of sequential histories this property coincides with the standard prefix closure, i.e., any
-prefix of the sequence of operations in a history $h\in H(B)$ is also included in $H(B)$. When
-$H(B)$ contains non-sequential histories the prefix-closure property is more intricate since
-a poset may have multiple minimal prefixes that include a given set of elements (a prefix of a poset 
-$(P,<)$ is a poset $(P',<'$) with $P'\subseteq P$ and $P'$ closed under $<$).
-
-A \emph{prefix} of a history $h=\tup{O,<,f}$ is a history $h'=\tup{O',<',f'}$ over 
-a subset of operations of $h$, i.e., $O'\subseteq O$, $<'$ is the projection of $<$ over $O'\times O'$,
-and $f'$ is the projection of $f$ over $O'$, that is 
-closed under $<$, i.e., $o\in O'$ and $o'<o$ implies $o'\in O'$.
-Given a set of operations $O_1$ in $h$, the prefix $h'$ \emph{overlaps} with $O_1$ iff
-every operation in $h'$ is ordered before or overlaps with an operation in $O_1$, i.e.,
-for every $o'\in O'$ there exists $o\in O_1$ s.t. $\neg o < o'$.
-
-\begin{example}
-
-Prefix of a history.
-
-Multiple minimal prefixes that include a given set of operations.
-
-A prefix overlaps a set of operations
-
-\end{example}
-
-Given a history $h=\tup{O,<,f}$, let $O_c$ be the set of completed operations
-in $h$. An operation $o\in O$ is called \emph{obsolete} iff there exists no pending 
-operation $o'\in O$ which overlaps with $o$, i.e., for all $o'\in O$, $\neg o<o'$ and $\neg o'<o$ implies
-$o'\in O_c$. The set of obsolete operations in the history $h$ is denoted by $O_{ob}$.
-Note that every operation of a complete sequential history is obsolete.
-
-\begin{example}
-
-Obsolete operations
-
-\end{example}
-
-\begin{definition}\label{lemma:kernel_histories_prefix}
-
-A set of histories $H$ is \emph{prefix-closed} when for every history $h=\tup{O,<,f}\in H$
-and every set of obsolete operations $O'\subseteq O$, $H$ contains a prefix of $h$
-that includes $O'$ and overlaps with $O'$.
-
-\end{definition}
-
-Since every operation of a complete sequential history is obsolete, a set of complete
-sequential histories is prefix-closed whenever ...
-
-The following result follows from the fact that a library $L$ is a prefix-closed sets of executions.
-
-\begin{lemma}
-
-Let $L$ be a library with a prefix-closed basis that consists only of complete histories. 
-Then, $H(L)$ is prefix-closed.
-
-\end{lemma}
-
-
-
-\begin{lemma}\label{lemma:pref_obsolete}
-
-Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
-Let $h_1=\tup{O_1,<_1,f_1}\in H(L)$ and $Ob$ a set of obsolete operations in $h_1$. Then, there exists a 
-history $h_2=\tup{O_2,<_2,f_2}$ such that 
-
-\begin{itemize}
-
-	\item $h_2$ is a prefix of $h_1$ and $h_2\in H(L)$, 
-
-	\item $h_2$ includes all operations in $Ob$ and no operation ordered by $h_1$ after all operations in $Ob$, i.e.,
-	$Ob\subseteq O_2$ and for all $o\in O_2$ there exists $o'\in Ob$ such that $\neg o'<o$.
-	
-\end{itemize}
-
-\end{lemma}
-
-\begin{proof}
-
-Since $h_1\in H(L)$, there exists a completion $h_{1,c}$ and a kernel history $h_3\in H(\ker L)$ such that
-$h_1\preceq_c h_{1,c} \preceq h_3=\tup{O_3,<_3,f_3}$. Let $h_4=\tup{O_4,<_4,f_4}$ be a minimal prefix of $h_3$ that
-includes all operations in $Ob$. We define $O_2=O_4$, $<_2=<_1 |_{O_4}$, and $f_2=f_1 |_{O_4}$.
-
-Since $h_4$ is downward closed w.r.t. $<_3$ and any two operations in $O_4$ ordered by $<_1$ are 
-also ordered by $<_3$, it follows that $h_2$ is downward closed w.r.t. $<_1$. 
-%Every $o\in O_4$ is completed in $h_1$: 
-Therefore, $h_2$ is a prefix of $h_1$.
-
-Every operation $o\in O_4$ is completed in $h_1$: by definition, 
-$h_1$ orders every obsolete operation before every pending operation $o'$,
-and by the minimality of $h_4$, it follows that $O_4$ doesn't include pending operations
-of $h_1$. This implies that $f_1 |_{O_4}=f_4$ which is enough to conclude that 
-$h_2\preceq h_4$. By Lemma~\ref{lemma:kernel_histories_prefix}, $h_4\in H(\ker L)$ and consequently, 
-$h_2\in H(L)$.
-
-Assume by contradiction that $O_4$ includes an operation $o$ such that $o' <_1 o$ for each $o'\in Ob$.
-Since $h_1\preceq h_3$, we obtain that $o' <_3 o$ for each $o'\in Ob$, which contradicts the minimality of
-the prefix $h_4$.
-\end{proof}
-
-\subsubsection{Reduction to propositional SAT}
-
-Let $\varphi_c(h)$ be a formula describing the order constraints
-and the labels in $h$ but only for completed operations:
-\[
-\varphi_c(h)::= \bigwedge_{o\in O_c} f(o)\land \bigwedge_{o,o'\in O_c, o<o'} o< o'\land \<PO>(<)
-\]
 %The formula $\<PO>_c$ restricts the interpretation of the universally-quantified variables to
 %complete operations:
 %\<PO>_c(<)
 
-Moreover, given a formula $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$, where 
-$F$ is defined as in Figure~\ref{fig:logic}, we define the formula $\varphi_{ob}$ that
-restricts the interpretation of the universally quantified variables to obsolete operations
-and the interpretation of the existentially quantified variables to complete operations:
-\begin{align}
-\varphi_{ob}::=\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_c \land F\big).
-\end{align}
 
-%\exists \poker.\ \big( < \subseteq \hspace{-1mm}\poker 
-%    \land \<PO>(\poker)\land \forall \vec{x}\ \exists \vec{y}.\ F
-    
-Given a formula $\psi::=\exists\poker.\ \psi'$ as in Figure~\ref{fig:logic}, let $\psi'_{ob}$ be the formula
-obtained from $\psi'$ by replacing the sub-formula $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$
-with $\varphi_{ob}$.
+The satisfiability of the formula $\mathit{Stronger}(h)\land \psi(\<ops>)$ can be again 
+reduced to propositional satisfiability since the domain of the quantifiers is fixed to the set
+of operations in $h$. Let $\mathit{Bool}(h,\psi)$ be the boolean formula equi-satisfiable
+to $\mathit{Stronger}(h)\land \psi(\<ops>)$.
 
-\begin{theorem}\label{th:satisfiability_pending}
+\begin{corollary}\label{cor:satisfiability_pending}
 
-Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
-Also, let $\psi::=\exists\poker.\ \psi'$ be a formula as in Figure~\ref{fig:logic} describing the set of 
-complete histories $H_c(L)$. Then,
+Let $h$ be a history and $\psi$ a formula describing a basis of $L$. Then,
 \[
-h\in H(L)\mbox{ implies }\varphi_c(h)\land \psi'_{ob}\mbox{ is satisfiable.}
-\]
-
-\end{theorem}
-
-\begin{proof}
-
-Let $h=\tup{O,<,f}$. By Lemma~\ref{lemma:pending_histories}, there exists $h_1=\tup{O_1,<_1,f_1}$  %and~\ref{lemma:kernel_histories}
-a completion of $h$  such that %and $h'\in H(\ker L)$
-$h\preceq_c h_1$ and $h_1\in H(L)$. Also, by Theorem~\ref{th:satisfiability}, we get that
-\[
-\varphi(h_1)\land \<Dom>(O_1)\land \psi'\mbox{ is satisfiable}.
-\]
-
-We show that the following entailment holds
-\begin{align}\label{eq:entailment}
-\big(\varphi(h_1)\land \<Dom>(O_1)\land \psi'\big) => (\varphi_c(h)\land \psi'_{ob}),
-\end{align}
-which implies that the right-hand side of the entailment is also satisfiable.
-
-Let $\tup{h_2,\poker}$ be a model of the left-hand side formula. Since all
-the constraints in $\varphi_c(h)$ are included in $\varphi(h_1)$ (as a completion of $h$, 
-$h_1$ preserves the complete operations in $h$ with the same labeling and the same
-order constraints), $\tup{h_2,\poker}$ is a model of $\varphi_c(h)$. 
-
-Let $\varphi::=\forall \vec{x}\ \exists \vec{y}.\ F$ and
-$
-\psi'::=< \subseteq \hspace{-1mm}\poker 
-\land \<PO>(\poker)\land \varphi
-$. We prove that 
-\[
-\tup{h_2,\poker}\models \psi'_{ob}::=< \subseteq \hspace{-1mm}\poker 
-\land \<PO>(\poker)\land \varphi_{ob}.
-\]
-The first two conjuncts of $\psi'_{ob}$ are clearly satisfied by $\tup{h_2,\poker}$ since
-they are also included in $\psi'$.
-
-Since $h_2\in H(L)$, by Lemma~\ref{lemma:pref_obsolete}, there exists a prefix $h_3=(O_3,<_3,f_3)$
-of $h_2$ that includes all the obsolete operations of $h$ and no pending operation of $h$
-such that $h_3\in H(L)$. Therefore, there exists $\poker'$ such that $(O_3,\poker',f_3)$ is
-a prefix of $(O_2,\poker,f_2)$ and 
-\[
-\tup{h_3,\poker'}\models \varphi(h_3)\land \<Dom>(O_3)\land \psi',
-\]
-and in particular, $\tup{h_3,\poker'}\models \<Dom>(O_3)\land \varphi$. The latter
-implies that
-\[
-\tup{h_3,\poker'}\models 
-\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_3 => \big(\bigwedge_{y\in\vec{y}}\ y\in O_3 \land F\big).
-\]
-
-Let $O_{ob}$ be the set of obsolete operations of $h$. % and $O_c$ the set of complete operations of $h$. 
-Since $O_{ob}\subseteq O_3$, we get that 
-\[
-\tup{h_3,\poker'}\models 
-\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_3 \land F\big).
-\]
-Now, because $h_3$ is a prefix of $h_2$ and $(O_3,\poker',f_3)$ is a prefix of $(O_2,\poker,f_2)$, we get that
-\[
-\tup{h_2,\poker}\models 
-\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_3 \land F\big).
-\]
-
-Let $O_c$ be the set of complete operations of $h$. Since $O_3\subseteq O_c$, we get that
-\[
-\tup{h_2,\poker}\models 
-\forall \vec{x}\ \exists \vec{y}.\ \bigwedge_{x\in\vec{x}}\ x\in O_{ob} => \big(\bigwedge_{y\in\vec{y}}\ y\in O_c \land F\big).
-\]
-Therefore, $\tup{h_2,\poker}\models \varphi_{ob}$, which concludes the proof.
-\end{proof}
-
-\begin{example}
-
-The reverse of this theorem doesn't hold.
-
-\end{example}
-
-The satisfiability of the formula $\varphi_c(h)\land \psi'_{ob}$ can be reduced to propositional satisfiability
-as it was the case for the formula in Theorem~\ref{th:satisfiability}. Again, the interpretation domain
-of the existentially-quantified variables is fixed, and the existential quantifiers can be replaced with
-finite disjunctions. The obtained formula falls also in the EPR fragment of first-order logic and there
-exists a boolean formula $\<ToBool>_{ob}(h,\psi)$, which is equi-satisfiable to $\varphi_c(h)\land \psi'_{ob}$.
-
-\begin{corollary}\label{cor:satisfiability}
-
-Let $L$ be a library such that $\ker L$ is defined and the operations of any execution in $\ker L$ are completed.
-Also, let $\psi::=\exists\poker.\ \psi'$ be a formula as in Figure~\ref{fig:logic} describing the set of 
-complete histories $H_c(L)$. Then,
-\[
-h\in H(L)\mbox{ implies }\<ToBool>_{ob}(h,\psi)\mbox{ is satisfiable.}
+h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}(h,\psi)\mbox{ is satisfiable.}
 \]
 \end{corollary}
 
-\begin{example}
 
-Show that the reduction in Theorem 2 is incomplete. A history with pending operations which is not linearizable but
-the formula is satisfiable. 
 
-One hopes that the history is extensible, that all pending operations become completed and then, detect the violation.
-
-\end{example}
-
-\subsection{Removing Matching Clusters}\label{ssec:removal}
+\section{Removing Matching Clusters}\label{ssec:removal}
 
 The following result shows that removing a matching cluster from a history 
 $h\in H(L)$ results in a history that also belongs to $H(L)$, 
