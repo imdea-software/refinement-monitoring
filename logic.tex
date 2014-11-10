@@ -41,14 +41,16 @@ an operation.
 &\hspace{5cm}=> \exists y_w.\ \<match>(x_r,y_w)\land \<b>(x_w,y_w)\land \<b>(y_w,x_r) \\ %\land \<ret>(x_r)=\<arg>(y_w)
 \<Register> & \triangleq \<Sequential>\land \<Match>_1(\<read>,\<write>)\land \<Read>\land \<ReadFrom> \\[2mm]
 \<Match>_3(\<unlock>,\<lock>) & \triangleq \forall x_u,x_l.\ \<match>(x_u,x_l) => (\<meth>(x_u)=\<unlock>\land \<meth>(x_l)=\<lock>) \\ %\land \<ret>(x_1)=\<arg>(x_2)
-\<Lock> & \triangleq \<Sequential>\land \<Match>_3(\<unlock>,\<lock>)\land \<Injective> \land\forall x_l,x_l'.\ (\<meth>(x_l)=\<lock>\land \<meth>(x_l')=\<lock>\land \<b>(x_l,x_l'))\\
-&\hspace{9cm}=> \exists y.\ \<b>(x_l,y)\land \<b>(y,x_l') \\[2mm]
-\<Semaphore> & \triangleq \<Sequential>\land \<Match>_3(\<release>,\<acquire>)\land \<Injective>\land \forall x_0,\dots,x_\capacity.\ 
+\<Total>(\<unlock>)& \triangleq \forall x_u.\ \<meth>(x_u)=\<unlock> => \exists y_l.\ \<match>(x_u,y_l)\land \<b>(y_l,x_u) \\ %\land \<ret>(x_r)=\<arg>(y_a)
+\<NoSuccLocks>& \triangleq \forall x_l,x_l'.\ (\<meth>(x_l)=\<lock>\land \<meth>(x_l')=\<lock>\land \<b>(x_l,x_l')) => \exists y.\ \<b>(x_l,y)\land \<b>(y,x_l') \\
+\<Lock> & \triangleq \<Sequential>\land \<Match>_3(\<unlock>,\<lock>)\land \<Injective> \land\<Total>(\<unlock>)\land \<NoSuccLocks>  \\[2mm]
+\<TooManyAcq> & \triangleq \forall x_0,\dots,x_\capacity.\ 
   \big(\bigwedge_{0 \leq i < \capacity} \<b>(x_i,x_\capacity) \land
-  \bigwedge_{0 \leq i \leq \capacity} \<meth>(x_i)=\<acquire> \big) \\
-   &\hspace{9cm} =>
+  \bigwedge_{0 \leq i \leq \capacity} \<meth>(x_i)=\<acquire> \big) 
+	 =>
    \exists y.\ y \poker x_\capacity \land 
     \bigvee_{0 \leq i \leq \capacity} \<match>(y,x_i) \\
+\<Semaphore> & \triangleq \<Sequential>\land \<Match>_3(\<release>,\<acquire>)\land \<Injective>\land \<Total>(\<release>)\land \<TooManyAcq> \\[2mm]
 \<Exchanger> & \triangleq \big(\forall x.\ \<ret>(x)\neq \bot\big) \land \big(\forall x_1,x_2.\ \<match>(x_1,x_2) => \neg \<b>(x_1,x_2)\land \neg \<b>(x_2,x_1)\big)  \\
 				& \land \big(\forall x,x_1,x_2.\ \neg (\<match>(x_1,x) \land \<match>(x_2,x))\big)
 				\land\ \big(\forall x.\ \<ret>(x) \neq \<null> =>  \exists y.\ \<match>(y,x) \vee \<match>(x,y)\big) \\
@@ -131,11 +133,12 @@ since two read operations may return the value written by the same write operati
 \begin{example}[Synchronization objects]
 
 The formula $\<Lock>$ in Figure~\ref{fig:examples_formulas} describing the basis of a lock object
-states that the matching function maps unlock operations to lock operations ($\<Match>_3(\<unlock>,\<lock>)$)
-and that there are no two successive $\<lock>$ operations. The basis of a semaphore of fixed capacity $\capacity$
+states that the matching function maps unlock operations to lock operations ($\<Match>_3(\<unlock>,\<lock>)$),
+that every unlock operation is mapped to a lock operation ($\<Total>$), 
+and that there are no two successive $\<lock>$ operations ($\<NoSuccLocks>$). The basis of a semaphore of fixed capacity $\capacity$
 is characterized by the formula $\<Semaphore>$ in Figure~\ref{fig:examples_formulas}. It states that 
 $\<release>$ operations are matched with $\<acquire>$ operations and that every sequence
-of $c+1$ $\<acquire>$ operations is interrupted by at least one $\<release>$ operation.
+of $c+1$ $\<acquire>$ operations is interrupted by at least one $\<release>$ operation ($\<TooManyAcq>$).
 
 \end{example}
 
