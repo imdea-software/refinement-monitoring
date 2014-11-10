@@ -20,7 +20,7 @@
 
   % pop(-)
   \node[lnode] (x5)  [right = 3mm of x4] {};
-  \node[nnode] (x6)  [right= 30mm of x5] {}; 
+  \node[nnode] (x6)  [right= 50mm of x5] {}; 
   \draw[opline] (x5) -- node[draw=none,above] {$\<pop>=>\bot$} (x6); 
 
   % push(2)
@@ -44,7 +44,7 @@
   \draw[opline] (t1) -- node[draw=none,above] {$\<push>(4)$} (t2); 
 
   % dotted barrier
-  \node[nnode] (b1)  [right = 2mm of x6,yshift = 3mm] {};
+  \node[nnode] (b1)  [right = 2mm of t2,yshift = 25mm] {};
   \node[nnode] (b2)  [right=  2mm of t2,yshift = -3mm] {}; 
   \node[nnode] (b3)  [above=  2mm of b1] {$h$}; 
   \draw[dotted] (b1) -- (b2); 
