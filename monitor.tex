@@ -211,8 +211,9 @@ can be characterized by a formula obtained from $\mathit{Stronger}_c(h)$
 by adding a domain predicate $\<ops>$
 that is constrained to contain all the completed operations of $h$
 and by omitting the constraints on the return values of pending operations.
-Moreover, every pending operation of $h$ whose return value is different from $\bot$
-in a model of this formula should satisfy $\<ops>$.
+Moreover, every operation of $h$ whose return value is different from $\bot$
+in a model of this formula (this may be an operation which is pending in $h$) 
+should satisfy $\<ops>$.
 It can be proved that every history stronger than $h$ corresponds to a 
 model of this formula, projected on the set of operations satisfying $\<ops>$.
 
@@ -222,7 +223,7 @@ Formally, let $\mathit{Stronger}(h)$ be the following formula:
 		    & \hspace{-10mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-1.3mm}\<b>(o,o')\land \bigwedge_{\<Matching>(h)(o,o')} \<match>(o,o') \\
 		    & \hspace{-10mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-7mm} \<meth>(o)=m\land \<arg>(o)=u \\
 		    & \hspace{-10mm}\land \ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\\ v\neq\bot\end{array}} \<ret>(o)=v\land \<ops>(o) \\
-		    & \hspace{-10mm}\land \ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>\bot\end{array}} \<ret>(o)\neq\bot => \<ops>(o)
+		    & \hspace{-10mm}\land \ \forall x.\ \<ret>(x)\neq\bot => \<ops>(x) %\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>\bot\end{array}} \<ret>(o)\neq\bot => \<ops>(o)
 \end{align*}
 
 The models of $\mathit{Stronger}(h)$ are histories paired with an interpretation $D$ for the domain
