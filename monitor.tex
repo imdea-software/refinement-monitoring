@@ -301,8 +301,9 @@ from the history of the atomic register pictured in Figure~\ref{fig:removal_even
 results in a history which is not anymore admitted by this object. To identify the
 removable operations that preserve history membership we rely on the matching function.
 
-A \emph{match} of a history $h$ is a completed operation $o$ together with a maximal non-empty 
-set of completed operations mapped by $\<Matching>(h)$ to $o$. Formally, a match of a 
+A \emph{match} of a history $h$ is a completed operation $o$ together with the maximal 
+set of operations mapped by $\<Matching>(h)$ to $o$. Also, a match must include
+only completed operations and at least one operation mapped to $o$. Formally, a match of a 
 history $h=\tup{O,<,f}$ is a set of operations $m=o\cup \<Matching>^{-1}(h)(o)$ such 
 that $o\in O$, $\<Matching>^{-1}(h)(o)\neq \emptyset$, and all the operations in $m$
 are completed.
@@ -315,7 +316,8 @@ Example of a match.
 
 A set of histories $H$ is \emph{match-removal closed} iff for every history $h\in H$
 and every match $m$ of $h$, $H$ contains the history obtained from $h$ by deleting the 
-operations in $m$.
+operations in $m$. The history obtained from another history $h$ by deleting a set
+of operations $O$ is denoted by $h\setminus O$.
 
 The bases of all the reference implementations described in Figure~\ref{fig:examples_formulas} are 
 match-removal closed. For instance, consider a sequential history in the basis of an atomic queue
@@ -364,48 +366,97 @@ the history $h_1$ obtained from $h$ by deleting the operations in $m$
 is weaker than $h_1'$ which implies $h_1\in H(L)$.
 \end{proof}
 
-\section{Efficient runtime monitoring}
+While the statement of Theorem~\ref{th:match_closure} implies that a history
+$h\setminus m$, where $m$ is a match of $h$, belongs to $H(L)$ whenever $h\in H(L)$,
+Example~\ref{ex:complete_removal} shows that the reverse is not true. 
+%Consequently, 
+%a monitor that eagerly removes all matching clusters from the history it tracks 
+%may miss some violations.
 
-We describe a monitor for detecting refinement violations, which is based on the logical characterizations
-introduced in Section~\ref{sec:logic}. Essentially, it records the history of the monitored execution 
-and continuously checks whether it is included in the set of histories $H(L)$ of a library $L$, using
-the formula $\psi$ describing $H(L)$. When the tracked history $h$ is complete, it can simply check whether
-$h$ satisfies $\psi$. This satisfaction problem can be reduced to propositional satisfiability as we show in Section~\ref{ssec:complete}.
-When $h$ contains pending operations, the membership test is more intricate since $\psi$ describes only complete histories.
-In this case, we rely on the assumption that the operations of any execution in $\ker L$ are completed.
-The membership test performed by the monitor, described in Section~\ref{ssec:pending}, 
-is again based on a reduction to propositional satisfiability. However, in this case, it is sound, i.e., any reported
-violation is real, but incomplete, i.e.,
-there may exist refinement violations which are missed by the monitor.
-Furthermore, in order to reduce space/time consumption, the monitor is allowed to forget completed 
-operations. More precisely, we show in Section~\ref{ssec:removal} that forgetting matching clusters is sound  
-provided that the kernel is $\<Matching>$-closed.
+\begin{figure}
+
+\input figures/complete_removal
+
+\caption{A history that is not admitted by the atomic stack.}
+\label{fig:complete_removal}
+
+\end{figure}
+
+\begin{example}\label{ex:complete_removal}
+
+Figure~\ref{fig:complete_removal} pictures a history which is not admitted by the atomic stack:
+since the element $3$ was pushed after $2$, $\<pop>=>3$ should not have started after 
+$\<pop>=>2$ has finished.
+%and $h'$, the latter being an
+%extension of the former. 
+The history obtained by removing the 
+match $\{{\tt push}(2),{\tt pop}=>2\}$ is however admitted by the atomic stack.
+
+\end{example}
+
+When continuously checking membership to a reference implementation 
+on a history that keeps extending with new operations, 
+one must ensure that forgetting matches doesn't lead to spurious violations
+at later times. Therefore, in the continuation of Theorem~\ref{th:match_closure},
+one must prove that a match of  
+a history $h$ is a match of any extension of $h$.
+This result holds when the matching function of all histories in the library is injective,
+which is true for all the reference implementations in Section~\ref{sec:logic}
+except for the atomic sets and registers. 
+
+A history $h_2$ \emph{extends} a history $h_1$, written $h_1 |> h_2$, iff $h_i$ is the history of an execution $e_i$, $i\in\{1,2\}$,
+and $e_1$ is a prefix of $e_2$.
+
+\begin{lemma}\label{lem:match_extension}
+
+Let $L$ be a library s.t. $\<Matching>(h)$ is injective for all $h\in H(L)$.
+For every two histories $h_1, h_2\in H(L)$ s.t. $h_1 |> h_2$,
+if $m$ is a match of $h_1$ then $m$ is also a match of $h_2$.
+
+\end{lemma}
+
+When the matching function is not injective, 
+a match $m$ of a history $h_1$ could be strictly included in a 
+match of an extension $h_2$ which implies that $m$ is not a match of $h_2$. 
+
+\begin{figure}
+
+\input figures/removal_even_saturation
+
+\caption{Two histories $h_1$ and $h_2$ of the atomic register, where $h_2$ is an extension of $h_1$.}
+\label{fig:removal_even_saturation}
+
+\end{figure}
+
+\begin{example}\label{ex:removal_even_saturation}
+
+Figure~\ref{fig:removal_even_saturation} pictures two histories $h_1$ and $h_2$ of the atomic
+register, the latter being an extension of the former. 
+The match $\{\<write>(1),\<read>=>1\}$ of $h_1$
+is strictly included in the match $\{\<write>(1),\<read>=>1,\<read>=>1\}$ of $h_2$. 
+Removing the match of $h_1$ and extending it with the $\<read>=>1$ operation
+results in a spurious violation.
+
+\end{example}
 
 
-When continuously checking membership on a history that keeps extending 
-with new operations, forgetting matches from the history would provide
-an important efficiency gain. Theorem~\ref{th:match_closure} alone doesn't guarantee
-that by forgetting operations, we cannot derive a violation at later times  although
-the tracked history is always admitted by the library we are interested in.
 
-doesn't prove completely the soundness of this 
 
-One must prove prefix closure
+Lemma~\ref{lem:match_extension} and Theorem~\ref{th:match_closure} imply
+that match removal is sound even 
 
-This holds for injective matching functions
+\begin{corollary}
 
-\begin{theorem}
+Let $L$ be a library with a match-removal closed basis
+s.t. $\<Matching>(h)$ is injective for all $h\in H(L)$.
+Then, for every two histories $h_1, h_2\in H(L)$ s.t. $h_1 |> h_2$ and
+$m$ a match of $h_1$, 
+$h_2\setminus m$ is a history of $L$.
 
-Let $L$ be a library with a closed basis.
-Let $h$ be a history of $L$ and $h'\leq_{pref} h$. If $\<Matching>(h)$ is injective for all $h$,
-then for every match $m$ of $h$, $h\setminus m$ is a history of $L$.
-
-\end{theorem}
+\end{corollary}
 
 
 
-When $\<Matching>(h)$ is not injective, e.g., for histories of a register and set, the problem is
-that ...
 
 Removing operations not in the matching relation, e.g. $\<pop>=>\<empty>$.
 
@@ -413,93 +464,13 @@ Removing operations not in the matching relation, e.g. $\<pop>=>\<empty>$.
 
 
 
-
-Given a history $h=\tup{O,<,f}$, a set of operations $O'\subseteq O$ is called a \emph{matching cluster}
-iff $O'$ consists of a single negative operation $o$ and all positive operations $o'$ with $\<Matching>(o,o')$.
-A set of histories $H$ is closed under matching cluster removal iff $H$ contains all the histories
-obtained by removing a matching cluster from another history in $H$. 
-%We say that 
-%a library $L$ is \emph{$\<Matching>$-closed} iff the set of kernel histories is closed under 
-%matching cluster removal. 
-Formally, given a history $h=\tup{O,<,f}$ and $O'\subseteq O$, 
-\[
-h\setminus O'=\tup{O\setminus O',<',f'},
-\] 
-where $<'=<|_{O\setminus O'}$, and $f'=f|_{O\setminus O'}$.
-
-\begin{definition}
-
-A set of histories $H$ is \emph{closed under matching cluster removal} 
-(for short, $\<Matching>$-closed)
-iff for every matching cluster $O'$ of a history $h\in H$,
-the history $h\setminus O'$ also belongs to $H$.
-
-\end{definition}
-
-\begin{example}
-
-Show that all objects we know satisfy this property.
-
-\end{example}
-
-
-The following result shows that removing a matching cluster from a history 
-$h\in H(L)$ results in a history that also belongs to $H(L)$, 
-provided that the same closure property holds for the set of kernel histories 
-$H(\ker L)$.
-
-
-\begin{theorem}\label{th:removing_matching}
-
-Let $L$ be a library for which $\ker L$ is defined. If $H(\ker L)$ is $\<Matching>$-closed, 
-then $H(L)$ is also $\<Matching>$-closed.
-
-\end{theorem}
-
-\begin{proof}
-
-Let $h$ be a history of $H(L)$. 
-By Lemmas~\ref{lemma:kernel_histories} and~\ref{lemma:pending_histories}, 
-there exists a completion $h_{c}$ and a kernel history $h'\in H(\ker L)$ such that
-$h\preceq_c h_{c} \preceq h'$. Also, let $O_1$ be a matching cluster of $h$.
-Since all the operations in $O_1$ are completed, they are included in $h'$ with the
-same labeling. By hypothesis, $H(\ker L)$ is $\<Matching>$-closed and therefore, 
-$h'\setminus O_1\in H(\ker L)$. By the definition of $\preceq$, it follows that
-$h_{c}\setminus O_1\preceq h'\setminus O_1$ and since the operations in $O_1$
-are completed, we get that $h\setminus O_1\preceq h_{c}\setminus O_1$. Consequently,
-$h\setminus O_1\in H(L)$.
-\end{proof}
-
 Theorem~\ref{th:removing_matching} provides soundness guarantees for   
 a monitor that instead of checking whether the tracked history belongs to $H(L)$,
 checks whether a smaller history, obtained from $h$ by removing all matching clusters,
 belongs to $H(L)$. In order to define a monitor that is allowed to remove
 the matching clusters from the tracked history, either the matching relation $\<Matching>$
 is injective or one needs to impose supplementary
-conditions on the removed clusters. When the matching function is not injective, 
-a matching cluster of a history $h$ could be strictly included in a 
-matching cluster of an extension of $h$. Therefore, removing it, may make the 
-extension of the history without the matching cluster a spurious violation.
-
-\begin{figure}
-
-\input figures/removal_even_saturation
-
-\caption{Removing the matching cluster $\{{\tt write}(1),{\tt read}=>1\}$ formed of obsolete operations.}
-\label{fig:removal_even_saturation}
-
-\end{figure}
-
-\begin{example}\label{ex:removal_even_saturation}
-
-Figure~\ref{fig:removal_even_saturation} pictures two histories $h$ and $h'$, the latter being an
-extension of the former. Note that the matching cluster $\{\<write>(1),\<read>=>1\}$ of $h$
-is strictly included in the cluster $\{\<write>(1),\<read>=>1,\<read>=>(1)\}$ of $h'$. 
-Removing the cluster of $h$ and extending it with the $\<read>=>(1)$ operation
-results in a spurious violation.
-
-\end{example}
-
+conditions on the removed clusters. 
 \begin{definition}
 
 A matching cluster $O$ of a history $h$ is called \emph{obsolete} iff 
@@ -524,31 +495,8 @@ of $h'$, which strictly includes an obsolete matching cluster of $h$.
 
 \end{lemma}
 
-\begin{figure}
 
-\input figures/complete_removal
 
-\caption{Removing the matching cluster $\{{\tt push}(2),{\tt pop}=>2\}$ formed of complete but not obsolete operations.}
-\label{fig:complete_removal}
-
-\end{figure}
-
-While the statement of Theorem~\ref{th:removing_matching} implies that a history
-$h\setminus O$, where $O$ is a matching cluster in $h$, belongs to $H(L)$ whenever $h\in H(L)$,
-Example~\ref{ex:complete_removal} shows that the reverse is not true. Consequently, 
-a monitor that eagerly removes all matching clusters from the history it tracks 
-may miss some violations.
-
-\begin{example}\label{ex:complete_removal}
-
-Figure~\ref{fig:complete_removal} pictures two histories $h$ and $h'$, the latter being an
-extension of the former. The history obtained by removing the 
-matching cluster $\{{\tt push}(2),{\tt pop}=>2\}$ from $h'$ belongs to $H(L_{stacks})$ while
-$h'\not\in H(L_{stacks})$. Therefore, a monitor that removes all 
-matching clusters when reading $h$, will miss the violation $h'$. Note that $h$ is not
-a violation since $h\in H(L_{stacks})$.
-
-\end{example}
 
 One way to avoid the incompleteness exhibited by Example~\ref{ex:complete_removal}
 is to remove a matching cluster only if it consists of obsolete operations.

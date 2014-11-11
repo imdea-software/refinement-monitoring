@@ -26,7 +26,7 @@
   % dotted barrier
   \node[nnode] (b1)  [right = 3mm of x6,yshift = 3mm] {};
   \node[nnode] (b2)  [right=  3mm of x6,yshift = -3mm] {}; 
-  \node[nnode] (b3)  [above=  2mm of b1] {$h$}; 
+  \node[nnode] (b3)  [above=  2mm of b1] {$h_1$}; 
   \draw[dotted] (b1) -- (b2); %node[draw=none,above] {$\<push>(4)$} 
 
   % read(1)
@@ -37,7 +37,7 @@
   % dotted barrier
   \node[nnode] (bb1)  [right = 15mm of b1] {};
   \node[nnode] (bb2)  [right=  15mm of b2] {}; 
-  \node[nnode] (bb3)  [above=  2mm of bb1] {$h'$}; 
+  \node[nnode] (bb3)  [above=  2mm of bb1] {$h_2$}; 
   \draw[dotted] (bb1) -- (bb2); %node[draw=none,above] {$\<push>(4)$} 
 
   
