@@ -301,9 +301,9 @@ from the history of the atomic register pictured in Figure~\ref{fig:removal_even
 results in a history which is not anymore admitted by this object. To identify the
 removable operations that preserve history membership we rely on the matching function.
 
-A \emph{match} of a history $h$ is a completed operation $o$ together with the maximal 
-set of operations mapped by $\<Matching>(h)$ to $o$. Also, a match must include
-only completed operations and at least one operation mapped to $o$. Formally, a match of a 
+A \emph{match} of a history $h$ is an operation $o$ together with the maximal 
+set of operations mapped by $\<Matching>(h)$ to $o$. Moreover, a match consists only of 
+completed operations and at least one operation mapped to $o$. Formally, a match of a 
 history $h=\tup{O,<,f}$ is a set of operations $m=o\cup \<Matching>^{-1}(h)(o)$ such 
 that $o\in O$, $\<Matching>^{-1}(h)(o)\neq \emptyset$, and all the operations in $m$
 are completed.
