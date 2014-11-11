@@ -397,11 +397,19 @@ match $\{{\tt push}(2),{\tt pop}=>2\}$ is however admitted by the atomic stack.
 When continuously checking membership to a reference implementation 
 on a history that keeps extending with new operations, 
 one must ensure that forgetting matches doesn't lead to spurious violations
-at later times. Therefore, in the continuation of Theorem~\ref{th:match_closure},
-one must prove that a match of  
-a history $h$ is a match of any extension of $h$.
-This result holds when the matching function of all histories in the library is injective,
-which is true for all the reference implementations in Section~\ref{sec:logic}
+at later times. In the continuation of Theorem~\ref{th:match_closure},
+one should also prove that a match of  
+a history $h$ is a match of every extension of $h$. In general, it can happen
+is that a match of $h$ is strictly included in a match of an extension
+and therefore, not a match of the extension.
+
+
+Otherwise, removing a match before extending a history is equivalent to
+removing a set of operations which is not a match from the extended history
+(therefore, Theorem~\ref{th:match_closure} doesn't apply).
+This result holds when the matching function of all histories in the library is injective
+because every match has exactly two operations. All 
+the reference implementations in Section~\ref{sec:logic} fall into this case 
 except for the atomic sets and registers. 
 
 A history $h_2$ \emph{extends} a history $h_1$, written $h_1 |> h_2$, iff $h_i$ is the history of an execution $e_i$, $i\in\{1,2\}$,
@@ -439,6 +447,7 @@ results in a spurious violation.
 
 \end{example}
 
+When the matching function is not injective
 
 
 
