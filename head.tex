@@ -82,6 +82,17 @@
 
   \begin{abstract}
 
+    Efficient implementations of concurrent objects such as semaphores, locks,
+    and atomic collections are essential to modern computing. Yet programming
+    such objects is error prone: in minimizing the synchronization overhead
+    between concurrent object invocations, one risks the conformance to
+    reference implementations --- or in formal terms, one risks violating
+    \emph{observational refinement}. Testing this refinement even within a
+    single execution is intractable, limiting existing approaches to executions
+    with very few object invocations.
+
+    We develop \ldots TODO FILL IN THE REST ACCORDING TO README.md
+    
   \end{abstract}
 
   \input intro
@@ -89,13 +100,12 @@
   \input logic
   \input propositional
   \input obsolete
-  \input basis
+  \input basis % TO BE DELETED
   \input empirical
   \input matching
   \input related
   
   \bibliographystyle{abbrvnat}
-%  \bibliographystyle{plain}%abbrvnat
   \bibliography{violin-short}
 
 \end{document}

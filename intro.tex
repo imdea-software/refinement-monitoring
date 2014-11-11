@@ -3,4 +3,18 @@
 \section{Introduction}
 \label{sec:intro}
 
-TODO WRITE THE INTRO
+Efficient implementations of concurrent objects such as semaphores, locks, and
+atomic collections including stacks and queues are vital to modern computer
+systems. Programming them is however error prone. To minimize synchronization
+overhead between concurrent object-method invocations, implementors avoid
+blocking operations like lock acquisition, allowing methods to execute
+concurrently. However, concurrency risks unintended inter-operation
+interference, and risks conformance to reference implementations. Conformance
+is formally captured by \emph{observational refinement}: given two libraries
+$L_1$ and $L_2$ implementing the methods of some concurrent object, we say
+$L_1$ \emph{refines} $L_2$ if and only if every computation of every program
+using $L_1$ would also be possible were $L_2$ used instead.
+
+Verifying observational refinement is intrinsically hard, \ldots
+
+SEE README.md TO FILL IN THE REST
