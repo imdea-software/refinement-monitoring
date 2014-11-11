@@ -30,6 +30,8 @@ What do we demonstrate?
 
 2. Our tricks are empirically complete, or close
 
+3. Our approach is extremely scalable
+
 What is the outline of our approach?
 -----------------------------------------
 
