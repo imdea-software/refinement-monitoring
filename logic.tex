@@ -3,15 +3,13 @@
 \section{Refinement via Logical Reasoning}
 \label{sec:logic}
 
-TODO THIS SECTION MAY NEED ANOTHER PASS
-
 In this section we represent the kernels of typical concurrent objects,
 including atomic collections and locks, in a simple first-order language. To
 simplify, and avoid having to determine, e.g.,~which operation removes the
 instance of a value added by another, we suppose that objects come equipped
 with a \emph{matching function} $M$ mapping each history $h = \tup{O,<,f}$ to a
 partial function $M_h : O /-> O$ over its operations. Intuitively, $M_h$ maps
-operations $o$ which ``remove'' values to the operations $M_h(o)$ which added
+operations $o$ which ``remove'' or ``test the presence'' of values to the operations $M_h(o)$ which added
 them. For instance, the matching function $M_h$ for a history of the atomic
 stack object is injective, and maps each $(\<pop> => v_1)$-operation $o$ to a
 $\<push>(v_2)$-operation $M_h(o)$ such that $v_1 = v_2$ when $M_h(o)$ is
@@ -31,7 +29,7 @@ history, and a given object's matching function. We use the function symbols
 symbols {\sf match} and {\sf b}-efore for this purpose. Note that we interpret
 the predicate ${\sf match}(x_1,x_2)$ by $o_1 = M_h(o_2)$ when each $x_i$ binds
 to $o_i$. We represent the kernel $H$ of each of the following objects by a
-first-order formula $@Y_H$ such that $h \in H$ if{f} $h, M_h |= @Y_H$, where
+first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M_h |= \textsc{Theory}(H)$, where
 the satisfaction relation $\_, \_ |= \_$ is defined as usual, using the
 aforementioned interpretations.
 
@@ -39,11 +37,23 @@ aforementioned interpretations.
   \footnotesize
   \begin{align*}
     & \textsc{Atomic} \\
+    & \forall x.\ \neg {\sf b}(x,x)\land \forall x_1,x_2,x_3.\ ({\sf b}(x_1,x_2) /| {\sf b}(x_2,x_3)) => {\sf b}(x_1,x_3) \\
     & \forall x_1,x_2.\ 
-      {\sf b}(x_1,x_2) \oplus {\sf b}(x_2,x_1) /| \forall x.\ {\sf ret}(x) \neq \bot
+      {\sf b}(x_1,x_2) \oplus {\sf b}(x_2,x_1) /| \forall x.\ {\sf ret}(x) \neq \bot 
+    \\
+    & \textsc{Completed} \\
+    & \forall x.\ \neg {\sf b}(x,x)\land \forall x_1,x_2,x_3.\ ({\sf b}(x_1,x_2) /| {\sf b}(x_2,x_3)) => {\sf b}(x_1,x_3) \\
+    & \forall x.\ {\sf ret}(x) \neq \bot
     \\
     & \textsc{Injective} \\
     & \forall x, y_1, y_2.\ {\sf match}(x, y_1) /| {\sf match}(x, y_2) => y_1 = y_2
+    \\
+    & \textsc{Injective}(X) \\
+    & \forall x, y_1, y_2.\ {\sf match}(x, y_1) /| {\sf match}(x, y_2) /| {\sf meth}(y_1)={\sf meth}(y_2)=X \\
+    &\quad => x_1 = x_2
+    \\
+    & \textsc{Symmetric} \\
+    & \forall x_1,x_2.\ {\sf match}(x_1,x_2) \Leftrightarrow {\sf match}(x_2,x_1)
     \\
     & \textsc{Total}(Y) \\
     & \forall y.\ {\sf meth}(y) = Y => \exists x.\ {\sf match}(x,y) /| {\sf b}(x,y)
@@ -52,31 +62,31 @@ aforementioned interpretations.
     & \forall x, y.\ {\sf match}(x,y) => 
         {\sf meth}(x) = X /| {\sf meth}(y) = Y /| {\sf arg}(x) = {\sf ret}(y)
     \\
-    & \textsc{Match2}(X,Y) \\
+    & \textsc{Match2}(X,Y_1,Y_2) \\
     & \forall x, y.\ {\sf match}(x,y) => 
-      {\sf meth}(x) = X /| {\sf meth}(y) = Y /| {\sf arg}(x) = {\sf arg}(y)
+      {\sf meth}(x) = X /| ({\sf meth}(y) = Y_1 \vee {\sf meth}(y) = Y_2) \\
+      & \hspace{2.6cm}/| {\sf arg}(x) = {\sf arg}(y)
     \\
     & \textsc{Match3}(X,Y) \\
       & \forall x, y.\ 
         {\sf match}(x,y) => {\sf meth}(x) = X /| {\sf meth}(y) = Y
   \end{align*}
-  \caption{Generic formul\ae used across many objects.}
+  \caption{Generic formul\ae used across many objects ($\oplus$ denotes exclusive or).}
   \label{fig:formulas:common}
 \end{figure}
 
 \begin{example}[Atomic collections]
 
-  Prior work~\cite{conf/tacas/AbdullaHHJR13, conf/concur/HenzingerSV13}
-  represents atomic queue objects by the conjunction of properties stating:
+  The kernel of atomic queue objects is represented by the conjunction of properties stating:
   \begin{itemize}
 
-    \item remove operations return distinct\footnote{Appealing to our
-    aforementioned use of matching functions, we assume each value is added to
-    an atomic collection at most once.} values ({\sc UniqRem}),
+%    \item remove operations return distinct\footnote{Appealing to our
+%    aforementioned use of matching functions, we assume each value is added to
+%    an atomic collection at most once.} values ({\sc UniqRem}),
 
     \item values are added before they are removed ({\sc AddRem}),
 
-    \item values are added in the order removed ({\sc Fifo}), and
+    \item values are removed in the order they are added ({\sc Fifo}), and
 
     \item remove operations returning empty are not surrounded by matching adds
     and removes ({\sc Empty}).
@@ -84,33 +94,34 @@ aforementioned interpretations.
   \end{itemize}
   We thus represent the kernel $H_{\sf q}$ of atomic queues by
   \begin{align*}
-    \textsc{Atomic} /| \textsc{UniqRem} /| \textsc{AddRem}
+    \textsc{Atomic}  /| \textsc{AddRem}
       /| \textsc{Fifo} /| \textsc{Empty}
   \end{align*}
   Similarly, we represent the kernel $H_{\sf pq}$ of priority queues by
   \begin{align*}
-    \textsc{Atomic} /| \textsc{UniqRem} /| \textsc{AddRem}
+    \textsc{Atomic} /| \textsc{AddRem}
       /| \textsc{Max} /| \textsc{Empty}
   \end{align*}
   and the kernel $H_{\sf st}$ of atomic stacks by
   \begin{align*}
-    \textsc{Atomic} /| \textsc{UniqRem} /| \textsc{AddRem}
+    \textsc{Atomic} /| \textsc{AddRem}
       /| \textsc{Lifo} /| \textsc{Empty}
   \end{align*}
   Additionally, we enforce the sanity of the underlying matching function by
-  adding the formul\ae $\textsc{Injective}$ and $\textsc{Match1}({\sf add},{\sf
-  rem})$, ensuring removes are matched to adds adding the removed value.
+  adding the formul\ae $\textsc{Match1}({\sf add},{\sf
+  rem})$ and $\textsc{Injective}$, ensuring removes are matched to adds adding 
+  the removed value and that every two removes are matched to different adds.
 
 \end{example}
 
 \begin{figure}
   \footnotesize
   \begin{align*}
-    & \textsc{UniqRem} \\
-      & \forall r_1, r_2.\
-        {\sf meth}(r_1) = {\sf meth}(r_2) = {\sf rem} /|
-        {\sf ret}(r_1) = {\sf ret}(r_2) => r_1 = r_2
-    \\
+%    & \textsc{UniqRem} \\
+%      & \forall r_1, r_2.\
+%        {\sf meth}(r_1) = {\sf meth}(r_2) = {\sf rem} /|
+%        {\sf ret}(r_1) = {\sf ret}(r_2) => r_1 = r_2
+%    \\
     & \textsc{AddRem} \\
     & \forall r.\ {\sf meth}(r) = {\sf rem} /| {\sf ret}(r) \neq {\sf empty} =>
       \exists a.\ {\sf match}(a,r) /| {\sf b}(a,r)
@@ -165,32 +176,28 @@ aforementioned interpretations.
   Unlike the atomic queues and stacks which behave as \emph{multisets} and
   return removed values, the atomic set's {\sf remove} method takes as an
   argument a value to be removed, and succeeds whether or not the value is
-  present. The formul\ae {\sc Include*} and {\sc Exclude} specify when a {\sf
+  present. The formul\ae {\sc Include} and {\sc Exclude} specify when a {\sf
   contains}-operation may return {\sf true}. We represent the kernel $H_{\sf s}$
   of atomic sets by  
   \begin{align*}
     \textsc{Atomic} /| \textsc{Include} /| \textsc{Exclude}
   \end{align*}
   Additionally, we enforce the sanity of the underlying matching function by
-  adding the formul\ae $\textsc{Injective}$ and $\textsc{Match2}({\sf add},{\sf
-  rem})$, ensuring removes are matched to adds adding the removed value.
+  adding the formul\ae: $\textsc{Match2}({\sf add},{\sf
+  remove},{\sf contains})$ ensuring removes and contains returning true
+  are matched to adds adding the same value, $\textsc{Injective}({\sf remove})$ 
+  ensuring that every two removes are matched to different adds,
+  $\textsc{AddRem}$ ensuring that the matching function maps removes to preceding
+  adds, and 
+  $\textsc{MatchingAdd}$ (resp., $\textsc{MatchingRem}$) ensuring that every add matched to a remove
+  (resp., every remove matched to an add) is the first in a sequence of adds adding 
+  (resp., removes removing) the same value.
 
 \end{example}
 
 \begin{figure}
   \footnotesize
   \begin{align*}
-    & \textsc{MatchingAdd} \\
-    & \forall a,rc,p.\ {\sf match}(rc,a) /| {\sf arg}(p) = {\sf arg}(a) \\
-    & \quad /| \forall q.\ {\sf b}(q,p) \vee {\sf b}(a,q) \vee {\sf arg}(q)\neq {\sf arg}(a) \\
-    & \quad => {\sf meth}(p)={\sf remove} \vee ({\sf meth}(p)={\sf contains} /| {\sf ret}(p) = {\sf false}) 
-    \\
-    & \textsc{MatchingRem} \\
-    & \forall a,r.\ {\sf match}(r,a) /| {\sf meth}(r) = {\sf remove}  => {\sf meth}(a)={\sf add} /| {\sf b}(a,r) \\
-    & \forall a,r,p.\ {\sf match}(r,a) /| {\sf arg}(p) = {\sf arg}(r) /| {\sf meth}(r)={\sf remove}\\
-    & \quad /| \forall q.\ {\sf b}(q,p) \vee {\sf b}(r,q) \vee {\sf arg}(q)\neq {\sf arg}(r) \\
-    & \quad => {\sf meth}(p)={\sf add} \vee ({\sf meth}(p)={\sf contains} /| {\sf ret}(p) = {\sf true}) 
-    \\   
     & \textsc{Include} \\
     & \forall c.\ {\sf meth}(c) = {\sf contains} /| {\sf ret}(c) = {\sf true} \\
     & \quad => \exists a.\ {\sf match}(c,a) /| {\sf b}(a,c) \\
@@ -202,6 +209,19 @@ aforementioned interpretations.
     & \forall c,a.\ {\sf meth}(c)={\sf contains} /| {\sf ret}(c) = {\sf false} \\
     & \quad /| {\sf meth}(a) = {\sf add}/| {\sf arg}(c) = {\sf arg}(a) /| {\sf b}(a,c) \\
     & \quad => \exists r.\ {\sf meth}(r)={\sf remove} /| {\sf match}(r,a) /| {\sf b}(r,c)
+    \\
+    & \textsc{AddRem} \\
+    & \forall a,r.\ {\sf match}(a,r) /| {\sf meth}(r) = {\sf remove}  => {\sf meth}(a)={\sf add} /| {\sf b}(a,r) 
+    \\
+    & \textsc{MatchingAdd} \\
+    & \forall a,x,p.\ {\sf match}(a,x) /| {\sf arg}(p) = {\sf arg}(a) \\
+    & \quad /| \forall q.\ {\sf b}(q,p) \vee {\sf b}(a,q) \vee {\sf arg}(q)\neq {\sf arg}(a) \\
+    & \quad => {\sf meth}(p)={\sf remove} \vee ({\sf meth}(p)={\sf contains} /| {\sf ret}(p) = {\sf false}) 
+    \\
+    & \textsc{MatchingRem} \\
+    & \forall a,r,p.\ {\sf match}(r,a) /| {\sf arg}(p) = {\sf arg}(r) /| {\sf meth}(r)={\sf remove}\\
+    & \quad /| \forall q.\ {\sf b}(q,p) \vee {\sf b}(r,q) \vee {\sf arg}(q)\neq {\sf arg}(r) \\
+    & \quad => {\sf meth}(p)={\sf add} \vee ({\sf meth}(p)={\sf contains} /| {\sf ret}(p) = {\sf true}) 
   \end{align*}
   \caption{Formul\ae for set objects.}
   \label{fig:formulas:set}
@@ -254,7 +274,27 @@ aforementioned interpretations.
   \end{align*}
   and enforce coherent matching by adding the fomrul\ae 
   $\textsc{Match3}({\sf acquire},{\sf release})$ and $\textsc{Injective}$.
-
+  
+  Exchanger objects are used to pair up threads so they can atomically swap
+  values. The only method of this object is ${\sf exchange}$ which receives as
+  input a value $v$ that a thread it offers to swap and returns a value $v'\neq
+  {\sf null}$ if it has paired up with an ${\sf exchange}(v')$ operation. The latter
+  operation will return the value $v$. We represent the kernel of exchanger
+  objects by
+  \begin{align*}
+     \textsc{Completed} /| \textsc{Exchange}
+  \end{align*}
+  The kernel of this object contains non-sequential histories
+  because the time spans of $\<exchange>$
+  operations that pair up overlap.
+  Additionally, we enforce the sanity of the underlying matching function by
+  adding the formul\ae: $\textsc{Match1}({\sf exchange},{\sf
+  exchange})$, $\textsc{Injective}$, and $\textsc{Symmetric}$
+  ensuring that the matching function is injective and symmetric and that it
+  associates operations returning a value $v$ to operations that receive $v$
+  as input, and $\textsc{MatchOverlap}$ ensuring that matched operations
+  overlap in time.
+  
 \end{example}
 
 \begin{figure}
@@ -269,36 +309,13 @@ aforementioned interpretations.
     & \quad=> \exists r.\ {\sf b}(r,x_n) /| \bigvee_{0 \leq i \leq n} {\sf match}(y,x_i)
     \\
     & \textsc{Exchange} \\
-    & \forall x.\ {\sf ret}(x)\neq \bot \\
-    & \forall x_1,x_2.\ {\sf match}(x_1,x_2) => \neg {\sf b}(x_1,x_2) /| \neg {\sf b}(x_2,x_1) \\
-    & \textsc{Injective} \\
-		& \forall x_1,x_2.\ {\sf match}(x_1,x_2) \Leftrightarrow {\sf match}(x_2,x_1) \\
-		& \forall x.\ {\sf ret}(x) \neq {\sf null} =>  \exists y.\ {\sf match}(x,y)  \\
-		& \forall x,y.\ {\sf match}(x,y) => {\sf ret}(x) = {\sf arg}(y)
+    & \forall x.\ {\sf ret}(x) \neq {\sf null} =>  \exists y.\ {\sf match}(x,y)  \\
+    & \textsc{MatchOverlap} \\
+    & \forall x_1,x_2.\ {\sf match}(x_1,x_2) => \neg {\sf b}(x_1,x_2) /| \neg {\sf b}(x_2,x_1) 
   \end{align*}
   \caption{Formul\ae for synchronization objects.}
   \label{fig:formulas:synchronization}
 \end{figure}
-
-\begin{example}[Exchanger]
-
-  TODO REVIEW THE FOLLOWING
-
-  Exchanger objects are used to pair up threads so they can atomically swap
-  values. The only method of this object is $\<exchange>$ which receives as
-  input a value $v$ that a thread it offers to swap and returns a value $v'\neq
-  {\sf null}$ if it has paired up with an $\<exchange>(v')$ operation. The latter
-  operation will return the value $v$. Since the time spans of $\<exchange>$
-  operations that pair up overlap in time, the basis of this object contains
-  complete histories which are not necessarily sequential. They are described
-  by the formula $\<Exchanger>$ in Figure~\ref{fig:examples_formulas} which
-  states that the matching function defines a one to one correspondence between
-  overlapping $\<exchange>$ operations, that every operation returning a value
-  different from ${\sf null}$ must match another operation, and that every two
-  matched operations must return the argument of their counterpart.
-
-\end{example}
-
 
 
 %The following result follows easily from definitions.
