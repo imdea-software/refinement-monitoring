@@ -21,7 +21,9 @@ used to characterize library kernels.
 Recall that a history $h\in \overline{H}$ iff there exists a history $h'$ stronger than $h$
 and a matching function $M : O /-> O$ such that $h',M\models \textsc{Theory}(H)$.
 We assume in the following that for every history $h$, 
-the matching function $M : O /-> O$ is unique and effectively computable.
+the matching function $M : O /-> O$ is unique and that it is defined by the 
+operation labels in $h$, i.e., there exists a function $\<Matching>:\<Labels>/-> \<Labels>$
+such that $M(o)=o'$ iff $\<Matching>(f(o))=f(o')$.
 The matching function associated to some history $h$ is denoted by $M_h$.
 We give some examples of how to construct histories of  
 standard libraries with unique matching functions. 
@@ -77,17 +79,23 @@ tag of the \<acquire> which had the slot.
 \subsection{Closure under removing matched operations}
 
 A \emph{match} of a history $h$ is an operation $o$ together with the maximal 
-set of operations mapped by $\<Matching>(h)$ to $o$. 
+set of operations mapped by $M_h$ to $o$. 
 Moreover, a match consists only of 
 completed operations and at least one operation mapped to $o$. Formally, a match of a 
-history $h=\tup{O,<,f}$ is a set of operations $m=o\cup \<Matching>^{-1}(h)(o)$ such 
-that $o\in O$, $\<Matching>^{-1}(h)(o)\neq \emptyset$, and all the operations in $m$
-are completed. The positive operation $o$ of a match $m=o\cup \<Matching>^{-1}(h)(o)$ 
+history $h=\tup{O,<,f}$ is a set of operations $m=o\cup M^{-1}_h(o)$ such 
+that $o\in O$, $M^{-1}_h(o)\neq \emptyset$, and all the operations in $m$
+are completed. The operation $o$ of a match $m=o\cup M^{-1}_h(o)$ 
 is denoted by $+(m)$.
 
 \begin{example}
 
-Example of a match.
+Let $h$ be the history in Figure~\ref{fig:complete_removal}
+such that the matching function $M_h$ maps every
+$\<pop>=>i$ operation to the $\<push>(i)$ operation.
+The matches of $h$ are $m_1=\{\<add>(1),\<rem>=>1\}$, $m_2=\{\<add>(2),\<rem>=>2\}$,
+and $m_3=\{\<add>(3),\<rem>=>3\}$. Since every operation has a different label, 
+we abuse the notation and write matches as sets of operation labels.
+Then, $+(m_i)=\<add>(i)$, for each $i$.
 
 \end{example}
 
@@ -96,19 +104,18 @@ and every match $m$ of $h$, $H$ contains the history obtained from $h$ by deleti
 operations in $m$. The history obtained from another history $h$ by deleting a set
 of operations $O$ is denoted by $h\setminus O$.
 
-The bases of all the reference implementations described in Figure~\ref{fig:examples_formulas} are 
-match-removal closed. For instance, consider a sequential history in the basis of an atomic queue
-$\sigma_1\cdot \<add>(1)\cdot\sigma_2\cdot \<rem>=>1\cdot\sigma_3$ 
-(the history is written as a sequence of operation labels) such that the matching function 
-maps the $\<rem>=>1$ operation to the $\<add>(1)$ operation. 
-These two operations form a match
-because the matching function for queue histories is injective (there is only one
-operation mapped to $\<add>(1)$).
-The history $\sigma_1\cdot \sigma_2\cdot \sigma_3$ obtained by removing the match 
-is also a valid sequential queue history: the order between the remaining adds and 
-removes is not affected by this removal.
-
-\fbox{Need a general explanation for this closure}
+The kernels of all the reference implementations described in Section~\ref{sec:logic} are 
+match-removal closed. For instance, consider a sequential history $h$ in the basis of an atomic queue
+and a match $m=\{\<add>(1),\<rem>=>1\}$. 
+%$\sigma_1\cdot \<add>(1)\cdot\sigma_2\cdot \<rem>=>1\cdot\sigma_3$ 
+%(the history is written as a sequence of operation labels) such that the matching function 
+%maps the $\<rem>=>1$ operation to the $\<add>(1)$ operation. 
+%These two operations form a match
+%because the matching function for queue histories is injective (there is only one
+%operation mapped to $\<add>(1)$).
+The history obtained from $h$ by removing the match $m$
+is also a valid sequential queue history because essentially, the remaining values are still removed 
+in the order in which they are added. 
 
 %\begin{theorem}
 %
@@ -117,34 +124,36 @@ removes is not affected by this removal.
 %
 %\end{theorem}
 
-The match-removal closure property extends from a basis to the entire library.
+The match-removal closure property extends from a kernel $H$ to the entire library $\overline{H}$.
 Therefore, if by deleting matches from a history we get a history which is not admitted
-by a library $L$ then the initial history is also not admitted by $L$.
+by a library $\overline{H}$ then the initial history is also not admitted by $\overline{H}$.
 
 \begin{theorem}\label{th:match_closure}
 
-If a basis of a library $L$ is match-removal closed, then $H(L)$ is also match-removal closed.
+If $H$ is match-removal closed, then $\overline{H}$ is also match-removal closed.
 
 \end{theorem}
 
 \begin{proof}
 
-Let $H(B)$ be a basis of $L$, $h$ a history in $H(L)$, and $m$
-a match of $h$.
-By Lemma~\ref{lemma:kernel_histories}, %and~\ref{lemma:pending_histories}, 
-there exists a history $h'\in H(B)$ such that $h\preceq h'$. 
-Since all the operations in $m$ are completed, they are included in $h'$ with the
-same labeling. Moreover, the matching function projected over completed
-operations is preserved from $h$ to $h'$. 
-By hypothesis, $H(B)$ is match-removal closed which implies 
+%Let $H(B)$ be a basis of $L$, $h$ a history in $H(L)$, and $m$
+%a match of $h$.
+Let $h\in \overline{H}$ and $m$ a match of $h$.
+By definition, %and~\ref{lemma:pending_histories}, 
+there exists a history $h'\in H$ such that $h\preceq h'$. 
+%Since all the operations in $m$ are completed, they are included in $h'$ with the
+%same labeling. Moreover, 
+By the assumptions on the matching functions, 
+$m$ is also a match of $h'$.
+By hypothesis, $H$ is match-removal closed which implies 
 that the history $h''$ obtained from $h'$ by deleting the operations in $m$ 
-is also in $H(B)$. From the definition of $\preceq$ it follows that
+is also in $H$. From the definition of $\preceq$ it follows that
 the history $h\setminus m$ 
-is weaker than $h''$ which implies $h_1\in H(L)$.
+is weaker than $h''$ which implies $h\setminus m\in \overline{H}$.
 \end{proof}
 
 While the statement of Theorem~\ref{th:match_closure} implies that a history
-$h\setminus m$, where $m$ is a match of $h$, belongs to $H(L)$ whenever $h\in H(L)$,
+$h\setminus m$, where $m$ is a match of $h$, belongs to $\overline{H}$ whenever $h\in \overline{H}$,
 Example~\ref{ex:complete_removal} shows that the reverse is not true. 
 %Consequently, 
 %a monitor that eagerly removes all matching clusters from the history it tracks 
@@ -154,7 +163,11 @@ Example~\ref{ex:complete_removal} shows that the reverse is not true.
 
 \input figures/complete_removal
 
-\caption{A history that is not admitted by the atomic stack.}
+\caption{A history that is not admitted by the atomic stack. Each operation is represented
+by an horizontal line segment. The line segment of an operation ending before
+the line segment of another operation means that the two operations are ordered
+(reading from left to right).
+}
 \label{fig:complete_removal}
 
 \end{figure}
@@ -163,10 +176,8 @@ Example~\ref{ex:complete_removal} shows that the reverse is not true.
 
 Figure~\ref{fig:complete_removal} pictures a history which is not admitted by the atomic stack:
 since the element $3$ was pushed after $2$, $\<pop>=>3$ should not have started after 
-$\<pop>=>2$ has finished. We assume here that the matching function maps every
-$\<pop>=>v$ operation with $v\neq\bot$ to a $\<push>(v)$ operation
-(otherwise, this history is not admitted by the atomic stack just because the
-matching function is not defined accordingly).
+$\<pop>=>2$ has finished. The matching function $M_h$ maps every
+$\<pop>=>i$ operation to the $\<push>(i)$ operation..
 %and $h'$, the latter being an
 %extension of the former. 
 The history obtained by removing the 
@@ -192,13 +203,26 @@ because every match has exactly two operations. All
 the reference implementations in Section~\ref{sec:logic} fall into this case 
 except for the atomic sets and registers. 
 
-A history $h_2$ \emph{extends} a history $h_1$, written $h_1 |> h_2$, iff $h_i$ is the history of an execution $e_i$, $i\in\{1,2\}$,
-and $e_1$ is a prefix of $e_2$.
+A history $h_2$ \emph{extends} a history $h_1$ if intuitively it is the history of an 
+execution that extends the execution represented by $h_1$. Formally, 
+$h_2=\tup{O_2,<_2,f_2}$ \emph{extends} $h_1=\tup{O_1,<_1,f_1}$, 
+written $h_1 |> h_2$, iff 
+\begin{itemize}
+
+	\item $O_1\subseteq O_2$, 
+	
+	\item $f_1(o) \ll f_2(o)$ for each $o \in O_1$,
+	
+	\item $o_1 <_1 o_2$ iff $o_1 <_2 o_2$ for each $o_1,o_2\in O_1$, and
+	
+	\item $o_1 <_2 o_2$ for each $o_1\in O_1$ and $o_2\in O_2\setminus O_1$.
+
+\end{itemize}
 
 \begin{lemma}\label{lem:match_extension1}
 
-Let $L$ be a library s.t. $\<Matching>(h)$ is injective for all $h\in H(L)$.
-For every two histories $h_1, h_2\in H(L)$ s.t. $h_1 |> h_2$,
+Let $\overline{H}$ be a library s.t. $M_h$ is injective for all $h\in \overline{H}$.
+For every two histories $h_1, h_2\in \overline{H}$ s.t. $h_1 |> h_2$,
 if $m$ is a match of $h_1$ then $m$ is also a match of $h_2$.
 
 \end{lemma}
@@ -222,8 +246,8 @@ hold when the matching function is not injective.
 Figure~\ref{fig:removal_even_saturation} pictures two histories $h_1$ and $h_2$ of the atomic
 register, the latter being an extension of the former. 
 We assume that the matching function maps every
-$\<read>=>v$ operation with $v\neq\bot$ to a $\<write>(v)$ operation
-(otherwise, the histories would not admitted by the atomic register).
+$\<read>=>i$ operation to the $\<write>(i)$ operation.
+%(otherwise, the histories would not admitted by the atomic register).
 The match $\{\<write>(1),\<read>=>1\}$ of $h_1$
 is strictly included in the match $\{\<write>(1),\<read>=>1,\<read>=>1\}$ of $h_2$,
 and therefore not a match of $h_2$.
@@ -234,7 +258,7 @@ results in a spurious violation.
 \end{example}
 
 For libraries with non-injective matching functions, we define additional conditions
-to be satisfied by their basis and by a match $m$ of a history $h$ such that
+to be satisfied by their kernel and by a match $m$ of a history $h$ such that
 $m$ is a match of every extension of $h$. 
 
 Let $R$ be a relation on operation
@@ -243,56 +267,62 @@ and $m_2$ of $h$ such that $R(+(m_1),+(m_2))$, each operation of $m_1$
 is ordered before each operation of $m_2$.
 
 Consider the atomic register and the relation $R_{reg}$ which holds for every two labels of two write operations.
-Then, any history from its basis (which by definition is sequential) is $R$-ordered
-because for every read operation $o$, the closest preceding write operation is the one 
-to which $o$ is mapped by the matching function.
-Similarly, one can show that any history from the basis of the atomic set is $R_{set}$-ordered,
+Then, any history from its kernel (which by definition is sequential) is $R$-ordered
+because every read operation is mapped by the matching function
+to the closest preceding write operation.
+Similarly, one can show that any history from the kernel of the atomic set is $R_{set}$-ordered,
 where $R_{set}$ holds for every two labels $\<add>(x)$ and $\<add>(y)$ with $x=y$.
 
 A set of histories $H$ is $R$-ordered iff every history in $H$ is $R$-ordered.
-Let $L$ be a library with an $R$-ordered basis. 
-A match $m$ of a history $h\in H(L)$ is \emph{overwritten} by 
+Let $\overline{H}$ be a library such that $H$ is $R$-ordered. 
+A match $m$ of a history $h\in \overline{H}$ is \emph{overwritten} by 
 another match $m'$ of $h$ iff 
-the labels of the positive operations of $m$ and $m'$ are related by $R$, 
+the labels of $+(m)$ and $+(m')$ are related by $R$, 
 $+(m)$ finishes before $+(m')$, and every operation 
-overlapping with the positive operation of $m'$ is completed. 
+overlapping with $+(m')$ is completed. 
 
 \begin{example}
 
-Example of overwritten.
+Given the histories $h_1$ and $h_2$ in Figure~\ref{fig:removal_even_saturation}, 
+the match $\{\<write>(0),\<read>=>0,\<read>=>0\}$ is overwritten by the
+match $\{\<write>(1),\<read>=>1,\<read>=>1\}$ in $h_2$ but not in $h_1$ since
+a $\<read>=>0$ operation is pending in $h_1$.
 
 \end{example}
 
-Given a match $m$ overwritten by another match $m'$ in a history $h\in H(L)$, every new completed operation $o$ 
+Given a match $m$ overwritten by another match $m'$ in a history $h\in \overline{H}$, 
+every new completed operation $o$ 
 from an extension $h'$ of $h$ cannot be matched to $+(m)$, therefore $m$ is also a match of $h'$. 
 Otherwise, since all the operations overlapping with 
-$+(m')$ are completed in $h$, $o$ starts after $+(m')$ and the
-basis of $L$ would contain a history where the operations $+(m)$, $+(m')$, $o$ occur in this order. 
-Therefore, the basis of $L$ is not $R$-ordered. 
+$+(m')$ are completed in $h$, $o$ starts after $+(m')$ and $H$
+would contain a history where the operations $+(m)$, $+(m')$, $o$ occur in this order. 
+Therefore, $H$ is not $R$-ordered. 
 
 \begin{lemma}\label{lem:match_extension2}
 
-Let $L$ be a library with an $R$-ordered basis.
-For every two histories $h_1, h_2\in H(L)$ s.t. $h_1 |> h_2$,
+Let $H$ be an $R$-ordered history set.
+For every two histories $h_1, h_2\in  \overline{H}$ s.t. $h_1 |> h_2$,
 if $m$ is a match of $h_1$ overwritten by another match $m'$ of $h_1$, then $m$ is also a match of $h_2$.
 
 \end{lemma}
 
-A match $m$ of a history $h\in H(L)$ is called \emph{obsolete} if (1) it is simply a
-match when the matching function of every history $h\in H(L)$
-is injective or (2) it is overwritten by another match of $h$, when the basis of $L$
+A match $m$ of a history $h\in  \overline{H}$ is called \emph{obsolete} if (1) it is simply a
+match when the matching function of every history $h\in \overline{H}$
+is injective or (2) it is overwritten by another match of $h$, when $H$
 is $R$-ordered.
 Lemmas~\ref{lem:match_extension1} and~\ref{lem:match_extension2},  and 
 Theorem~\ref{th:match_closure} imply the following.
 
 \begin{corollary}
 
-Let $L$ be a library with a match-removal closed basis $B$ s.t.
-$\<Matching>(h)$ is injective for all $h\in H(L)$ or $B$ is $R$-ordered,
+Let $H$ be a match-removal closed history set 
+%$L$ be a library with a match-removal closed basis $B$ 
+s.t.
+$M_h$ is injective for all $h\in \overline{H}$ or $H$ is $R$-ordered,
 for some $R$.
-Then, for every two histories $h_1, h_2\in H(L)$ s.t. $h_1 |> h_2$ and
+For every two histories $h_1, h_2\in \overline{H}$ s.t. $h_1 |> h_2$ and
 $m$ an obsolete match of $h_1$, 
-$h_2\setminus m$ is a history of $L$.
+$h_2\setminus m$ is a history of $\overline{H}$.
 
 \end{corollary}
 

@@ -18,6 +18,16 @@
   \node[lnode] (x4)  [right=6mm of x3] {}; 
   \draw[opline] (x3) -- node[draw=none,above] {$\<write>(1)$} (x4); 
 
+  % read(0)
+  \node[lnode] (x3p)  [below=of x3, xshift=3mm] {};
+  \node[lnode] (x3pp)  [right=6mm of x3p] {}; 
+  \draw[opline] (x3p) -- node[draw=none,above] {$\<read>=>0$} (x3pp); 
+
+  % read(0)
+  \node[lnode] (y3p)  [below=of x3p, xshift=-2mm] {};
+  \node[lnode] (y3pp)  [right=30mm of y3p] {}; 
+  \draw[opline] (y3p) -- node[draw=none,above] {$\<read>=>0$} (y3pp); 
+
   % read(1)
   \node[lnode] (x5)  [right=7mm of x4] {};
   \node[lnode] (x6)  [right=6mm of x5] {}; 
@@ -25,7 +35,7 @@
 
   % dotted barrier
   \node[nnode] (b1)  [right = 3mm of x6,yshift = 3mm] {};
-  \node[nnode] (b2)  [right=  3mm of x6,yshift = -3mm] {}; 
+  \node[nnode] (b2)  [right=  3mm of x6,yshift = -13mm] {}; 
   \node[nnode] (b3)  [above=  2mm of b1] {$h_1$}; 
   \draw[dotted] (b1) -- (b2); %node[draw=none,above] {$\<push>(4)$} 
 
