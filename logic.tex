@@ -180,17 +180,28 @@ aforementioned interpretations.
 \begin{figure}
   \footnotesize
   \begin{align*}
+    & \textsc{MatchingAdd} \\
+    & \forall a,rc,p.\ {\sf match}(rc,a) /| {\sf arg}(p) = {\sf arg}(a) \\
+    & \quad /| \forall q.\ {\sf b}(q,p) \vee {\sf b}(a,q) \vee {\sf arg}(q)\neq {\sf arg}(a) \\
+    & \quad => {\sf meth}(p)={\sf remove} \vee ({\sf meth}(p)={\sf contains} /| {\sf ret}(p) = {\sf false}) 
+    \\
+    & \textsc{MatchingRem} \\
+    & \forall a,r.\ {\sf match}(r,a) /| {\sf meth}(r) = {\sf remove}  => {\sf meth}(a)={\sf add} /| {\sf b}(a,r) \\
+    & \forall a,r,p.\ {\sf match}(r,a) /| {\sf arg}(p) = {\sf arg}(r) /| {\sf meth}(r)={\sf remove}\\
+    & \quad /| \forall q.\ {\sf b}(q,p) \vee {\sf b}(r,q) \vee {\sf arg}(q)\neq {\sf arg}(r) \\
+    & \quad => {\sf meth}(p)={\sf add} \vee ({\sf meth}(p)={\sf contains} /| {\sf ret}(p) = {\sf true}) 
+    \\   
     & \textsc{Include} \\
     & \forall c.\ {\sf meth}(c) = {\sf contains} /| {\sf ret}(c) = {\sf true} \\
-    & \quad => \exists a.\ {\sf meth}(a) = {\sf add} /| {\sf arg}(a) = {\sf arg}(c) /| {\sf b}(a,c) \\
-    & \forall c,r.\ {\sf meth}(c)={\sf contains} /| {\sf ret}(c) = {\sf true} \\
-    & \quad /| {\sf meth}(r) = {\sf rem}/| {\sf arg}(c) = {\sf arg}(r) /| {\sf b}(r,c) \\
-    & \quad => \exists a.\ {\sf meth}(a) = {\sf add}/|{\sf arg}(c) = {\sf arg}(a) /| {\sf b}(r,a) /| {\sf b}(a,c)
+    & \quad => \exists a.\ {\sf match}(c,a) /| {\sf b}(a,c) \\
+    & \forall c,a,r.\ {\sf meth}(c)={\sf contains} /| {\sf ret}(c) = {\sf true} \\
+    & \quad /| {\sf meth}(r) = {\sf remove}/| {\sf meth}(a) = {\sf add} /|  {\sf match}(c,a) /| {\sf match}(r,a)  \\ %{\sf arg}(c) = {\sf arg}(r) = {\sf arg}(a) \\
+    & \quad => {\sf b}(a,c) /| {\sf b}(c,r)
     \\
     & \textsc{Exclude} \\
     & \forall c,a.\ {\sf meth}(c)={\sf contains} /| {\sf ret}(c) = {\sf false} \\
     & \quad /| {\sf meth}(a) = {\sf add}/| {\sf arg}(c) = {\sf arg}(a) /| {\sf b}(a,c) \\
-    & \quad => \exists r.\ {\sf meth}(r)={\sf remove} /| {\sf arg}(c) = {\sf arg}(r) /| {\sf b}(r,c)
+    & \quad => \exists r.\ {\sf meth}(r)={\sf remove} /| {\sf match}(r,a) /| {\sf b}(r,c)
   \end{align*}
   \caption{Formul\ae for set objects.}
   \label{fig:formulas:set}
@@ -260,9 +271,10 @@ aforementioned interpretations.
     & \textsc{Exchange} \\
     & \forall x.\ {\sf ret}(x)\neq \bot \\
     & \forall x_1,x_2.\ {\sf match}(x_1,x_2) => \neg {\sf b}(x_1,x_2) /| \neg {\sf b}(x_2,x_1) \\
-		& \forall x,x_1,x_2.\ \neg ({\sf match}(x_1,x) /| {\sf match}(x_2,x)) \\
-		& \forall x.\ {\sf ret}(x) \neq {\sf null} =>  \exists y.\ {\sf match}(y,x) \vee {\sf match}(x,y) \\
-		& \forall x,y.\ {\sf match}(y,x) |/ {\sf match}(x,y) => {\sf ret}(x) = {\sf arg}(y)
+    & \textsc{Injective} \\
+		& \forall x_1,x_2.\ {\sf match}(x_1,x_2) \Leftrightarrow {\sf match}(x_2,x_1) \\
+		& \forall x.\ {\sf ret}(x) \neq {\sf null} =>  \exists y.\ {\sf match}(x,y)  \\
+		& \forall x,y.\ {\sf match}(x,y) => {\sf ret}(x) = {\sf arg}(y)
   \end{align*}
   \caption{Formul\ae for synchronization objects.}
   \label{fig:formulas:synchronization}
