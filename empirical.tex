@@ -4,3 +4,55 @@
 \label{sec:empirical}
 
 TODO FILL IN THE RESULTS
+
+\begin{table}[t]
+  \footnotesize
+  \centering
+  \setlength{\tabcolsep}{1.8mm}
+  \begin{tabular}{ccccc}
+   & Nb. of steps  & & Nb. of & Step of  \\
+   Method & to timeout & Time & violations & the violation \\
+  \hline
+  Lineup & 35 & - & 0/4 \\
+  Lineup -c & 38 & - & 0/4 \\
+  SMT & 52 & - & 3/4 & 39, 49, 51\\
+  SMT -r & 52 & - & 3/4 & 39, 49, 51\\
+  SMT -i & 51 & - & 3/4 & 39, 49, 51\\
+  SMT -c & 38 & - & 0/4 \\
+  SMT -c -i & 38 & - & 0/4 \\
+  Saturation & 100 & 0.1340s & 4/4 & 39, 49, 51,100\\
+  Saturation -r  & 100 & 0.1521s & 4/4 &39, 49, 51,100 
+  %MSQueue                             & 2xEnqueue 2xDequeue & 0 & 2 & 2 & & Yes \\
+  \end{tabular} 
+  \caption{Experimental data for the very concurrent {\tt bkq} and {\tt msq}: 200 executions and only 4 violations.
+    }
+  \label{tab:exp:static}
+\end{table}
+
+
+\begin{table}[t]
+  \footnotesize
+  \centering
+  \setlength{\tabcolsep}{1.8mm}
+  \begin{tabular}{cccc}
+   	        & 	                     & Step of     \\
+   Method & $\%$ violations  & violations & Time \\
+  \hline
+  Lineup & 55$\%$ & 23.8 & 1.2593s \\
+  Lineup -c & 88$\%$ & 23.8 & 0.8906s \\
+  SMT & 75$\%$ & 23.8 & 1.1058s \\
+  SMT -r & 78$\%$ & 23.8 & 0.8390s\\
+  SMT -i & 90$\%$ & 23.8 & 0.5053s\\
+  SMT -c & 100$\%$ & 23.8 & 0.8461s \\
+  SMT -c -i & 100$\%$ & 23.8 & 0.5021s \\
+  Saturation & 100$\%$ & 24.2 & 0.0171s\\
+  Saturation -r  & 100$\%$ & 24.2 & 0.0191s
+  %MSQueue                             & 2xEnqueue 2xDequeue & 0 & 2 & 2 & & Yes \\
+  \end{tabular} 
+  \caption{Experimental data for the very sequential {\tt bkq}: 100 executions which are all violations. The column ``Step of violations'', resp., ``Time'',
+  gives the step at which a method found the violation and the time spent, in average, but only for the 53 violations
+  which were detected by all methods. In 9 cases, the saturation procedure is late to detect a violation by two steps
+  from 21 to 23.
+    }
+  \label{tab:exp:static}
+\end{table}
