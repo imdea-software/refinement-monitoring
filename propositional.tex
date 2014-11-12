@@ -26,51 +26,48 @@ Section~\ref{sec:propositional:pending}.
 \subsection{Complete Histories}
 \label{sec:propositional:complete}
 
-TODO REVIEW THIS PART; BE CLEARER ABOUT THE IMPORTANCE OF THESE LEMMAS, AND
-HOW THEY AFFECT THE REST
-
-The following two lemmas characterize the weaker than relation between
-histories. The first one states that the matching function of a history,
-projected over completed operations, is preserved by any stronger history. The
-second lemma states that a history $h'$ stronger than a complete history $h$
+The following lemma characterizes the weaker than relation between
+histories. It states that a history $h'$ stronger than a complete history $h$
 can only differ in having more order constraints between the operations, the
-operation labels and the matching function being the same in $h$ and $h'$.
+operation labels being the same in $h$ and $h'$.
 
-\begin{lemma}
-
-Let $h_1=\tup{O_1,<_1,f_1}$ and $h_2=\tup{O_2,<_2,f_2}$ be two histories. If $h_1\preceq_g h_2$ then
-for every two completed operations $o_1, o_2\in O_1$, 
-\[
-\<Matching>(h_1)(o_1)=o_2\text{ iff }\<Matching>(h_2)(g^{-1}(o_1))=g^{-1}(o_2).
-\]
-
-\end{lemma}
+%\begin{lemma}
+%
+%Let $h_1=\tup{O_1,<_1,f_1}$ and $h_2=\tup{O_2,<_2,f_2}$ be two histories. If $h_1\preceq_g h_2$ then
+%for every two completed operations $o_1, o_2\in O_1$, 
+%\[
+%\<Matching>(h_1)(o_1)=o_2\text{ iff }\<Matching>(h_2)(g^{-1}(o_1))=g^{-1}(o_2).
+%\]
+%
+%\end{lemma}
 
 \begin{lemma}
   \label{lemma:complete_history}
 
-  A complete history $h_1=\tup{O_1,<_1,f_1}$ is weaker than another history
-  $h_2=\tup{O_2,<_2,f_2}$ iff there exists a bijection $g:O_2->O_1$ such that:
+  A complete history $h=\tup{O,<,f}$ is weaker than another history
+  $h'=\tup{O',<',f'}$ iff there exists a bijection $g:O'->O$ such that:
 
   \begin{itemize}
 
-    \item operations related by $g$ have the same label, i.e., for each $o\in O_1$, $f_1(o)=f_2(g^{-1}(o))$,
+    \item operations related by $g$ have the same label, i.e., for each $o\in O$, $f(o)=f'(g^{-1}(o))$, and
 
-    \item order constraints are preserved from $h_1$ to $h_2$, i.e., for each $o,o'\in O_1$, $o<_1 o'$ implies $g^{-1}(o)<_2 g^{-1}(o')$, and
+    \item order constraints are preserved from $h$ to $h'$, i.e., for each $o,o'\in O$, $o< o'$ implies $g^{-1}(o)<' g^{-1}(o')$.
 
-    \item the matching function is the same for the two histories, i.e., for each $o,o'\in O_1$, $\<Matching>(h_1)(o)=o'$ iff $\<Matching>(h_2)(g^{-1}(o))=g^{-1}(o')$.
+%    \item the matching function is the same for the two histories, i.e., for each $o,o'\in O_1$, $\<Matching>(h_1)(o)=o'$ iff $\<Matching>(h_2)(g^{-1}(o))=g^{-1}(o')$.
 
   \end{itemize}
 
 \end{lemma}
 
-We characterize histories $h$ by the formula $\textsc{Stronger}(h)$, defined as
+We characterize histories stronger than $h$ by the formula $\textsc{Stronger}(h)$, defined as
 the conjunction
 \begin{align*}
-  \textsc{Match}(M,h) /| \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h)
+  %\textsc{Match}(M,h) /| 
+  \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h)
 \end{align*}
 using the formul\ae of Figure~\ref{fig:formula:history} characterizing the
-matching function, identifiers, labels, and order constraints of $h$. Note that
+%matching function, 
+identifiers, labels, and order constraints of $h$. Note that
 the $\textsc{Domain}(h)$ formula restricts the interpretation domain of each
 variable to the operations of $h$. As a consequence of
 Lemma~\ref{lemma:complete_history}, the formula $\textsc{Stronger}(h)$ does
@@ -79,8 +76,8 @@ indeed characterize all histories at least as strong as $h$.
 \begin{figure}
   \footnotesize
   \begin{align*}
-    & \textsc{Match}(M,h)
-    && \bigwedge_{o_1 = M_h(o_2)} {\sf match}(o_1,o_2) \\
+%    & \textsc{Match}(M,h)
+%    && \bigwedge_{o_1 = M_h(o_2)} {\sf match}(o_1,o_2) \\
     & \textsc{Domain}(h)
     && \bigwedge_{o_1, o_2 \in O} o_1 \neq o_2 /| \forall x.\ \bigvee_{o\in O} x = o \\
     & \textsc{Labels}(h)
@@ -98,8 +95,8 @@ indeed characterize all histories at least as strong as $h$.
 \begin{lemma}
   \label{lem:stronger_form_complete}
   
-  Let $h_1$ and $h_2$ be histories.
-  Then $h_1 \preceq h_2$ if{f} $h_2 |= \textsc{Stronger}(h_1)$.
+  Let $h$ and $h'$ be histories.
+  Then $h \preceq h'$ if{f} $h' |= \textsc{Stronger}(h)$.
 
 \end{lemma}
 
@@ -130,8 +127,6 @@ $\bigvee_{o \in O} @p[x |-> o]$. It follows that this propositional formula is
 equisatisfiable to the original first-order formula, and is constructed in
 polynomial time.
 
-TODO WHAT ABOUT THE PARTIAL ORDER AXIOMS? AND THE MATCHING FUNCTION?
-
 \begin{corollary}
   \label{cor:satisfiability_complete}
 
@@ -145,9 +140,13 @@ TODO WHAT ABOUT THE PARTIAL ORDER AXIOMS? AND THE MATCHING FUNCTION?
 \subsection{Histories with Pending Operations}
 \label{sec:propositional:pending}
 
-TODO REVISIT THIS TEXT
-
-In the case of an arbitrary history $h$, the set of histories stronger than $h$
+The pending operations of a history $h$ may be omitted in a stronger history or
+they may be completed with arbitrary return values. 
+Therefore, 
+%Since in general two comparable histories (w.r.t. the weaker than relation)
+%may consist of different sets of operations 
+%In the general case, 
+the set of histories stronger than a history $h$
 can be characterized by a formula obtained from $\textsc{Stronger}(h)$ by
 adding a domain predicate ${\sf used}$ that is constrained to contain all the
 completed operations of $h$ and by omitting the constraints on the return
@@ -171,8 +170,8 @@ the history obtained from $h$ by deleting operations $o$ such that $\lnot U(o)$.
 \begin{lemma}
   \label{lem:stronger_form_pending}
 
-  Let $h_1$ and $h_2$ be histories, and $U : O_2 -> \<Bools>$.
-  Then $h_2, U |= \textsc{Stronger}(h_1)$ if{f} $h_1 \preceq U(h_2)$.
+  Let $h$ and $h'$ be histories, and $U : O' -> \<Bools>$.
+  Then $h', U |= \textsc{Stronger}(h)$ if{f} $h \preceq U(h')$.
 
 \end{lemma}
 
@@ -198,7 +197,7 @@ first-order satisfiability.
 
   Let $h$ be a history, and $H$ a history set. Then $h \in \overline{H}$ if{f}
   the first-order formula
-  $$\textsc{Stronger}(h) /| G(\textsc{Theory}(H) /| \textsc{Used})$$
+  $$\textsc{Stronger}(h) /| \textsc{Used} /| G(\textsc{Theory}(H))$$
   is satisfiable.
 
 \end{theorem}
@@ -212,7 +211,7 @@ via the function $\db{\cdot}$.
 
   Let $h$ be a history, and $H$ a history set. Then $h \in \overline{H}$ if{f}
   the propositional formula
-  $$\db{\textsc{Stronger}(h) /| G(\textsc{Theory}(H) /| \textsc{Used})}$$
+  $$\db{\textsc{Stronger}(h) /| \textsc{Used} /| G(\textsc{Theory}(H))}$$
   is satisfiable.
 
 \end{corollary}
