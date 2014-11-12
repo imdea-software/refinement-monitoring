@@ -25,6 +25,7 @@ TODO FILL IN THE RESULTS
   %MSQueue                             & 2xEnqueue 2xDequeue & 0 & 2 & 2 & & Yes \\
   \end{tabular} 
   \caption{Experimental data for the very concurrent {\tt bkq} and {\tt msq}: 200 executions and only 4 violations.
+  Timeout is set to 5 seconds.
     }
   \label{tab:exp:static}
 \end{table}
@@ -52,7 +53,7 @@ TODO FILL IN THE RESULTS
   \caption{Experimental data for the very sequential {\tt bkq}: 100 executions which are all violations. The column ``Step of violations'', resp., ``Time'',
   gives the step at which a method found the violation and the time spent, in average, but only for the 53 violations
   which were detected by all methods. In 9 cases, the saturation procedure is late to detect a violation by two steps
-  from 21 to 23.
+  from 21 to 23. Timeout is set to 5 seconds.
     }
   \label{tab:exp:static}
 \end{table}
