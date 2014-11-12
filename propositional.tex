@@ -1,64 +1,40 @@
 %!TEX root = head.tex
 
-%\section{Monitoring History Inclusion}
-
 \section{Refinement via Propositional Reasoning}
 \label{sec:propositional}
 
-%A history formula describing the set of histories $H(B)$ 
-%of a library basis $B$ is considered a specification for the entire library.
-%
-%Since every execution of a library $L$ can be obtained through the $~>$ rewriting 
-%from an execution of a given basis $B$, 
+In this section we demonstrate that the history membership problem $h \in
+\overline{H}$ reduces to propositional satisfiability, given a formula
+$\textsc{Theory}(H)$ characterizing the histories of the library kernel $H$.
+Note that $h \in \overline{H}$ if{f} $h$ is weaker than some history $h' \in
+H$, or equivalently weaker than some history $h' |= \textsc{Theory}(H)$. When
+$h$ is complete, the fact that any stronger history contains exactly the same
+set of operations enables the construction of a formula $\textsc{Stronger}(h)$
+characterizing the histories stronger than $h$. Together with
+$\textsc{Theory}(H)$, this formula describes all stronger histories satisfying
+$\textsc{Theory}(H)$, and is therefore equivalent to $h \in H(L)$. We show how
+to construct these formul\ae in Section~\ref{sec:propositional:complete}.
 
-%\begin{definition}
-%
-%A formula $\psi$ \emph{represents} $L$ iff there exists a basis $B$ of $L$ such that 
-%for every history $h$, $h\in H(B)$ iff $h\models \psi$.
-%
-%\end{definition}
-
-%Since $\psi$ is required to characterize only histories of a basis of $L$, there are
-%histories of $L$ that don't satisfy $\psi$. However, for every history of $L$ there
-%exists a stronger history which satisfies $\psi$.
-Given a formula $\psi$ describing a basis of $L$, 
-checking whether a history $h$ belongs to $H(L)$ 
-can be reduced to propositional satisfiability. 
-Thus, by Lemma~\ref{lemma:kernel_histories}, a history $h$ belongs to $H(L)$ iff 
-it is weaker than a history $h'$ in a basis of $L$, or equivalently, weaker than a history
-$h'$ satisfying $\psi$.
-When $h$ is a complete history, the fact that any stronger history contains exactly the same set of 
-operations~\footnote{More precisely, there exists a bijection between the set of operations in $h$ and respectively $h'$.}
-enables the construction of a formula  $\mathit{Stronger}_c(h)$ characterizing all the histories
-stronger than $h$. This formula conjuncted with $\psi$ describes all the histories stronger than $h$
-that satisfy $\psi$. Therefore, the satisfiability of $\mathit{Stronger}_c(h)\land \psi$ is
-equivalent to $h\in H(L)$. 
-When the history $h$ contains pending operations, a stronger history $h'$ may contain
-less operations (pending operations of $h$ can be omitted in $h'$)
-and some pending operations of $h$ may be completed in $h'$.  
-Therefore, the formula $\mathit{Stronger}_c(h)$ is enhanced with a domain predicate $\<ops>$
-defining the set of operations in the stronger history and the return values of the pending
-operations are left unconstrained. The conjunction between the obtained
-formula and the formula $\psi'$ obtained from $\psi$ by guarding the quantified variables to satisfy
-the domain predicate $\<ops>$ characterizes the histories stronger
-than $h$ which satisfy $\psi$.
-
-%$h\in H(L)$ is equivalent to the fact that $\mathit{Hist}(h)$ is consistent
-%with the formula $\psi$ where the quantifiers are guarded by a domain predicate representing the
-%set of operations in a history stronger than $h$.
-%using the same
-%function and predicate symbols as $\psi$. 
-%using different versions $\<hb>_h$, $\<match>_h$, $\ldots$ of the predicates $\<hb>$, $\<match>$, $\ldots$, 
-%and $\mathit{Weaker}$ is a formula expressing the fact that $\<hb>_h$ is included in $\<hb>$, 
-%$\<match>_h$ is exactly $\<match>$, etc.
+When $h$ contains pending operations, stronger histories $h'$ may contain fewer
+operations, since some pending operations of $h$ may be omitted in $h'$, and
+others completed. In this case the joint satisfiability of $\textsc{Theory}(H)$
+and $\textsc{Stronger}(h)$ must be enhanced with additional constraints to
+ensure that the operations of $h'$ include at least the completed operations of
+$h$, and possibly some pending operations of $h$. We tackle this problem in
+Section~\ref{sec:propositional:pending}.
 
 \subsection{Complete Histories}
+\label{sec:propositional:complete}
 
-The following two lemmas characterize the weaker than relation between histories. 
-The first one states that the matching function of a history, projected over completed operations, 
-is preserved by any stronger history. The second lemma states that a history $h'$ stronger than
-a complete history $h$ can only differ in having more order constraints between the operations,
-the operation labels and the matching function being the same in $h$ and $h'$.
+TODO REVIEW THIS PART; BE CLEARER ABOUT THE IMPORTANCE OF THESE LEMMAS, AND
+HOW THEY AFFECT THE REST
+
+The following two lemmas characterize the weaker than relation between
+histories. The first one states that the matching function of a history,
+projected over completed operations, is preserved by any stronger history. The
+second lemma states that a history $h'$ stronger than a complete history $h$
+can only differ in having more order constraints between the operations, the
+operation labels and the matching function being the same in $h$ and $h'$.
 
 \begin{lemma}
 
@@ -70,218 +46,173 @@ for every two completed operations $o_1, o_2\in O_1$,
 
 \end{lemma}
 
-\begin{lemma}\label{lemma:complete_history}
+\begin{lemma}
+  \label{lemma:complete_history}
 
-A complete history $h_1=\tup{O_1,<_1,f_1}$ is weaker than another history $h_2=\tup{O_2,<_2,f_2}$ 
-iff there exists a bijection $g:O_2->O_1$ such that: %for every two operations $o, o'\in O_1$, 
-\begin{itemize}
+  A complete history $h_1=\tup{O_1,<_1,f_1}$ is weaker than another history
+  $h_2=\tup{O_2,<_2,f_2}$ iff there exists a bijection $g:O_2->O_1$ such that:
 
-	\item operations related by $g$ have the same label, i.e., for each $o\in O_1$, $f_1(o)=f_2(g^{-1}(o))$,
+  \begin{itemize}
 
-	\item order constraints are preserved from $h_1$ to $h_2$, i.e., for each $o,o'\in O_1$, $o<_1 o'$ implies $g^{-1}(o)<_2 g^{-1}(o')$, and
+    \item operations related by $g$ have the same label, i.e., for each $o\in O_1$, $f_1(o)=f_2(g^{-1}(o))$,
 
-	\item the matching function is the same for the two histories, i.e., for each $o,o'\in O_1$, $\<Matching>(h_1)(o)=o'$ iff $\<Matching>(h_2)(g^{-1}(o))=g^{-1}(o')$.
+    \item order constraints are preserved from $h_1$ to $h_2$, i.e., for each $o,o'\in O_1$, $o<_1 o'$ implies $g^{-1}(o)<_2 g^{-1}(o')$, and
 
-\end{itemize}
+    \item the matching function is the same for the two histories, i.e., for each $o,o'\in O_1$, $\<Matching>(h_1)(o)=o'$ iff $\<Matching>(h_2)(g^{-1}(o))=g^{-1}(o')$.
 
-\end{lemma}
-
-Given a complete history $h=\tup{O,<,f}$, let $\mathit{Stronger}_c(h)$ be a formula that characterizes
-the labels, the matching function, and the order of $h$ (the operation identifiers in $O$ are used as constants):
-\begin{align*}
-\mathit{Stronger}_c(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \<Distinct>(O) \\
-		    & \hspace{-13mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-2.3mm}\<b>(o,o')\land \bigwedge_{\<Matching>(h)(o,o')} \<match>(o,o') \\
-		    & \hspace{-13mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-8mm} \<meth>(o)=m\land \<arg>(o)=u\land \<ret>(o)=v 
-%		   \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} o,o'\in O\\f(o)=m(u)=>v\\f(o)=m'(v)=>v'\end{array}} \hspace{-7mm} \<Val>(o,o') \\
-		   %\land \<PO>(<)
-\end{align*}
-The first sub-formula restricts the interpretation domain of every 
-operation-identifier variable to $O$. The formula $x\in O$ is a syntactic sugar for 
-$
-\bigvee_{o\in O} x=o
-$. 
-The sub-formula $\<Distinct>(O)$ states that every two operation identifier constants are distinct,
-i.e.,
-$
-\<Distinct>(O)\triangleq \bigwedge_{o_1,o_2\in O} o_1\neq o_2
-$. 
-
-%It uses indexed versions of the predicate and function symbols introduced in Section~\ref{sec:logic}
-%The last sub-formula uses a relation symbol $\<hb>(o,o')$
-
-%Also, let $\mathit{Weaker}$ be a formula expressing the weaker than relation between $h$ and another history 
-%described using the standard symbols $\<hb>$, $\<meth>$, $\ldots$
-%\begin{align*}
-%\mathit{Weaker}\ \triangleq\ &\bigwedge_{F\in\{\<meth>,\<arg>,\<ret>\}} \forall x.\ F_h(x)=F(x) \\
-%& \land\ \forall x,x'.\ \<hb>_h(x,x') => \<hb>(x,x')\\
-%& \land\  \forall x,x'.\ \<match>_h(x,x') <=> \<match>(x,x')
-%\end{align*}
-
-%Also, let $\<Dom>(O)::=\forall x. x\in O$ be a
-
-
-%Also, given $h$, let $F[h]$ be the HL formula $F$ where the relation symbol $<_k$ is replaced by $<$
-%and the quantifiers are instantiated on the set of operations $O$, 
-%i.e., every sub-formula $\exists x.\ G$ of $F$ is rewritten into
-%\[
-%\bigvee_{o\in O} G[x\mapsto o].
-%\]
-
-The following result states that $\mathit{Stronger}_c(h)$ characterizes precisely
-all the histories stronger than $h$. It is a direct consequence of Lemma~\ref{lemma:complete_history}.
-
-\begin{lemma}\label{lem:stronger_form_complete}
-
-Let $h$ be a complete history. Then, for every history $h'$,
-\begin{align*}
-h\preceq h'\text{ iff }h'\models \mathit{Stronger}_c(h).
-\end{align*}
+  \end{itemize}
 
 \end{lemma}
 
-Lemmas~\ref{lemma:kernel_histories} and~\ref{lem:stronger_form_complete} enable the following 
-reduction from history membership to first-order satisfiability.
+We characterize histories $h$ by the formula $\textsc{Stronger}(h)$, defined as
+the conjunction
+\begin{align*}
+  \textsc{Match}(M,h) /| \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h)
+\end{align*}
+using the formul\ae of Figure~\ref{fig:formula:history} characterizing the
+matching function, identifiers, labels, and order constraints of $h$. Note that
+the $\textsc{Domain}(h)$ formula restricts the interpretation domain of each
+variable to the operations of $h$. As a consequence of
+Lemma~\ref{lemma:complete_history}, the formula $\textsc{Stronger}(h)$ does
+indeed characterize all histories at least as strong as $h$.
 
-\begin{theorem}\label{th:satisfiability_pending}
-Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$.
-Then,
-\[
-h\in H(L)\mbox{ iff }\mathit{Stronger}_c(h)\land \psi\mbox{ is satisfiable.}
-\]
+\begin{figure}
+  \footnotesize
+  \begin{align*}
+    & \textsc{Match}(M,h)
+    && \bigwedge_{o_1 = M_h(o_2)} {\sf match}(o_1,o_2) \\
+    & \textsc{Domain}(h)
+    && \bigwedge_{o_1, o_2 \in O} o_1 \neq o_2 /| \forall x.\ \bigvee_{o\in O} x = o \\
+    & \textsc{Labels}(h)
+    && \hspace{-5mm} \bigwedge_{f(o) = (m(u) => v)}
+      \hspace{-5mm}
+      {\sf meth}(o) = m /| {\sf arg}(o) = u /| 
+      [{\sf ret}(o) = v]_{v \neq \bot} \\
+    & \textsc{Order}(h)
+    && \bigwedge_{o_1 < o_2} {\sf b}(o_1, o_2)
+  \end{align*}
+  \caption{Formul\ae characterizing histories $h = \tup{O,<,f}$.}
+  \label{fig:formula:history}
+\end{figure}
+
+\begin{lemma}
+  \label{lem:stronger_form_complete}
+  
+  Let $h_1$ and $h_2$ be histories.
+  Then $h_1 \preceq h_2$ if{f} $h_2 |= \textsc{Stronger}(h_1)$.
+
+\end{lemma}
+
+\noindent
+It follows that the library membership test $h \in \overline{H}$ for complete
+histories $h$ reduces to first-order satisfiability.
+
+\begin{theorem}
+  \label{th:satisfiability_pending}
+
+  Let $h$ be a complete history, and $H$ a history set.
+  Then $h \in \overline{H}$ if{f}
+  $\textsc{Stronger}(h) /| \textsc{Theory}(H)$ is satisfiable.
+
 \end{theorem}
-%\begin{proof}
-%($=>$) This direction is a direct consequence of Lemmas~\ref{lemma:kernel_histories} and~\ref{lemma:complete_history}.
-%
-%%Let $h=\tup{O,<,f}$. Since $h\models \psi$, there exists a relation $\poker\subseteq O\times O$
-%%such that $\tup{h,\poker}\models\psi'$, which implies that $\tup{h,\poker}$ is a model of $\varphi(h)\land \psi'$.
-%
-%($\Leftarrow$) The interpretation of $\<match>_h$, $\<hb>_h$, and $F_h$ with $F\in \{\<meth>,\<arg>,\<ret>\}$ 
-%from a model of $\mathit{Hist}(h)\land\mathit{Weaker}\land \psi$ defines a history $h'$ such that $h\preceq h'$.
-%On the other hand, the interpretation of $\<match>$, $\<hb>$, $\<meth>$, $\<arg>$, $\<ret>$ defines a history
-%$h''$ such that $h'\preceq h''$ and $h''\models \psi$. Therefore, $h\preceq h''$ and $h''\models \psi$, which 
-%by Lemma~\ref{lemma:kernel_histories} imply that $h\in H(L)$.
-%\end{proof}
 
-%\textcolor{red}{Say that there are no function symbols on input and output values, only = and $\leq$}
+As long as the formula $\textsc{Theory}(H)$ contains only a fixed set of
+predicates e.g.,~$=$ and $\leq$, as is the case for all formul\ae of
+Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization},
+satisfiability of $\textsc{Stronger}(h) /| \textsc{Theory}(H)$ reduces to
+propositional satisfiability. Intuitively this holds since the domain of
+(quantified) variables is restricted to operations appearing in $h$. Thus for a
+given $h$ and $H$, we construct the propositional formula
+$\db{\textsc{Stronger}(h) /| \textsc{Theory}(H)}$ by replacing each
+universally-quantified subformula $\forall x. @p$ by $\bigwedge_{o \in O} @p[x
+|-> o]$, and each existentially-quantified subformula $\exists x. @p$ by
+$\bigvee_{o \in O} @p[x |-> o]$. It follows that this propositional formula is
+equisatisfiable to the original first-order formula, and is constructed in
+polynomial time.
 
-Assuming that the formula $\psi$ doesn't contain function symbols on input and output values but only
-a fixed set of predicates, e.g., $=$ and $\leq$, which is the case for all the formulas in Figure~\ref{fig:examples_formulas}, 
-the satisfiability of $\mathit{Stronger}_c(h)\land \psi$ 
-can be reduced to propositional satisfiability.
-This is based on the fact that $\mathit{Stronger}_c(h)$ fixes the domain of the operation-identifier variables to $O$
-and every quantifier can be replaced by a finite conjunction/disjunction, e.g., every sub-formula $\exists x.\ A$ is replaced by 
-$
-\bigvee_{o\in O}\ A[x\mapsto o]
-$.
-Before eliminating the quantifiers, one also needs to add some universally-quantified axioms to 
-express the fact that $\<b>$ is interpreted as a partial order and that $\<match>$ is interpreted as a 
-partial function.
-%existential quantifiers can be replaced by finite 
-%disjunctions, i.e., every sub-formula $\exists x.\ A$ is replaced by 
-%$
-%\bigvee_{o\in O}\ A[x\mapsto o]
-%$.
-%The formula obtained by removing the existential quantifiers belongs to the EPR fragment
-%(also known as the Bernays-Sch\"{o}nfinkel class),  whose satisfiability is known to be reducible to
-%propositional satisfiability in polynomial time, provided that the quantifier count is fixed.
-%The EPR fragment consists of first-order
-%formulas with no occurrences of function symbols other than constants, and which  
-%when written in the prenex normal form have the quantifier prefix $\exists^*\forall^*$.
-%The formula $\varphi(h)\land \<Dom>(O)\land \psi'$ has no function symbols other than constants
-%and by removing the existential quantifiers, it has a quantifier prefix $\forall^*$.
-Therefore, one can construct a propositional formula $\mathit{Bool}_c(h,\psi)$, which
-is equi-satisfiable to $\mathit{Stronger}_c(h)\land \psi$. The construction of
-$\mathit{Bool}_c(h,\psi)$ can be done in polynomial time provided that the number of
-quantifiers in $\psi$ is fixed, which is the case for all the formulas in Figure~\ref{fig:examples_formulas}.
+TODO WHAT ABOUT THE PARTIAL ORDER AXIOMS? AND THE MATCHING FUNCTION?
 
+\begin{corollary}
+  \label{cor:satisfiability_complete}
 
-\begin{corollary}\label{cor:satisfiability_complete}
-
-Let $h$ be a complete history and $\psi$ a formula describing a basis of $L$. Then,
-\[
-h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}_c(h,\psi)\mbox{ is satisfiable.}
-\]
+  Let $h$ be a complete history, and $H$ a history set.
+  Then $h \in \overline{H}$ if{f} the propositional formula
+  $$\db{\textsc{Stronger}(h) /| \textsc{Theory}(H)}$$
+  is satisfiable.
 
 \end{corollary}
 
-\subsection{Handling pending operations}\label{ssec:pending}
+\subsection{Histories with Pending Operations}
+\label{sec:propositional:pending}
 
-%The pending operations of a history $h$ may be omitted in a history stronger than $h$.
-In the case of an arbitrary history $h$, the set of histories stronger than $h$ 
-can be characterized by a formula obtained from $\mathit{Stronger}_c(h)$
-by adding a domain predicate $\<ops>$
-that is constrained to contain all the completed operations of $h$
-and by omitting the constraints on the return values of pending operations.
-Moreover, every operation of $h$ whose return value is different from $\bot$
-in a model of this formula (this may be an operation which is pending in $h$) 
-should satisfy $\<ops>$.
-It can be proved that every history stronger than $h$ corresponds to a 
-model of this formula, projected on the set of operations satisfying $\<ops>$.
+TODO REVISIT THIS TEXT
 
-Formally, let $\mathit{Stronger}(h)$ be the following formula:
+In the case of an arbitrary history $h$, the set of histories stronger than $h$
+can be characterized by a formula obtained from $\textsc{Stronger}(h)$ by
+adding a domain predicate ${\sf used}$ that is constrained to contain all the
+completed operations of $h$ and by omitting the constraints on the return
+values of pending operations. Moreover, every operation of $h$ whose return
+value is different from $\bot$ in a model of this formula (this may be an
+operation which is pending in $h$) should satisfy ${\sf used}$. It can be
+proved that every history stronger than $h$ corresponds to a model of this
+formula, projected on the set of operations satisfying ${\sf used}$.
+
+We define the formula {\sc Used} as
 \begin{align*}
-\mathit{Stronger}(h)\ \triangleq\ & \forall x.\ x\in O\ \ \land \<Distinct>(O) \\
-		    & \hspace{-10mm}\land\ \hspace{-2.5mm}\bigwedge_{o,o'\in O, o<o'} \hspace{-1.3mm}\<b>(o,o')\land \bigwedge_{\<Matching>(h)(o,o')} \<match>(o,o') \\
-		    & \hspace{-10mm}\land\ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\end{array}} \hspace{-7mm} \<meth>(o)=m\land \<arg>(o)=u \\
-		    & \hspace{-10mm}\land \ \hspace{-7mm}\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>v\\ v\neq\bot\end{array}} \<ret>(o)=v\land \<ops>(o) \\
-		    & \hspace{-10mm}\land \ \forall x.\ \<ret>(x)\neq\bot => \<ops>(x) %\bigwedge_{\scriptsize \begin{array}{c} f(o)=m(u)=>\bot\end{array}} \<ret>(o)\neq\bot => \<ops>(o)
+  \forall x.\ {\sf ret}(x) \neq \bot => {\sf used}(x)
 \end{align*}
 
-The models of $\mathit{Stronger}(h)$ are histories paired with an interpretation $D$ for the domain
-predicate $\<ops>$. Given such a model $\tup{h',D}$, let $h'_D$ be the history obtained from $h'$
-by removing all operations $o\not\in D$.
+For arbitrary, not necessarily complete, histories $h$, the models of
+$\textsc{Stronger}(h)$ are histories paired with an interpretation $U : O ->
+\<Bools>$ for the domain predicate ${\sf used}$, mapping the operations $O$ of
+$h$ to $\set{\sf true, false}$ . Given such a model $\tup{h,U}$, let $U(h)$ be
+the history obtained from $h$ by deleting operations $o$ such that $\lnot U(o)$.
 
-\begin{lemma}\label{lem:stronger_form_pending}
+\begin{lemma}
+  \label{lem:stronger_form_pending}
 
-For every history $h$,
-\begin{align*}
-\tup{h',D}\models \mathit{Stronger}(h)\mbox{ iff }h\preceq h'_D
-\end{align*}
+  Let $h_1$ and $h_2$ be histories, and $U : O_2 -> \<Bools>$.
+  Then $h_2, U |= \textsc{Stronger}(h_1)$ if{f} $h_1 \preceq U(h_2)$.
 
 \end{lemma}
 
-The predicate $\<ops>$ is also used to guard the domain of the quantifiers in 
-the formula $\psi$ defining a basis of the library $L$. For simplicity,
-we assume that $\psi$ is given in prenex normal form and that it has a quantifier prefix 
-of the form $\forall^*\exists^*$ (all the formulas in Figure~\ref{fig:examples_formulas} can 
-be written in such a form). Thus, given $\psi=\forall \vec{x}\ \exists \vec{x}'.\ F$, 
-let $\psi(\<ops>)$ be the formula:
+We leverage the predicate {\sf used} to guard the domain of quantifiers in
+$\textsc{Theory}(H)$. For simplicity, we assume that $\textsc{Theory}(H)$ is
+given in prenex normal form, whose quantifiers form a prefix $\forall^*
+\exists^*$. All of the formul\ae of
+Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization} can be
+written in this form. We thus define the guarded formula $G(@p)$ of the formula
+$@p = \forall \vec{x}. \exists \vec{y}. @y$ as
 \begin{align*}
-\psi(\<ops>)\triangleq\forall \vec{x}\ \exists \vec{x}'.\ \bigwedge_{x\in\vec{x}}\ \<ops>(x) => \big(\bigwedge_{x'\in\vec{x}'}\ \<ops>(x') \land F\big)
+  G(@p) = \forall \vec{x}. \exists \vec{y}.
+  \bigwedge_{x \in \vec{x}} {\sf used}(x) => 
+  \bigvee_{y \in \vec{y}} {\sf used}(y) /| @y
 \end{align*}
-As usual, universal quantifiers are guarded using implication and existential quantifiers
-using conjunction.
+As usual, universal quantifiers are guarded using implication and existential
+quantifiers using conjunction. It follows from
+Lemma~\ref{lem:stronger_form_pending} that history membership reduces to
+first-order satisfiability.
 
+\begin{theorem}
+  \label{th:satisfiability_complete}
 
+  Let $h$ be a history, and $H$ a history set. Then $h \in \overline{H}$ if{f}
+  the first-order formula
+  $$\textsc{Stronger}(h) /| G(\textsc{Theory}(H) /| \textsc{Used})$$
+  is satisfiable.
 
-Lemmas~\ref{lemma:kernel_histories} and~\ref{lem:stronger_form_pending}
-together with the guarded quantification added to $\psi$ imply that 
-history membership can be reduced to first-order satisfiability.
-
-\begin{theorem}\label{th:satisfiability_complete}
-Let $h$ be a history and $\psi=\forall \vec{x}\ \exists \vec{x}'.\ F$ a formula describing a basis of $L$.
-Then,
-\[
-h\in H(L)\mbox{ iff }\mathit{Stronger}(h)\land \psi(\<ops>)\mbox{ is satisfiable.}
-\]
 \end{theorem}
 
+We again reduce this first-order satisfiability problem to propositional
+satisfiability by limiting the domain of quantifiers to the operations of $h$
+via the function $\db{\cdot}$.
 
-%The formula $\<PO>_c$ restricts the interpretation of the universally-quantified variables to
-%complete operations:
-%\<PO>_c(<)
+\begin{corollary}
+  \label{cor:satisfiability_pending}
 
+  Let $h$ be a history, and $H$ a history set. Then $h \in \overline{H}$ if{f}
+  the propositional formula
+  $$\db{\textsc{Stronger}(h) /| G(\textsc{Theory}(H) /| \textsc{Used})}$$
+  is satisfiable.
 
-The satisfiability of the formula $\mathit{Stronger}(h)\land \psi(\<ops>)$ can be again 
-reduced to propositional satisfiability since the domain of the quantifiers is fixed to the set
-of operations in $h$. Let $\mathit{Bool}(h,\psi)$ be the boolean formula equi-satisfiable
-to $\mathit{Stronger}(h)\land \psi(\<ops>)$.
-
-\begin{corollary}\label{cor:satisfiability_pending}
-
-Let $h$ be a history and $\psi$ a formula describing a basis of $L$. Then,
-\[
-h\in H(L)\mbox{ iff the formula}\ \mathit{Bool}(h,\psi)\mbox{ is satisfiable.}
-\]
 \end{corollary}
-
