@@ -1,9 +1,85 @@
 %!TEX root = head.tex
 
 \section{Empirical Results}
-\label{sec:empirical}
+\label{sec:exp}
 
-TODO FILL IN THE RESULTS
+To demonstrate the practical value of our approach to checking observational
+refinement, we argue that our symbolic refinement-checking algorithms
+\begin{itemize}
+
+  \item scale far beyond existing algorithms, and
+
+  \item are often complete in practice.
+
+\end{itemize}
+To argue these points we have implemented several variations of three basic
+refinement-checking algorithms for the membership query $h \in \overline{H}$.
+
+\begin{description}
+
+  \item[The Linearization Checker] enumerates the linearizations of $h$. For
+  each (sequential) linearization $h' \succeq h$, we leverage an automated
+  theorem prover to check whether $h'$ is included in the kernel $H$ via
+  satisfaction query $h' |= \textsc{Theory}(H)$. If this check succeeds, we
+  conclude that $h \in \overline{H}$. If this check fails for all of the
+  linearizations $h'$ of $h$, we conclude that $h \not\in \overline{H}$.
+
+  \item[The Satisfiability Checker] essentially delegates the enumeration of
+  linearizations to an underlying theorem prover by encoding the refinement
+  query into a logical question including the formula $\textsc{Theory}(H)$. As
+  described in Section~\ref{sec:propositional}, we check $h \in \overline{H}$
+  by checking the satisfiability of the formula $\textsc{Stronger}(h) /|
+  \textsc{Theory}(H)$. If this check succeeds or is inconclusive, we conclude
+  that $h \in \overline{H}$. If unsatisfiability is found, we conclude that $h
+  \not\in \overline{H}$.
+
+  \item[The Saturation Checker] avoids the expensive propositional
+  branching/backtracking inherent to the aforementioned satisfiability query,
+  by limiting the satisfiability check to Boolean constraint propagation.
+  Essentially, we implement a solver which only saturates with unit
+  propagation, avoiding any propositional branching. If a contradiction is
+  found, we conclude that $h \not\in \overline{H}$. Otherwise if saturation
+  fails to reveal a contradiction, we conclude $h \in \overline{H}$.
+
+\end{description}
+
+We have studied actual concurrent data structure implementations, including the
+Scal\footnote{\url{http://scal.cs.uni-salzburg.at}} High-Performance
+Multicore-Scalable Computing suite. Some of these implementations, such as the
+Michael-Scott Queue~\cite{conf/podc/MichaelS96}, are meant to preserve
+observational refinement\footnote{More precisely, they are designed to be
+linearizable.}, while others, such as the non-blocking bounded-reordering
+queue~\cite{conf/pact/KirschLP13}, are meant to preserve weaker properties.
+
+The input to our checking algorithms are histories given as text files
+consisting of line-separated call and return actions. For the selected set of
+concurrent object implementations, we generated the histories of several
+pseudo-random executions by logging calls and returns in the order in which
+they occurred. While scanning an input history, the selected algorithm performs
+a membership test at each prefix at which an operation completes --- i.e.,~at
+return actions.
+
+Our first set of experiments (\S\ref{sec:exp:scalable}) demonstrates that our
+symbolic algorithms are drastically more scalable than existing algorithms, in
+that they are able to process vastly more history operations in much shorter
+time. Our second set of experiments (\S\ref{sec:exp:complete}) demonstrates
+that while our more efficient algorithms can be incomplete on certain
+hand-crafted cases, failing to identify particularly intricate refinement
+violations, the violations surfacing in the logs of actual executions are
+consistently discovered. We made all measurements on similar MacBook Proc
+2.XGHz Intel Core i5/i7 machines, and discharged theorem-prover queries with
+Z3 version 4.3.1.
+
+\subsection{Scalability of Symbolic Checking}
+\label{sec:exp:scalable}
+
+TODO ARGUE THAT WE'RE EXTREMELY SCALABLE
+
+\subsection{Completeness in Practice}
+\label{sec:exp:complete}
+
+TODO ARGUE THAT WE AREN'T MISSING VIOLATIONS
+
 
 \begin{table}[t]
   \footnotesize
