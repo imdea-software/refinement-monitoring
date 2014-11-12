@@ -4,32 +4,38 @@
 \label{sec:logic}
 
 In this section we represent the kernels of typical concurrent objects,
-including atomic collections and locks, in a simple first-order language. To
-simplify, and avoid having to determine, e.g.,~which operation removes the
-instance of a value added by another, we suppose that objects come equipped
-with a \emph{matching function} $M$ mapping each history $h = \tup{O,<,f}$ to a
-partial function $M_h : O /-> O$ over its operations. Intuitively, $M_h$ maps
-operations $o$ which ``remove'' or ``test the presence'' of values to the operations $M_h(o)$ which added
-them. For instance, the matching function $M_h$ for a history of the atomic
+including atomic collections and locks, in a simple first-order language. 
+Besides function and predicate symbols describing the operation labels and 
+the order relation of a history, this language includes
+a predicate {\sf match} describing a \emph{matching function} $M$ that
+%simplify, and avoid having to determine, e.g.,~which operation removes the
+%instance of a value added by another, we suppose that objects come equipped
+%with a \emph{matching function} $M$ mapping each history $h = \tup{O,<,f}$ to a
+%partial function $M_h : O /-> O$ over its operations. Intuitively, $M_h$ 
+maps
+operations $o$ which ``remove'' or ``test the presence'' of values to the operations $M(o)$ which added
+them. For instance, a matching function $M$ for a history of the atomic
 stack object is injective, and maps each $(\<pop> => v_1)$-operation $o$ to a
-$\<push>(v_2)$-operation $M_h(o)$ such that $v_1 = v_2$ when $M_h(o)$ is
-defined. Similarly, the matching function $M_h$ for an atomic lock object is
+$\<push>(v_2)$-operation $M(o)$ such that $v_1 = v_2$ when $M(o)$ is
+defined. Similarly, the matching function $M$ for an atomic lock object is
 also injective, and maps each ${\sf unlock}$-operation $o$ to a
-${\sf lock}$-operation $M_h(o)$ if $M_h(o)$ is defined. In
-Section~\ref{sec:matching} we demonstrate that such matching functions can be
-maintained for all objects of interest, e.g.,~by tagging values with unique
-identifiers.
+${\sf lock}$-operation $M(o)$ if $M(o)$ is defined. 
+%In
+%Section~\ref{sec:matching} we demonstrate that such matching functions can be
+%maintained for all objects of interest, e.g.,~by tagging values with unique
+%identifiers.
 
 Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization} list the
 properties characterizing typical concurrent objects in a first-order language
 whose variables range over operation identifiers, and whose functions and
 predicates are interpreted over the operation labels and order relation of a
-history, and a given object's matching function. We use the function symbols
+history, and a given matching function. We use the function symbols
 {\sf meth}-od, {\sf arg}-ument, and {\sf ret}-urn, as well as the predicate
 symbols {\sf match} and {\sf b}-efore for this purpose. Note that we interpret
-the predicate ${\sf match}(x_1,x_2)$ by $o_1 = M_h(o_2)$ when each $x_i$ binds
+the predicate ${\sf match}(x_1,x_2)$ by $o_1 = M(o_2)$ when each $x_i$ binds
 to $o_i$. We represent the kernel $H$ of each of the following objects by a
-first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M_h |= \textsc{Theory}(H)$, where
+first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M |= \textsc{Theory}(H)$, 
+for some $M$, where
 the satisfaction relation $\_, \_ |= \_$ is defined as usual, using the
 aforementioned interpretations.
 
