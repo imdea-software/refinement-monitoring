@@ -1,5 +1,5 @@
 %!TEX root = head.tex
-\section{Removing ``Obsolete'' Operations}
+\section{Removing Matched Operations}
 \label{sec:obsolete}
 
 %Since from a theoretical point of view, testing history membership is NP-complete~\cite{journals/siamcomp/GibbonsK97},
@@ -9,11 +9,72 @@ from Corollary~\ref{cor:satisfiability_pending} can still be quite inefficient.
 One way of dealing with this inefficiency is to check history membership for a fragment
 of the given history provided that the smaller history being a violation to
 history inclusion implies that the initial history is also a violation. 
-However, deleting arbitrary operations from a history $h\in H(L)$
-may result in a history $h'\not\in H(L)$. For example, removing the $\<write>(1)$ operation
-from the history of the atomic register pictured in Figure~\ref{fig:removal_even_saturation}
+However, deleting arbitrary operations from a history $h\in \overline{H}$
+may result in a history $h'\not\in \overline{H}$. For example, removing the $\<write>(1)$ operation
+from the history of the atomic register in Figure~\ref{fig:removal_even_saturation}
 results in a history which is not anymore admitted by this object. To identify the
-removable operations that preserve history membership we rely on the matching function.
+removable operations that preserve history membership we rely on the matching functions
+used to characterize library kernels.
+
+\subsection{Unique matching functions}
+
+Recall that a history $h\in \overline{H}$ iff there exists a history $h'$ stronger than $h$
+and a matching function $M : O /-> O$ such that $h',M\models \textsc{Theory}(H)$.
+We assume in the following that for every history $h$, 
+the matching function $M : O /-> O$ is unique and effectively computable.
+The matching function associated to some history $h$ is denoted by $M_h$.
+We give some examples of how to construct histories of  
+standard libraries with unique matching functions. 
+
+
+\begin{example}[Collections]
+
+For usual implementations of collections 
+such as stacks, queues, and sets, 
+%it is 
+%straightforward to instrument an implementation in order the get the matching 
+%relation. 
+each operation adding a value to the collection is going to 
+receive as input a value which is uniquely identified by a tag. When a method removing 
+an element from the collection succeeds 
+%succeeds -- for instance pops an 
+%element from the stack -- 
+it is also going to return the unique tag associated
+with that element, thus defining a unique matching function
+from remove operations to add operations. The same strategy can be adapted to 
+implementations of a register: the inputs to write operations are tagged 
+and the read operations return tagged values.
+
+\end{example}
+
+\begin{example}[Locks]
+
+The implementations of a lock object usually have two abstract states, one where the
+object is unlocked, and one where it is locked. 
+%We can thus instrument the 
+%implementation in the following way. 
+The \<lock> operations can be modified to receive as input a value which is unique
+for every \<lock> operation in an execution and every successful execution
+of a $\<lock>$ operation results in an object state that stores that input value.
+When
+an \<unlock> operation succeeds, it returns the value stored in the object state.
+Therefore, the matching function maps $\<unlock>=>v$ operations to $\<lock>(v)$ operations.
+
+\end{example}
+
+\begin{example}[Semaphores]
+
+Semaphore objects are usually implemented using a counter, which counts the 
+number of \<acquire> operations which successfully entered the semaphore and
+which are not yet released. We can instrument the implementation by keeping
+a map which maps each \emph{slot} (from $1$ to the capacity $\capacity$) to a unique tag 
+which was received as input by the \<acquire> operation which has that slot, if any.
+When a \<release> succeeds in decrementing the counter, it returns the unique 
+tag of the \<acquire> which had the slot.
+
+\end{example}
+
+\subsection{Closure under removing matched operations}
 
 A \emph{match} of a history $h$ is an operation $o$ together with the maximal 
 set of operations mapped by $\<Matching>(h)$ to $o$. 
@@ -112,6 +173,8 @@ The history obtained by removing the
 match $\{{\tt push}(2),{\tt pop}=>2\}$ is however admitted by the atomic stack.
 
 \end{example}
+
+\subsection{Forgetting matched operations}
 
 When continuously checking membership to a reference implementation 
 on a history that keeps extending with new operations, 
