@@ -360,7 +360,7 @@ order constraints implied by their presence.
   may not detect the violation obviated when the pending ${\sf rem}$ completes.
   In order to avoid such incompleteness, at the very least, our monitoring
   algorithm must remember that the ${\sf add}(2)$ operation should be ordered
-  before $({\sf rm} => {\tt empty})$ (since ${\sf add}(2)$ must be ordered
+  before $({\sf rem} => {\tt empty})$ (since ${\sf add}(2)$ must be ordered
   before ${\sf add}(1)$, which is ordered before $({\tt rem} => {\tt empty})$),
   even after removing the match. Then when $({\sf rem} => 2)$ completes, we
   could deduce that $({\sf rem} => empty)$ must be ordered after ${\sf add}(2)$
