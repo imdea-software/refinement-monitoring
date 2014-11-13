@@ -24,8 +24,8 @@ refinement-checking algorithms.
   some number $n \in \<Nats>$ of operations, and the subset $H_n \subseteq H$
   of $n$-operation histories of $H$ is computable in finite time. As we assume
   no such bound on the number of operations, we perform this check via
-  theorem-prover query.} whether $h' |= \textsc{Theory}(H)$. As soon as this
-  check succeeds, we conclude that $h \in \overline{H}$. Otherwise if this
+  theorem-prover query instead.} whether $h' |= \textsc{Theory}(H)$. As soon as
+  this check succeeds, we conclude that $h \in \overline{H}$. Otherwise if this
   check fails for all linearizations $h'$, we conclude $h \not\in
   \overline{H}$. We also implement a variation which skips the enumeration of
   $h$'s completions, allowing the solver to search the space of completions
@@ -39,19 +39,19 @@ refinement-checking algorithms.
   Otherwise if unsatisfiability is found, we conclude that $h \not\in
   \overline{H}$. We also implement variations where the completions of $h'$ are
   enumerated explicitly ({\tt -c}), where the formula $\textsc{Stronger}(h)$ is
-  asserted to the solver incrementally as operations begin an end ({\tt -i}),
+  asserted to the solver incrementally as operations begin and end ({\tt -i}),
   where the match-removal optimization of Section~\ref{sec:obsolete} is
   performed ({\tt -r}), and any combination of the three.
 
   \item[{\sc Saturate}] avoids the expensive propositional backtracking
   inherent to the aforementioned {\sc Symbolic} checker by limiting the
   satisfiability check to Boolean constraint propagation. Essentially, we
-  implement a customized solver which only saturates with unit propagation,
-  avoiding any propositional branching. If a contradiction is found, we
-  conclude that $h \not\in \overline{H}$. Otherwise if saturation fails to
-  reveal a contradiction, we conclude $h \in \overline{H}$. We also implement a
-  variation where the match-removal optimization of Section~\ref{sec:obsolete}
-  is performed ({\tt -r}).
+  implement a customized incremental solver which only saturates with unit
+  propagation, avoiding any propositional branching. If a contradiction is
+  found, we conclude that $h \not\in \overline{H}$. Otherwise if saturation
+  fails to reveal a contradiction, we conclude $h \in \overline{H}$. We also
+  implement a variation where the match-removal optimization of
+  Section~\ref{sec:obsolete} is performed ({\tt -r}).
 
 \end{description}
 
@@ -78,12 +78,12 @@ time. Our second set of experiments (\S\ref{sec:exp:complete}) demonstrates
 that while our more efficient algorithms can be incomplete on certain
 hand-crafted cases, failing to identify particularly intricate refinement
 violations, the violations surfacing in the logs of actual executions are
-consistently discovered. We made all measurements on similar MacBook Proc
+consistently discovered. We made all measurements on similar MacBook Pro
 2.XGHz Intel Core i5/i7 machines, and discharged theorem-prover queries with
 an in-process instance of Z3, version 4.3.1.
 
 Our implementation of the algorithms, and all (generated) histories used in
-these experiments, is available on
+these experiments, are available on
 Github\footnote{\url{https://github.com/pldi15-anonymous/refinement-monitor-experiments}}.
 
 \subsection{Scalability of Symbolic Checking}
