@@ -4,17 +4,19 @@
 
 %Since from a theoretical point of view, testing history membership is NP-complete~\cite{journals/siamcomp/GibbonsK97},
 
-Checking history membership for large histories using the reduction to propositional SAT 
-from Corollary~\ref{cor:satisfiability_pending} can still be quite inefficient. 
-One way of dealing with this inefficiency is to check history membership for a fragment
-of the given history provided that the smaller history being a violation to
-history inclusion implies that the initial history is also a violation. 
-However, deleting arbitrary operations from a history $h\in \overline{H}$
-may result in a history $h'\not\in \overline{H}$. For example, removing the $\<write>(1)$ operation
-from the history of the atomic register in Figure~\ref{fig:removal_even_saturation}
-results in a history which is not anymore admitted by this object. To identify the
-removable operations that preserve history membership we rely on the matching functions
-used to characterize library kernels.
+While the reduction to symbolic reasoning enabled by the previous sections
+already offers practical advantages over the explicit enumeration of history
+linearizations, this reduction does nothing to avoid the increasing cost of
+refinement checking as execution-length increases. A truly useful runtime
+monitor must be \emph{linear} in the number of operations in order to avoid a
+progressive slowdown of the monitored implementation. Achieving this complexity
+goal implies forgetting increasingly-many previously-executed operations.
+However, forgetting arbitrary operations from a valid history can result in a
+false violation. For example, removing the ${\sf write}(1)$ operation from the
+history of the atomic register in Figure~\ref{fig:removal_even_saturation}
+results in a history which is not anymore admitted by this object. To identify
+the removable operations that preserve history membership, we rely on the
+matching functions used to characterize library kernels.
 
 \subsection{Unique matching functions}
 
