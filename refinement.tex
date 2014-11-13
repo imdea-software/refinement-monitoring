@@ -136,18 +136,19 @@ implementation, yet not using the atomic one.
 TODO SHORTEN THE ABOVE
 
 We capture the interaction between programs and libraries by their
-\emph{histories}: the partial happens-before orders of library method
-invocations. Fixing arbitrary sets $\<Ops>$, $\<Methods>$, and $\<Vals>$ of
-operation identifiers, method names, and parameter/return values, respectively,
-we define the set of \emph{operation labels} as $\<Labels> = (\<Methods> \x
-\<Vals> \x (\<Vals> \u \set{\bot}))$. We write $m(u) => v$ to denote the label
-$@l = \tup{m,u,v}$, and when $v = \bot$ we say $@l$ is \emph{pending}, and
-otherwise \emph{completed}. A \emph{history} $h = \tup{O,<,f}$ is a partial
-order $<$ on a set $O \subseteq \<Ops>$ of operations labeled by $f : O ->
-\<Labels>$ such that operations with pending labels are maximal. An operation
-$o$ with label $@l$ is an \emph{$@l$-operation}, and $o$ is
-\emph{pending}/\emph{completed} when $@l$ is. We say $h$ is \emph{sequential}
-when $<$ is a total order on $O$, and a history set is \emph{sequential} when
+\emph{histories}, representing the partial happens-before orders of library
+method invocations. Fixing arbitrary sets $\<Ops>$, $\<Methods>$, and $\<Vals>$
+of operation identifiers, method names, and parameter/return values,
+respectively, we define the set of \emph{operation labels} as $\<Labels> =
+(\<Methods> \x \<Vals> \x (\<Vals> \u \set{\bot}))$. We write $m(u) => v$ to
+denote the label $@l = \tup{m,u,v}$. When $v = \bot$ we say $@l$ is
+\emph{pending}, and otherwise \emph{completed}. A \emph{history} $h =
+\tup{O,<,f}$ is a partial order $<$ on a set $O \subseteq \<Ops>$ of operations
+labeled by $f : O -> \<Labels>$ such that operations with pending labels are
+maximal. An operation $o$ with label $@l$ is an \emph{$@l$-operation}, and $o$
+is \emph{pending}/\emph{completed} when $@l$ is. We say $h$ is
+\emph{sequential} when $<$ is a total order on $O$, and \emph{(in)complete}
+when (not) all operations are complete. A history set is \emph{sequential} when
 it contains only sequential histories.
 
 % \begin{example}
@@ -207,12 +208,16 @@ weakening.
 
 \end{example}
 
-A \emph{library} $L$ is a set of histories closed under weakening,
-i.e.~$\overline{L} = L$, and a \emph{kernel of $L$} is any set $H$ such that
-$\overline{H} = L$. A library $L$ is called \emph{atomic} if it has a
-sequential kernel. Atomic libraries are often considered as specifications for
-concurrent objects. In practice, libraries can be made atomic by guarding their
-methods bodies with global lock acquisitions.
+We model libraries as sets of histories. Since libraries only dictate methods'
+executions between their respective calls and returns, and making calls/returns
+earlier/later corresponds to weakening, any weakening of a history admitted by
+a library must also be admitted. Thus formally, a \emph{library} $L$ is a set
+of histories closed under weakening, i.e.~$\overline{L} = L$, and a
+\emph{kernel of $L$} is any set $H$ such that $\overline{H} = L$. A library $L$
+is called \emph{atomic} if it has a sequential kernel. Atomic libraries are
+often considered as specifications for concurrent objects. In practice,
+libraries can be made atomic by guarding their methods bodies with global lock
+acquisitions.
 
 \begin{example}
   \label{ex:atomic_stack}

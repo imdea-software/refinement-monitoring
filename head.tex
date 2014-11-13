@@ -63,7 +63,8 @@
 \newtheorem{example}{Example}[section]
 \newtheorem{remark}{Remark}
 
-\title{Monitoring Observational Refinement} % short and sweet
+\title{Monitoring Refinement via Symbolic Reasoning}
+% \title{Monitoring Observational Refinement} % short and sweet
 % \title{Monitoring Refinement for Concurrent Objects} % original
 % \title{Scalable Refinement Monitoring for Concurrent Objects}
 % \title{Scalable Refinement Checking for Concurrent Objects} % similar to POPL
@@ -83,16 +84,22 @@
   \begin{abstract}
 
     Efficient implementations of concurrent objects such as semaphores, locks,
-    and atomic collections are essential to modern computing. Yet programming
-    such objects is error prone: in minimizing the synchronization overhead
-    between concurrent object invocations, one risks the conformance to
-    reference implementations --- or in formal terms, one risks violating
-    \emph{observational refinement}. Testing this refinement even within a
-    single execution is intractable, limiting existing approaches to executions
-    with very few object invocations.
+    and atomic collections are essential to modern computing. Programming such
+    objects is error prone: in minimizing the synchronization overhead between
+    concurrent object invocations, one risks the conformance to reference
+    implementations --- or in formal terms, one risks violating
+    \emph{observational refinement}. Precisely testing this refinement even
+    within a single execution is intractable, limiting existing approaches to
+    executions with very few object invocations.
 
-    We develop \ldots TODO FILL IN THE REST ACCORDING TO README.md
-    
+    We develop scalable and effective algorithms for detecting refinement
+    violations. Our algorithms are founded on incremental, symbolic reasoning,
+    and exploit foundational insights into the refinement-checking problem. Our
+    approach is \emph{sound}, in that we detect only actual violations, and
+    scales far beyond existing violation-detection algorithms. Empirically, we
+    find that our approach is \emph{practically} complete, in that we detect
+    nearly all violations arising in actual executions.
+
   \end{abstract}
 
   \input intro
@@ -101,7 +108,6 @@
   \input propositional
   \input obsolete
   \input empirical
-  \input matching
   \input related
   
   \bibliographystyle{abbrvnat}

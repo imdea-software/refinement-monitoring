@@ -45,7 +45,9 @@ argument/return values, and invocation-ordering constraints. Ultimately this
 allows us to reduce violation detection for single executions to satisfiability
 in propositional logic. Practically speaking, this allows us to exploit the
 highly-developed algorithms of modern symbolic reasoning engines in place of
-the explicit enumeration of linearizations.
+the explicit enumeration of linearizations. Furthermore, symbolic reasoning
+lends itself to \emph{incrementality}, with the possibility to avoid
+recomputing the set of possible linearizations after each execution step.
 
 While exploiting symbolic reasoning engines makes sense practically, and is
 likely to be more efficient, the link to symbolic reasoning also reveals
@@ -72,14 +74,14 @@ memory. Achieving this complexity goal implies that the monitor cannot store
 all previously-executed operations. However, simply forgetting arbitrary
 operations is unsound, in the sense that we may conclude a violation when none
 actually occurred. For instance, if a monitor for an atomic queue object
-observes an enqueue of element $a$ followed by a enqueue of element $b$, and a
-dequeue of element $b$, having dropped a previous dequeue of element $a$, the
-monitor may report a violation, thinking that $b$ shouldn't have been dequeued
-before $a$. To resolve this issue, we develop a sound theory allowing the
-removal of \emph{matched} operations, e.g.,~the enqueue operations together
-with the dequeue operations removing the same added elements. We hypothesize
-that such strategies are, too, effective in practice, in the that they do not
-cause many violations to be missed.
+observes ordered ${\sf enqueue}(a)$ and ${\sf enqueue}(b)$ operations, and
+${\sf dequeue}(b)$, having dropped ${\sf dequeue}(a)$, the monitor may detect a
+violation, thinking ${\sf dequeue}(b)$ should not precede ${\sf dequeue}(a)$.
+To resolve this issue, we develop a sound theory for the removal of
+\emph{matched} operations, e.g.,~the {\sf enqueue} operations together with the
+{\sf dequeue} operations removing the same added elements. We hypothesize that
+such strategies are, too, effective in practice, in that they do not cause many
+violations to be missed.
 
 Empirically we demonstrate that our violation-detection strategies are
 profoundly-more scalable than existing techniques. We also validate our
@@ -96,10 +98,13 @@ To summarize, we make the following contributions:
   \item A reduction from refinement-violation detection for single executions
   to propositional logic satisfiability (\S\ref{sec:propositional}).
   
-  \item A sound theory allowing the removal of matched operations
-  (\S\ref{sec:obsolete}).
+  \item A sound theory of matched-operation removal, allowing the scalability
+  required for runtime monitoring (\S\ref{sec:obsolete}).
   
   \item Empirical demonstration that our violation-detection optimizations are
   scalable and effectively-complete (\S\ref{sec:exp}).
 
 \end{itemize}
+We begin with a formalization of observational refinement
+(\S\ref{sec:refinement}), and conclude with a discussion of related work
+(\S\ref{sec:related}).
