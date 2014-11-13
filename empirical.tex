@@ -98,9 +98,9 @@ stack implementation with an average of $1020.8$ steps. We used five
 per-history time limits of $5$s, $25$s, $50$s, $75$s, and $100$s. The graph of
 Figure~\ref{fig:steprace} shows the results with time plotted on the y-axis,
 and number of steps plotted on the x-axis on a logarithmic scale. The {\sc
-Enumerate} algorithm performs worst, progressing only from $X$ steps in $5$s to
-$Y$ steps in $100$s. The {\sc Symbolic} algorithm is a significant improvement,
-progressing from $X$ steps in $5$s to $Y$ steps in $100$s. While adding match
+Enumerate} algorithm performs worst, progressing only from $16$ steps in $5$s to
+$18$ steps in $100$s. The {\sc Symbolic} algorithm is a significant improvement,
+progressing from $31.6$ steps in $5$s to $52.7$ steps in $100$s. While adding match
 removal helps, achieving roughly an order-of-magnitude improvement over {\sc
 Enumerate}, the cost of checking remains exponential in the number of steps.
 
@@ -108,7 +108,7 @@ TODO FILL IN THOSE $X$'s and $Y$'s above.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{figures/new_chart}
+  \includegraphics[width=\linewidth]{figures/chart_efficiency}
   \caption{The number of steps each algorithm is able to process in given time
   limits of $5$s, $25$s, $50$s, $75$s, and $100$s, per history averaged over
   $10$ histories of an atomic stack implementation. Further right is better.
@@ -117,8 +117,8 @@ TODO FILL IN THOSE $X$'s and $Y$'s above.
 \end{figure}
 
 Even without match removal, the {\sc Saturate} checker achieves roughly a
-two-orders-of-magnitude improvement over {\sc Enumerate}, progressing from $X$
-steps in $5$s to $Y$ steps in $100$s. Most impressively, adding match removal
+two-orders-of-magnitude improvement over {\sc Enumerate}, progressing from $307.7$
+steps in $5$s to $744.6$ steps in $100$s. Most impressively, adding match removal
 to the {\sc Saturate} checker allows it to process \emph{all} $1020.8$ steps in
 under $5$s.
 
