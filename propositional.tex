@@ -7,7 +7,8 @@ In this section we demonstrate that the history membership problem $h \in
 \overline{H}$ reduces to propositional satisfiability, given a formula
 $\textsc{Theory}(H)$ characterizing the histories of the library kernel $H$.
 Note that $h \in \overline{H}$ if{f} $h$ is weaker than some history $h' \in
-H$, or equivalently weaker than some history $h' |= \textsc{Theory}(H)$. When
+H$, or equivalently weaker than some history $h'$ such that
+$h',M |= \textsc{Theory}(H)$, for some matching function $M$. When
 $h$ is complete, the fact that any stronger history contains exactly the same
 set of operations enables the construction of a formula $\textsc{Stronger}(h)$
 characterizing the histories stronger than $h$. Together with
@@ -86,9 +87,12 @@ indeed characterize all histories at least as strong as $h$.
       {\sf meth}(o) = m /| {\sf arg}(o) = u /| 
       [{\sf ret}(o) = v]_{v \neq \bot} \\
     & \textsc{Order}(h)
-    && \bigwedge_{o_1 < o_2} {\sf b}(o_1, o_2)
+    && \bigwedge_{o_1 < o_2} {\sf b}(o_1, o_2) \\
+    & \textsc{Used} 
+    && \forall x.\ {\sf ret}(x) \neq \bot => {\sf used}(x)
   \end{align*}
-  \caption{Formul\ae characterizing histories $h = \tup{O,<,f}$.}
+  \caption{Formul\ae characterizing histories $h = \tup{O,<,f}$ (${\sf ret}(o) = v$
+  is present in $\textsc{Labels}(h)$ only if $v\neq \bot$).}
   \label{fig:formula:history}
 \end{figure}
 
@@ -156,10 +160,18 @@ operation which is pending in $h$) should satisfy ${\sf used}$. It can be
 proved that every history stronger than $h$ corresponds to a model of this
 formula, projected on the set of operations satisfying ${\sf used}$.
 
-We define the formula {\sc Used} as
+Thus, let $\textsc{Stronger}(h)$ be defined as
+the conjunction
 \begin{align*}
-  \forall x.\ {\sf ret}(x) \neq \bot => {\sf used}(x)
+  \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h) /| \textsc{Used},
 \end{align*}
+where $\textsc{Used}$ is defined in Figure~\ref{fig:formula:history}.
+
+
+%We define the formula {\sc Used} as
+%\begin{align*}
+%  \forall x.\ {\sf ret}(x) \neq \bot => {\sf used}(x)
+%\end{align*}
 
 For arbitrary, not necessarily complete, histories $h$, the models of
 $\textsc{Stronger}(h)$ are histories paired with an interpretation $U : O ->
@@ -177,7 +189,7 @@ the history obtained from $h$ by deleting operations $o$ such that $\lnot U(o)$.
 
 We leverage the predicate {\sf used} to guard the domain of quantifiers in
 $\textsc{Theory}(H)$. For simplicity, we assume that $\textsc{Theory}(H)$ is
-given in prenex normal form, whose quantifiers form a prefix $\forall^*
+given in prenex normal form, whose quantifier prefix is of the form $\forall^*
 \exists^*$. All of the formul\ae of
 Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization} can be
 written in this form. We thus define the guarded formula $G(@p)$ of the formula
