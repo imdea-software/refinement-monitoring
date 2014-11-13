@@ -1,10 +1,10 @@
 %!TEX root = head.tex
 
-\section{Empirical Results}
+\section{Empirical Validation}
 \label{sec:exp}
 
-To demonstrate the practical value of our approach to checking observational
-refinement, we argue that our symbolic refinement-checking algorithms
+To demonstrate the practical value of the theory developed in the previous
+sections, we argue that our symbolic refinement-checking algorithms
 \begin{itemize}
 
   \item scale far beyond existing algorithms, and
@@ -13,33 +13,45 @@ refinement, we argue that our symbolic refinement-checking algorithms
 
 \end{itemize}
 To argue these points we have implemented several variations of three basic
-refinement-checking algorithms for the membership query $h \in \overline{H}$.
+refinement-checking algorithms.
 
 \begin{description}
 
-  \item[The Linearization Checker] enumerates the linearizations of $h$. For
-  each (sequential) linearization $h' \succeq h$, we leverage an automated
-  theorem prover to check whether $h'$ is included in the kernel $H$ via
-  satisfaction query $h' |= \textsc{Theory}(H)$. If this check succeeds, we
-  conclude that $h \in \overline{H}$. If this check fails for all of the
-  linearizations $h'$ of $h$, we conclude that $h \not\in \overline{H}$.
+  \item[{\sc Enumerate}] checks each history $h$ by enumerating the
+  linearizations $h'$ of $h$'s completions. We check whether each $h'$ is
+  included in the kernel $H$ by asking\footnote{Classically this check is
+  performed by set inclusion, as the length of $h$ is assumed to be bounded by
+  some number $n \in \<Nats>$ of operations, and the subset $H_n \subseteq H$
+  of $n$-operation histories of $H$ is computable in finite time. As we assume
+  no such bound on the number of operations, we perform this check via
+  theorem-prover query.} whether $h' |= \textsc{Theory}(H)$. As soon as this
+  check succeeds, we conclude that $h \in \overline{H}$. Otherwise if this
+  check fails for all linearizations $h'$, we conclude $h \not\in
+  \overline{H}$. We also implement a variation which skips the enumeration of
+  $h$'s completions, allowing the solver to search the space of completions
+  symbolically. The {\tt -c} flag specifies explicit enumeration of completions.
 
-  \item[The Satisfiability Checker] essentially delegates the enumeration of
-  linearizations to an underlying theorem prover by encoding the refinement
-  query into a logical question including the formula $\textsc{Theory}(H)$. As
-  described in Section~\ref{sec:propositional}, we check $h \in \overline{H}$
-  by checking the satisfiability of the formula $\textsc{Stronger}(h) /|
-  \textsc{Theory}(H)$. If this check succeeds or is inconclusive, we conclude
-  that $h \in \overline{H}$. If unsatisfiability is found, we conclude that $h
-  \not\in \overline{H}$.
+  \item[{\sc Symbolic}] checks each history $h$ by reduction to the
+  satisfiability of $\textsc{Stronger}(h) /| \textsc{Theory}(H)$, as described
+  in Section~\ref{sec:propositional}, delegating the enumeration of both
+  completions and linearizations to an underlying solver. If the satisfiability
+  check succeeds, or is inconclusive, we conclude that $h \in \overline{H}$.
+  Otherwise if unsatisfiability is found, we conclude that $h \not\in
+  \overline{H}$. We also implement variations where the completions of $h'$ are
+  enumerated explicitly ({\tt -c}), where the formula $\textsc{Stronger}(h)$ is
+  asserted to the solver incrementally as operations begin an end ({\tt -i}),
+  where the match-removal optimization of Section~\ref{sec:obsolete} is
+  performed ({\tt -r}), and any combination of the three.
 
-  \item[The Saturation Checker] avoids the expensive propositional
-  branching/backtracking inherent to the aforementioned satisfiability query,
-  by limiting the satisfiability check to Boolean constraint propagation.
-  Essentially, we implement a solver which only saturates with unit
-  propagation, avoiding any propositional branching. If a contradiction is
-  found, we conclude that $h \not\in \overline{H}$. Otherwise if saturation
-  fails to reveal a contradiction, we conclude $h \in \overline{H}$.
+  \item[{\sc Saturate}] avoids the expensive propositional backtracking
+  inherent to the aforementioned {\sc Symbolic} checker by limiting the
+  satisfiability check to Boolean constraint propagation. Essentially, we
+  implement a customized solver which only saturates with unit propagation,
+  avoiding any propositional branching. If a contradiction is found, we
+  conclude that $h \not\in \overline{H}$. Otherwise if saturation fails to
+  reveal a contradiction, we conclude $h \in \overline{H}$. We also implement a
+  variation where the match-removal optimization of Section~\ref{sec:obsolete}
+  is performed ({\tt -r}).
 
 \end{description}
 
@@ -54,10 +66,10 @@ queue~\cite{conf/pact/KirschLP13}, are meant to preserve weaker properties.
 The input to our checking algorithms are histories given as text files
 consisting of line-separated call and return actions. For the selected set of
 concurrent object implementations, we generated the histories of several
-pseudo-random executions by logging calls and returns in the order in which
-they occurred. While scanning an input history, the selected algorithm performs
-a membership test at each prefix at which an operation completes --- i.e.,~at
-return actions.
+executions under pseudo-random scheduling by logging calls and returns in the
+order in which they occurred. While scanning an input history, the selected
+algorithm performs a membership test at each prefix at which an operation
+completes --- i.e.,~at return actions.
 
 Our first set of experiments (\S\ref{sec:exp:scalable}) demonstrates that our
 symbolic algorithms are drastically more scalable than existing algorithms, in
@@ -68,83 +80,133 @@ hand-crafted cases, failing to identify particularly intricate refinement
 violations, the violations surfacing in the logs of actual executions are
 consistently discovered. We made all measurements on similar MacBook Proc
 2.XGHz Intel Core i5/i7 machines, and discharged theorem-prover queries with
-Z3 version 4.3.1.
+an in-process instance of Z3, version 4.3.1.
+
+Our implementation of the algorithms, and all (generated) histories used in
+these experiments, is available on
+Github\footnote{\url{https://github.com/pldi15-anonymous/refinement-monitor-experiments}}.
 
 \subsection{Scalability of Symbolic Checking}
 \label{sec:exp:scalable}
 
-TODO ARGUE THAT WE'RE EXTREMELY SCALABLE
+Our first experiment measures the number of steps each algorithm is able to
+process for varying time limits, averaged over $10$ histories of an atomic
+stack implementation with an average of $1020.8$ steps. We used five
+per-history time limits of $5$s, $25$s, $50$s, $75$s, and $100$s. The graph of
+Figure~\ref{fig:steprace} shows the results with time plotted on the y-axis,
+and number of steps plotted on the x-axis on a logarithmic scale. The {\sc
+Enumerate} algorithm performs worst, progressing only from $X$ steps in $5$s to
+$Y$ steps in $100$s. The {\sc Symbolic} algorithm is a significant improvement,
+progressing from $X$ steps in $5$s to $Y$ steps in $100$s. While adding match
+removal helps, achieving roughly an order-of-magnitude improvement over {\sc
+Enumerate}, the cost of checking remains exponential in the number of steps.
 
-\subsection{Completeness in Practice}
-\label{sec:exp:complete}
-
-TODO ARGUE THAT WE AREN'T MISSING VIOLATIONS
-
-
-\begin{table}[t]
-  \footnotesize
-  \centering
-  \setlength{\tabcolsep}{1.8mm}
-  \begin{tabular}{ccccc}
-   & Nb. of steps  & & Nb. of & Step of  \\
-   Method & to timeout & Time & violations & the violation \\
-  \hline
-  Lineup & 35 & - & 0/4 \\
-  Lineup -c & 38 & - & 0/4 \\
-  SMT & 52 & - & 3/4 & 39, 49, 51\\
-  SMT -r & 52 & - & 3/4 & 39, 49, 51\\
-  SMT -i & 51 & - & 3/4 & 39, 49, 51\\
-  SMT -c & 38 & - & 0/4 \\
-  SMT -c -i & 38 & - & 0/4 \\
-  Saturation & 100 & 0.1340s & 4/4 & 39, 49, 51,100\\
-  Saturation -r  & 100 & 0.1521s & 4/4 &39, 49, 51,100 
-  %MSQueue                             & 2xEnqueue 2xDequeue & 0 & 2 & 2 & & Yes \\
-  \end{tabular} 
-  \caption{Experimental data for the very concurrent {\tt bkq} and {\tt msq}: 200 executions and only 4 violations.
-  Timeout is set to 5 seconds.
-    }
-  \label{tab:exp:concur}
-\end{table}
-
-
-\begin{table}[t]
-  \footnotesize
-  \centering
-  \setlength{\tabcolsep}{1.8mm}
-  \begin{tabular}{cccc}
-   	        & 	                     & Step of     \\
-   Method & $\%$ violations  & violations & Time \\
-  \hline
-  Lineup & 55$\%$ & 23.8 & 1.2593s \\
-  Lineup -c & 88$\%$ & 23.8 & 0.8906s \\
-  SMT & 75$\%$ & 23.8 & 1.1058s \\
-  SMT -r & 78$\%$ & 23.8 & 0.8390s\\
-  SMT -i & 90$\%$ & 23.8 & 0.5053s\\
-  SMT -c & 100$\%$ & 23.8 & 0.8461s \\
-  SMT -c -i & 100$\%$ & 23.8 & 0.5021s \\
-  Saturation & 100$\%$ & 24.2 & 0.0171s\\
-  Saturation -r  & 100$\%$ & 24.2 & 0.0191s
-  %MSQueue                             & 2xEnqueue 2xDequeue & 0 & 2 & 2 & & Yes \\
-  \end{tabular} 
-  \caption{Experimental data for the very sequential {\tt bkq}: 100 executions which are all violations. The column ``Step of violations'', resp., ``Time'',
-  gives the step at which a method found the violation and the time spent, in average, but only for the 53 violations
-  which were detected by all methods. In 9 cases, the saturation procedure is late to detect a violation by two steps
-  from 21 to 23. Timeout is set to 5 seconds.
-    }
-  \label{tab:exp:sec}
-\end{table}
-
+TODO FILL IN THOSE $X$'s and $Y$'s above.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/new_chart}
-  \caption{Logarithmic scale. Lineup -r behaves like lineup. The other smt -i, smt -i -c, smt -c behave like smt.
-  }
-  \label{fig:data:chart}
+  \caption{The number of steps each algorithm is able to process in given time
+  limits of $5$s, $25$s, $50$s, $75$s, and $100$s, per history averaged over
+  $10$ histories of an atomic stack implementation. Further right is better.
+  The x-axis plots steps on a logarithmic scale, and the y-axis plots time.}
+  \label{fig:steprace}
 \end{figure}
 
+Even without match removal, the {\sc Saturate} checker achieves roughly a
+two-orders-of-magnitude improvement over {\sc Enumerate}, progressing from $X$
+steps in $5$s to $Y$ steps in $100$s. Most impressively, adding match removal
+to the {\sc Saturate} checker allows it to process \emph{all} $1020.8$ steps in
+under $5$s.
+
+Our second experiment measures the average number of steps each algorithm is
+able to process in a fixed time limit of $5$s per history over $100$ histories
+of Scal's Michael-Scott Queue and $100$ histories of Scal's bounded-reordering
+queue. Each history contains $20$ {\sf enqueue}-operations and $30$ {\sf
+dequeue} operations (total $100$ steps) obtained from highly-concurrent
+executions in which most operations are concurrent. Although most sequential
+executions of the bounded-reordering queue exhibit violations with respect to
+an atomic queue, the extreme concurrency in this set of histories allows great
+freedom in the linearization of operations, rendering all but $4$ histories
+violation free. Table~\ref{tab:exp:con} shows the results, including the
+average number of steps (out of $100$) processed, and the number of violations
+(out of $4$) discovered, within the $5$s time limit. While the {\sc Enumerate}
+algorithm is never able to process enough steps in $5$s to detect any of the
+violations, the {\sc Symbolic} checker, at least without computing history
+completions, does detect $3$ out of $4$ violations. Once again, the {\sc
+Saturate} checker swiftly processes all histories to their entirety well under
+the time limit, averaging $0.1$s, correctly detecting all $4$ violations.
+
+\begin{table}[t]
+  \footnotesize
+  \centering
+  \setlength{\tabcolsep}{1.8mm}
+  \begin{tabular}{lcccc}
+    Algorithm & Avg. steps & Avg. time & Nb. violations \\
+    \hline
+    {\sc Enumerate}             & 35  & --      & 0/4 \\
+    {\sc Enumerate} {\tt -c}    & 38  & --      & 0/4 \\
+    {\sc Symbolic}              & 52  & --      & 3/4 \\
+    {\sc Symbolic} {\tt -r}     & 52  & --      & 3/4 \\
+    {\sc Symbolic} {\tt -i}     & 51  & --      & 3/4 \\
+    {\sc Symbolic} {\tt -c}     & 38  & --      & 0/4 \\
+    {\sc Symbolic} {\tt -c -i}  & 38  & --      & 0/4 \\
+    {\sc Saturate}              & 100 & 0.1340s & 4/4 \\
+    {\sc Saturate} {\tt -r}     & 100 & 0.1521s & 4/4
+  \end{tabular} 
+
+  \caption{The average number of steps each algorithm is able to process in a
+  fixed time limit of $5$s per history, averaged over $200$ very-concurrent
+  histories.}
+  \label{tab:exp:con}
+\end{table}
 
 
+\subsection{Completeness in Practice}
+\label{sec:exp:complete}
 
+While the second experiment of Table~\ref{tab:exp:con} already demonstrates
+that ``needle-in-a-haystack'' violations are swiftly discovered by the {\sc
+Saturate} checker, our third experiment elaborates, measuring the percentage of
+violations each algorithm is able discover in a fixed time limit of $5$s per
+history over $100$ histories of Scal's bounded-reordering queue. Each history
+contains $20$ {\sf enqueue}-operations and $30$ {\sf dequeue} operations (total
+$100$ steps) obtained from highly-sequential executions in which most
+operations are sequential. Consequently, the extreme sequentiality in this set
+of histories greatly limits freedom in the linearization of operations of the
+reordering queue, rendering all $100$ histories violations.
+Table~\ref{tab:exp:seq} shows the results, including the percentage of
+histories in which, and average step at which, the violation was discovered
+within the $5$s time limit. Since most operations are already ordered, the {\sc
+Enumerate} checker has very few completions and linearizations to perform, and
+succeeds in exposing most, but not all violations. The {\sc Symbolic} checker
+is more efficient, particularly when interacting with the solver incrementally,
+and computing completions explicitly. Still, the {\sc Saturate} checker is far
+more efficient, and succeeds in discovering \emph{every} violation. Notice that
+in some cases the {\sc Saturate} checker requires more steps to detect a
+violation. This is of course by design, as we wish to avoid branching and
+backtracking on the possible completions of operations.
 
+\begin{table}[t]
+  \footnotesize
+  \centering
+  \setlength{\tabcolsep}{1.8mm}
+  \begin{tabular}{lccc}
+   	          & 	              & Avg. step \\
+    Algorithm & $\%$ violations & detected  \\
+    \hline
+    {\sc Enumerate}             & 55$\%$  & 23.8 \\
+    {\sc Enumerate} {\tt -c}    & 88$\%$  & 23.8 \\
+    {\sc Symbolic}              & 75$\%$  & 23.8 \\
+    {\sc Symbolic} {\tt -r}     & 78$\%$  & 23.8 \\
+    {\sc Symbolic} {\tt -i}     & 90$\%$  & 23.8 \\
+    {\sc Symbolic} {\tt -c}     & 100$\%$ & 23.8 \\
+    {\sc Symbolic} {\tt -c -i}  & 100$\%$ & 23.8 \\
+    {\sc Saturate}              & 100$\%$ & 24.2 \\
+    {\sc Saturate} {\tt -r}     & 100$\%$ & 24.2
+  \end{tabular} 
 
+  \caption{The percentage of violations each algorithm is able to discover in a
+  fixed time limit of $5$s per history, over $100$ barely-concurrent histories.}
+  \label{tab:exp:seq}
+\end{table}
