@@ -3,21 +3,12 @@
 \section{Observational Refinement}
 \label{sec:refinement}
 
-TODO REPURPOSE AS AN ``INTRO'' TO THIS SECTION
 
-Figure~\ref{fig:treiber} lists a non-blocking Treiber's stack~\cite{tr/Treiber86}
-implementation providing {\tt push} and {\tt pop} methods. This implementation
-stores {\tt push}ed elements into a singly-linked list rooted at {\tt Top}, and
-avoids blocking lock acquisitions in favor of non-blocking compare-and-swap
-({\tt CAS}) operations in order to maximize parallelism, allowing methods to
-interleave their internal actions. In one atomic step, the {\tt CAS} operation
-assigns {\tt Top = n} only if {\tt Top == t}.
-
-% The first lock-based implementation ensures that methods execute atomically by
-% holding a lock for the duration of each operation, and stores {\tt push}ed
-% elements in a singly-linked list rooted at {\tt S->Top}. The second
-% implementation of Treiber~\cite{Treiber'86} stores its elements in the same
-% singly-linked list structure,
+Figure~\ref{fig:treiber} lists a non-blocking stack~\cite{tr/Treiber86} which
+stores its elements in a singly-linked list rooted at {\tt Top}, and avoids
+blocking lock acquisitions in favor of non-blocking compare-and-swap ({\tt
+CAS}) instructions in order to maximize parallelism. In one atomic step, the
+{\tt CAS} instruction assigns {\tt Top = n} only if {\tt Top == t}.
 
 \begin{figure}[t]
   \scriptsize
@@ -101,10 +92,10 @@ void Thread2():
   \label{fig:stacks}
 \end{figure}
 
-Unfortunately this implementation suffers from a subtle concurrency bug, now
-commonly known as an ``ABA'' bug~\cite{tr/ibm/Michael04}. The bug manifests in
-the two-thread program of Figure~\ref{fig:treiber}, via the execution depicted
-in Figure~\ref{fig:stacks}(a). Essentially, Thread~1 wrongfully assumes the
+Unfortunately this implementation suffers from a subtle concurrency
+bug~\cite{tr/ibm/Michael04} exposed by the two-thread program of
+Figure~\ref{fig:treiber} via the execution depicted in
+Figure~\ref{fig:stacks}(a). Essentially, Thread~1 wrongfully assumes the
 absence of interference from other threads on the successful {\tt CAS}
 operation. Thread~1 is preempted right before executing its {\tt CAS} in the
 {\tt pop} method; at that moment, its {\tt t} variable points to the first
@@ -117,23 +108,18 @@ When Thread~1 resumes, its {\tt CAS} succeeds, effectively removing two
 elements from the list instead of one. The final {\tt pop} of Thread~2 thus
 erroneously returns {\tt EMPTY}. Intuitively, this is a problem because the
 {\tt EMPTY} value should not have been returned since more elements have been
-pushed than popped prior to Thread~2's final {\tt pop} operation.
+pushed than popped prior to Thread~2's final {\tt pop} operation. This bug
+exposes the fact that our {\tt CAS}-based implementation does not conform to
+programmers' expectations of a stack object whose operations execute
+atomically. In particular, the assignment {\tt z = EMPTY} should never have
+occurred.
 
-This bug exposes the fact that our {\tt CAS}-based implementation does not
-conform to programmers' expectations of a stack object whose operations
-execute atomically, e.g.,~by holding a lock for the duration of each operation.
-In particular, the assignment {\tt z = EMPTY} should never have occurred.
-
-This idea of conformance is rigorously captured by the formal notion of
-\emph{observational refinement}. Essentially, an implementation $L_1$ of a
-concurrent object \emph{refines} another implementation $L_2$ if every
-observable behavior of a program using $L_1$ is also observable using $L_2$.
-This property clearly does not hold between the {\tt CAS}-based implementation
-of Figure~\ref{fig:treiber} and a correct atomic lock-based implementation,
-since {\tt y = 1; x = 3; z = EMPTY} is observable using the {\tt CAS}-based
-implementation, yet not using the atomic one.
-
-TODO SHORTEN THE ABOVE
+Formally this conformance is \emph{observational refinement}. Essentially, a
+library implementation $L_1$ \emph{refines} $L_2$ if every observable behavior
+of programs using $L_1$ is also observable using $L_2$. This is not the case
+between the {\tt CAS}-based implementation $L_1$ of Figure~\ref{fig:treiber}
+and an atomic implementation $L_2$, since {\tt z = EMPTY} is observable with
+$L_1$ yet not with $L_2$.
 
 We capture the interaction between programs and libraries by their
 \emph{histories}, representing the partial happens-before orders of library
@@ -209,12 +195,13 @@ weakening.
 \end{example}
 
 We model libraries as sets of histories. Since libraries only dictate methods'
-executions between their respective calls and returns, and making calls/returns
-earlier/later corresponds to weakening, any weakening of a history admitted by
-a library must also be admitted. Thus formally, a \emph{library} $L$ is a set
-of histories closed under weakening, i.e.~$\overline{L} = L$, and a
-\emph{kernel of $L$} is any set $H$ such that $\overline{H} = L$. A library $L$
-is called \emph{atomic} if it has a sequential kernel. Atomic libraries are
+executions between their respective calls and returns, for any execution they
+admit, they must also admit executions with weaker inter-operation ordering, in
+which calls may happen earlier, and/or returns later. Thus any weakening of a
+history admitted by a library must also be admitted. Formally, a \emph{library}
+$L$ is a set of histories closed under weakening, i.e.~$\overline{L} = L$, and
+a \emph{kernel of $L$} is any set $H$ such that $\overline{H} = L$. A library
+$L$ is called \emph{atomic} if it has a sequential kernel. Atomic libraries are
 often considered as specifications for concurrent objects. In practice,
 libraries can be made atomic by guarding their methods bodies with global lock
 acquisitions.
