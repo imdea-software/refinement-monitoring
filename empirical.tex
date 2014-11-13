@@ -211,3 +211,27 @@ backtracking on the possible completions of operations.
   fixed time limit of $5$s per history, over $100$ barely-concurrent histories.}
   \label{tab:exp:seq}
 \end{table}
+
+Finally, we address the possible sources of incompleteness due to match removal
+discussed in Section~\ref{sec:obsolete}. Recall the history $h$ and its
+extension $h'$ of Figure~\ref{fig:removal_no_saturation} from
+Example~\ref{ex:removal_no_saturation}. Since the {\sc Saturate} algorithm does
+not speculate on whether the pending {\sf rem}-operation might match the {\sf
+add} of $2$ or $3$ (or both!), it will not detect the violation in $h$ until
+the pending {\sf rem}-operation completes. Simply removing the {\sf add}-{\sf
+rem} match of value $1$ from $h$ before the pending {\sf rem}-operation
+completes would result in a non-violating history. However, by applying the
+stack-theory axioms $\textsc{Theory}(H_{\sf st})$ to completed operations
+before removing this match, the {\sc Saturate} algorithm infers the constraints
+\begin{align*}
+  {\sf add}(2) < {\sf add}(1) < ({\sf rem} => 1) < ({\sf rem} => {\tt empty})
+\end{align*}
+of which ${\sf add}(2) < ({\sf rem} => {\tt empty})$ persists after the
+match removal. Finally, when the pending {\sf rem}-operation does complete,
+returning $2$, the {\sc Saturate} algorithm derives a contradiction, since
+\begin{align*}
+  {\sf add}(2) < ({\sf rem} => {\tt empty}) < ({\sf rem} => 2).
+\end{align*}
+The incremental nature of the {\sc Saturate} algorithm thus avoids the
+practically-occurring sources of possible incompleteness due to match removal
+of which we are aware.
