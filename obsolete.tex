@@ -131,9 +131,10 @@ The match-removal closure property extends from a kernel $H$ to the entire libra
 Therefore, if by deleting matches from a history we get a history which is not admitted
 by a library $\overline{H}$ then the initial history is also not admitted by $\overline{H}$.
 
-\begin{theorem}\label{th:match_closure}
+\begin{theorem}
+  \label{th:match_closure}
 
-If $H$ is match-removal closed, then $\overline{H}$ is also match-removal closed.
+  $\overline{H}$ is match-removal closed if $H$ is.
 
 \end{theorem}
 
@@ -260,9 +261,9 @@ results in a spurious violation.
 
 \end{example}
 
-For libraries with non-injective matching functions, we define additional conditions
-to be satisfied by their kernel and by a match $m$ of a history $h$ such that
-$m$ is a match of every extension of $h$. 
+For libraries with non-injective matching functions, we impose additional
+conditions on their kernels, and insist that a match $m$ of $h$ is a match of
+every extension of $h$.
 
 Let $R$ be a relation on operation
 labels. We say that a history $h$ is \emph{$R$-ordered} iff for any two matches $m_1$
