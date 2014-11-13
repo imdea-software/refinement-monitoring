@@ -314,7 +314,7 @@ is $R$-ordered.
 Lemmas~\ref{lem:match_extension1} and~\ref{lem:match_extension2},  and 
 Theorem~\ref{th:match_closure} imply the following.
 
-\begin{corollary}
+\begin{corollary}\label{cor:matching_final}
 
 Let $H$ be a match-removal closed history set 
 %$L$ be a library with a match-removal closed basis $B$ 
@@ -327,33 +327,35 @@ $h_2\setminus m$ is a history of $\overline{H}$.
 
 \end{corollary}
 
-TODO THE NEXT EXAMPLE SHOULD BE MOVED IN THE EXPERIMENTAL SECTION.
-IT TALKS ABOUT INCREMENTALITY AND PRESERVING DEDUCED FACTS.
-
-
-One way to avoid the incompleteness exhibited by Example~\ref{ex:complete_removal}
-is to remove a matching cluster only if it consists of obsolete operations.
-Example~\ref{ex:removal_no_saturation} shows that even this strategy is incomplete.
-Intuitively, this happens because the monitor doesn't remember any constraints
-on the kernel order implied by the presence of the matching cluster.
+A monitoring algorithm that forgets matches may miss violations, 
+in particular, if he doesn't preserve
+order constraints implied by their presence.
+%
+%even this strategy is incomplete.
+%Intuitively, this happens because the monitor doesn't remember any constraints
+%on the kernel order implied by the presence of the matching cluster.
 
 \begin{figure}
 
 \input figures/removal_no_saturation
 
-\caption{Removing the matching cluster $\{{\tt push}(1),{\tt pop}=>1\}$ formed of obsolete operations.}
+\caption{Two histories which are not admitted by the atomic stack, $h_2$ being an extension of $h_1$.}
 \label{fig:removal_no_saturation}
 
 \end{figure}
 
 \begin{example}\label{ex:removal_no_saturation}
 
-Figure~\ref{fig:removal_no_saturation} pictures two histories $h$ and $h'$, the latter being an
-extension of the former. Even though the matching cluster $\{{\tt push}(1),{\tt pop}=>1\}$
-consists only of obsolete operations, removing it from the history $h'\not\in H(L_{stacks})$ 
-results in a history $h$ which is not anymore a violation, since $h\in H(L_{stacks})$.
-In order to detect this violation, the monitor should remember the constraint
-$\<push>(2) \poker \<pop>=>Empty$ implied by the presence of this matching cluster.
+Figure~\ref{fig:removal_no_saturation} pictures two histories $h_1$ and $h_2$, the latter being an
+extension of the former. Removing the match $\{{\tt push}(1),{\tt pop}=>1\}$ from $h_1$
+and then extending the obtained history in the same way as $h_2$ extends $h_1$ results
+in a history admitted by the atomic stack. However, if the monitoring algorithm would remember
+that $\<push>(2)$ is ordered before $\<pop>=>Empty$ in any history stronger than $h_1$
+
+the constraint ${\sf b}(\<push>(2), \<pop>=>Empty)$ implied by the presence of this match, 
+then, he would be able to detect the violation.
+%To detect this violation, the monitor should remember the constraint
+%$\<push>(2) \poker \<pop>=>Empty$ implied by the presence of this matching cluster.
 
 \end{example}
 
