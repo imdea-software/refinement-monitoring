@@ -293,19 +293,19 @@ a $\<read>=>0$ operation is pending in $h_1$.
 
 \end{example}
 
-Given a match $m$ overwritten by another match $m'$ in a history $h\in \overline{H}$, 
-every new completed operation $o$ 
-from an extension $h'$ of $h$ cannot be matched to $+(m)$, therefore $m$ is also a match of $h'$. 
-Otherwise, since all the operations overlapping with 
-$+(m')$ are completed in $h$, $o$ starts after $+(m')$ and $H$
-would contain a history where the operations $+(m)$, $+(m')$, $o$ occur in this order. 
-Therefore, $H$ is not $R$-ordered. 
+Given a match $m$ overwritten by another match $m'$ in $h\in \overline{H}$,
+every new completed operation $o$ from an extension $h'$ of $h$ cannot be
+matched to $+(m)$, therefore $m$ is also a match of $h'$. Otherwise, since all
+the operations overlapping with $+(m')$ are completed in $h$, $o$ starts after
+$+(m')$ and $H$ would contain a history where the operations $+(m)$, $+(m')$,
+$o$ occur in this order. Therefore, $H$ is not $R$-ordered.
 
-\begin{lemma}\label{lem:match_extension2}
+\begin{lemma}
+  \label{lem:match_extension2}
 
-Let $H$ be an $R$-ordered history set.
-For every two histories $h_1, h_2\in  \overline{H}$ s.t. $h_1 |> h_2$,
-if $m$ is a match of $h_1$ overwritten by another match $m'$ of $h_1$, then $m$ is also a match of $h_2$.
+  Let $H$ be a $R$-ordered, and $h_1, h_2\in \overline{H}$. If $h_1 |> h_2$ and
+  $m$ is a match of $h_1$ overwritten by another match $m'$ of $h_1$, then $m$
+  is also a match of $h_2$.
 
 \end{lemma}
 
@@ -329,22 +329,8 @@ $h_2\setminus m$ is a history of $\overline{H}$.
 
 \end{corollary}
 
-A monitoring algorithm that forgets matches may miss violations, 
-in particular, if he doesn't preserve
-order constraints implied by their presence.
-%
-%even this strategy is incomplete.
-%Intuitively, this happens because the monitor doesn't remember any constraints
-%on the kernel order implied by the presence of the matching cluster.
-
-\begin{figure}
-
-\input figures/removal_no_saturation
-
-\caption{Two histories which are not admitted by the atomic stack, $h_2$ being an extension of $h_1$.}
-\label{fig:removal_no_saturation}
-
-\end{figure}
+The following example illustrates a possible source of incompleteness for
+monitoring algorithms which remove operations.
 
 \begin{example}
   \label{ex:removal_no_saturation}
@@ -369,4 +355,9 @@ order constraints implied by their presence.
 
 \end{example}
 
-
+\begin{figure}
+  \input figures/removal_no_saturation
+  \caption{Two histories which are not admitted by the atomic stack, $h_2$
+  being an extension of $h_1$.}
+  \label{fig:removal_no_saturation}
+\end{figure}
