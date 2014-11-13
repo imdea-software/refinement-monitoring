@@ -191,12 +191,12 @@ aforementioned interpretations.
   Additionally, we enforce the sanity of the underlying matching function by
   adding the formul\ae: $\textsc{Match2}({\sf add},{\sf
   remove},{\sf contains})$ ensuring removes and contains returning true
-  are matched to adds adding the same value, $\textsc{Injective}({\sf remove})$ 
+  are matched to adds of the same value, $\textsc{Injective}({\sf remove})$ 
   ensuring that every two removes are matched to different adds,
   $\textsc{AddRem}$ ensuring that the matching function maps removes to preceding
   adds, and 
   $\textsc{MatchingAdd}$ (resp., $\textsc{MatchingRem}$) ensuring that every add matched to a remove
-  (resp., every remove matched to an add) is the first in a sequence of adds adding 
+  (resp., remove matched to an add) is the first in a sequence of adds adding 
   (resp., removes removing) the same value.
 
 \end{example}
