@@ -347,13 +347,14 @@ order constraints implied by their presence.
 \begin{example}\label{ex:removal_no_saturation}
 
 Figure~\ref{fig:removal_no_saturation} pictures two histories $h_1$ and $h_2$, the latter being an
-extension of the former. Removing the match $\{{\tt push}(1),{\tt pop}=>1\}$ from $h_1$
+extension of the former. The operation $\<rem>=>2$ is pending in $h_1$
+and becomes completed in $h_2$.
+Removing the match $\{{\tt add}(1),{\tt rem}=>1\}$ from $h_1$
 and then extending the obtained history in the same way as $h_2$ extends $h_1$ results
 in a history admitted by the atomic stack. However, if the monitoring algorithm would remember
-that $\<push>(2)$ is ordered before $\<pop>=>Empty$ in any history stronger than $h_1$
-
-the constraint ${\sf b}(\<push>(2), \<pop>=>Empty)$ implied by the presence of this match, 
-then, he would be able to detect the violation.
+that $\<add>(2)$ must be ordered before $\<pop>=>{\tt empty}$ in order to obtain a stronger
+history in the kernel of atomic stacks (since by \textsc{Empty}, $\<rem>=>1$ should be ordered before
+$\<rem>=>{\tt empty}$) then he would be able to detect the violation.
 %To detect this violation, the monitor should remember the constraint
 %$\<push>(2) \poker \<pop>=>Empty$ implied by the presence of this matching cluster.
 
