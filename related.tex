@@ -2,74 +2,56 @@
 \section{Related Work}
 \label{sec:related}
 
-%TODO UPDATE THIS WHICH IS CURRENTLY FROM OUR POPL PAPER
+Previous work on automated refinement verification focuses on
+\emph{linearizability}~\citep{journals/toplas/HerlihyW90}, which is now known
+to be equivalent when considering atomic reference
+implementations~\cite{journals/tcs/FilipovicORY10,conf/popl/BouajjaniEEH15}.
+The theoretical limits of linearizability checking are well studied. While
+checking a single execution is NP-complete~\cite{journals/siamcomp/GibbonsK97},
+checking all executions of a finite-state implementation is in EXPSPACE when
+the number of program threads is bounded~\cite{journals/iandc/AlurMP00}, and
+undecidable otherwise~\cite{conf/esop/BouajjaniEEH13}.
 
-Previous work on automated verification for concurrent objects focuses on the
-\emph{linearizability} criterion~\citep{journals/toplas/HerlihyW90},
-which was proved to be equivalent to observational refinement 
-when considering atomic reference implementations~\cite{journals/tcs/FilipovicORY10,conf/popl/BouajjaniEEH15}. 
-%Our results in
-%Section~\ref{sec:lin} expound further: we show that the two criteria coincide
-%for atomic object specifications, and that in general, observational refinement
-%can hold for non-linearizable objects.
+Several semi-automated verification approaches rely on annotating method bodies
+with \emph{linearization points}~\cite{conf/tacas/AbdullaHHJR13,
+conf/cav/AmitRRSY07, DBLP:conf/cav/DragoiGH13, conf/fm/LiuCLS09,
+conf/podc/OHearnRVYY10, conf/cav/Vafeiadis10, conf/icse/Zhang11a} to reduce the
+otherwise-exponential number of possible linearizations to one single
+linearization. These methods typically rely on programmer annotation, and do
+not admit conclusive evidence of a violation in the case of a failed proof.
+``Aspect-oriented proofs'' reduce verification for certain atomic objects to a
+small set of simpler properties. Specifically, checking executions of atomic
+queue implementations against the theory $\textsc{Theory}(H_q)$ of the atomic
+queue\footnote{Technically, the axioms of this theory without our totality
+axiom.} \emph{kernel} from Section~\ref{sec:logic} is sound and complete for
+complete histories~\cite{conf/concur/HenzingerSV13}.
 
-The theoretical limits of linearizability are well studied. Gibbons
-and Korach~\cite{journals/siamcomp/GibbonsK97} show NP-completeness for
-checking a single execution. Alur et al.~\cite{journals/iandc/AlurMP00} show
-EXPSPACE membership for checking finite-state implementations against atomic
-specifications, but only when the number of program threads is bounded.
-Bouajjani et al.~\cite{conf/esop/BouajjaniEEH13} show the same problem is
-undecidable with unbounded threads, and introduce a decidable variant for a
-restricted class of executions.
+% TODO either be clear on how this compares, or just omit it
+% Another approach that partially avoids the need of user provided linearization
+% points is described in~\cite{DBLP:conf/issta/ShachamYGABSV14} where verifying
+% linearizability of composed concurrent operations is reduced to finite state
+% model checking.
 
-% one can show that this class corresponds to executions whose histories have
-% bounded interval length.
+Most automated approaches for detecting linearizability
+violations~\cite{conf/pldi/BurckhardtDMT10, DBLP:conf/asplos/BurnimNS11,
+DBLP:conf/kbse/ZhangCW13, DBLP:journals/jpdc/WingG93} enumerate the
+exponentially-many linearizations of each execution, limiting them to
+executions with few operations, as observed in Section~\ref{sec:exp}.
+Colt~\cite{conf/oopsla/ShachamBASVY11}'s approach mitigates this cost with
+programmer-annotated linearization points, as mentioned above, and ultimately
+suffers from the same problem: a failed proof only indicates incorrect
+annotation.
 
-Several semi-automated approaches for proving linearizability, and thus
-observational refinement, have relied on annotating method bodies with
-\emph{linearization points}~\cite{conf/tacas/AbdullaHHJR13,conf/cav/AmitRRSY07,DBLP:conf/cav/DragoiGH13,conf/fm/LiuCLS09,
-conf/podc/OHearnRVYY10, conf/cav/Vafeiadis10, conf/icse/Zhang11a}, to reduce the otherwise-exponential
-space of possible history linearizations to one single linearization. These
-methods often rely on programmer annotation, and do not admit conclusive
-evidence of a violation in the case of a failed proof.
-
-Aspect-oriented proofs~\cite{conf/concur/HenzingerSV13} reduce the verification
-of linearizability w.r.t. some reference implementation 
-to the verification of a set of constituent properties which can be proved independently.
-Thus, \cite{conf/concur/HenzingerSV13} shows that the complete histories
-of an atomic queue (assuming that each value is added at most once) are described
-by the theory $\textsc{Theory}(H_q)$ where $H_q$ is the kernel of atomic queues
-and where the axiom enforcing total orders is removed.
-Another approach that partially avoids the need of user provided linearization points
-is described in~\cite{DBLP:conf/issta/ShachamYGABSV14} where verifying linearizability
-of composed concurrent operations is reduced to finite state model checking.
-
-The majority of the automated approaches for detecting linearizability 
-violations~\cite{conf/pldi/BurckhardtDMT10,DBLP:conf/asplos/BurnimNS11,DBLP:conf/kbse/ZhangCW13,DBLP:journals/jpdc/WingG93} 
-enumerate the exponentially-many
-possible history linearizations. This exponential cost effectively limits such
-approaches to executions with few operations, as noted in
-Section~\ref{sec:exp}. Colt~\cite{conf/oopsla/ShachamBASVY11}'s
-approach mitigates this cost with programmer-annotated linearization points, as
-in the previously-mentioned approaches, and ultimately suffers from the same
-problem: a failed proof only indicates incorrect annotation.
-
-One notable exception is the approximate refinement check introduced in \cite{conf/popl/BouajjaniEEH15}
-which differs from the work in this paper in several aspects. First,~\cite{conf/popl/BouajjaniEEH15}
-relies on the assumption that the set of input and output values in a history is fixed
-a priori or more generally, that the user provides a wrapper which defines a finite
-quotient of this set of values. It is not clear whether such a wrapper can be provided
-for all the objects considered in this paper. Moreover, the approximation defined in~\cite{conf/popl/BouajjaniEEH15}
-is relatively complete when sufficiently many executions are explored while
-the approach considered in this paper is relatively complete even for a single execution.
-There are other technical aspects that make the two approaches incomparable, 
-e.g., the approximation introduced in this paper forgets operations completely while the one 
-in~\cite{conf/popl/BouajjaniEEH15} forgets ordering constraints between operations.
-Using an incremental solver one can recover some of the imprecision due
-to forgetting operations and it is not clear whether something similar is possible with
-forgetting ordering constraints.
-
-
-
-
-
+One closely-related work aims to reduce the complexity of refinement checking
+by approximating executions with weaker, bounded
+histories~\cite{conf/popl/BouajjaniEEH15}. While this approach is also sound,
+in the sense that only actual violations are flagged, its completeness in
+practice is reported to rely on observing \emph{many} executions with varying
+thread schedules, and its applicability is limited to executions with a bounded
+number of argument/return values. On the contrary, the requirements for
+long-term execution monitoring which we address demand completeness for each
+individual execution without bounding the number of data values. Technically,
+our approximations differ as well: while theirs forgets the order between some
+operations, our match removal optimization forgets operations completely. Note
+however that by removing operations only \emph{after} saturation of their
+logical implications, the effect of forgotten operations can persist.
