@@ -35,7 +35,7 @@ methods often rely on programmer annotation, and do not admit conclusive
 evidence of a violation in the case of a failed proof.
 
 Automated approaches for detecting linearizability violations such as
-Line-Up~\cite{conf/pldi/BurckhardtDMT10} enumerate the exponentially-many
+Line-Up~\cite{conf/pldi/BurckhardtDMT10,DBLP:conf/asplos/BurnimNS11,DBLP:conf/kbse/ZhangCW13,DBLP:journals/jpdc/WingG93} enumerate the exponentially-many
 possible history linearizations. This exponential cost effectively limits such
 approaches to executions with few operations, as noted in
 Section~\ref{sec:exp:dynamic}. Colt~\cite{conf/oopsla/ShachamBASVY11}'s
@@ -43,5 +43,8 @@ approach mitigates this cost with programmer-annotated linearization points, as
 in the previously-mentioned approaches, and ultimately suffers from the same
 problem: a failed proof only indicates incorrect annotation.
 
-
 ~\cite{conf/popl/BouajjaniEEH15}
+
+~\cite{conf/concur/HenzingerSV13} shows that the theory of queues kernel also describes the whole queue histories provided unique values and complete histories
+
+Data independence~\cite{conf/tacas/AbdullaHHJR13,DBLP:conf/issta/ShachamYGABSV14,DBLP:conf/popl/Wolper86} ... they are concerned with verification ... the first one uses abstraction ... the second one is concerned with composed operations
