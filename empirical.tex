@@ -130,7 +130,7 @@ executions of the bounded-reordering queue exhibit violations with respect to
 an atomic queue, the extreme concurrency in this set of histories allows great
 freedom in the linearization of operations, rendering all but $4$ histories
 violation free. Table~\ref{tab:exp:con} shows the results, including the
-average number of steps (out of $100$) processed, and the number of violations
+average number of steps (out of $100$) processed, the number of violations
 (out of $4$) discovered, within the $5$s time limit. While the {\sc Enumerate}
 algorithm is never able to process enough steps in $5$s to detect any of the
 violations, the {\sc Symbolic} checker, at least without computing history
@@ -143,17 +143,17 @@ the time limit, averaging $0.1$s, correctly detecting all $4$ violations.
   \centering
   \setlength{\tabcolsep}{1.8mm}
   \begin{tabular}{lcccc}
-    Algorithm & Avg. steps & Avg. time & Nb. violations \\
+    Algorithm & Avg. steps & Avg. time to viol. & Nb. violations \\
     \hline
     {\sc Enumerate}             & 35  & --      & 0/4 \\
     {\sc Enumerate} {\tt -c}    & 38  & --      & 0/4 \\
-    {\sc Symbolic}              & 52  & --      & 3/4 \\
-    {\sc Symbolic} {\tt -r}     & 52  & --      & 3/4 \\
-    {\sc Symbolic} {\tt -i}     & 51  & --      & 3/4 \\
+    {\sc Symbolic}              & 52  & 2.350s  & 3/4 \\
+    {\sc Symbolic} {\tt -r}     & 52  & 2.322s  & 3/4 \\
+    {\sc Symbolic} {\tt -i}     & 51  & 0.984s  & 3/4 \\
     {\sc Symbolic} {\tt -c}     & 38  & --      & 0/4 \\
     {\sc Symbolic} {\tt -c -i}  & 38  & --      & 0/4 \\
-    {\sc Saturate}              & 100 & 0.1340s & 4/4 \\
-    {\sc Saturate} {\tt -r}     & 100 & 0.1521s & 4/4
+    {\sc Saturate}              & 100 & 0.040s  & 4/4 \\
+    {\sc Saturate} {\tt -r}     & 100 & 0.050s  & 4/4
   \end{tabular} 
 
   \caption{The average number of steps each algorithm is able to process in a
