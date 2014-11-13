@@ -46,8 +46,11 @@ allows us to reduce violation detection for single executions to satisfiability
 in propositional logic. Practically speaking, this allows us to exploit the
 highly-developed algorithms of modern symbolic reasoning engines in place of
 the explicit enumeration of linearizations. Furthermore, symbolic reasoning
-lends itself to \emph{incrementality}, with the possibility to avoid
-recomputing the set of possible linearizations after each execution step.
+lends itself to \emph{incrementality}: as the symbolic representation of each
+successive execution step differs monotonically, only by the addition of a new
+operation or return value, we can reuse all logical implications of previous
+steps. Conceptually, this avoids recomputing the set of possible linearizations
+from scratch after each execution step.
 
 While exploiting symbolic reasoning engines makes sense practically, and is
 likely to be more efficient, the link to symbolic reasoning also reveals
@@ -55,7 +58,7 @@ insights leading to more-drastic optimizations. In particular, we notice that
 in proving satisfiability, the solver must essentially build a model of some
 linearization of the given execution which represents a valid object
 method-invocation sequence. In doing so, the solver may need to make branching
-decisions in addition to logical deductions (i.e.,~``unit propagation''),
+decisions in addition to logical deductions, or \emph{unit propagation},
 possibly backtracking later, about (a)~how pending operations should be
 completed/dropped, and (b)~which operations should be linearized before others.
 However, from the perspective of detecting violations, it is always sound to
