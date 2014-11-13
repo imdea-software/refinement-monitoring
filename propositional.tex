@@ -160,8 +160,8 @@ operation which is pending in $h$) should satisfy ${\sf used}$. It can be
 proved that every history stronger than $h$ corresponds to a model of this
 formula, projected on the set of operations satisfying ${\sf used}$.
 
-Thus, let $\textsc{Stronger}(h)$ be defined as
-the conjunction
+Thus, we override the $\textsc{Stronger}(h)$ formula for incomplete histories
+$h$ as the conjunction
 \begin{align*}
   \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h) /| \textsc{Used},
 \end{align*}
