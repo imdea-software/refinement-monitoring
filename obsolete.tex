@@ -344,19 +344,26 @@ order constraints implied by their presence.
 
 \end{figure}
 
-\begin{example}\label{ex:removal_no_saturation}
+\begin{example}
+  \label{ex:removal_no_saturation}
 
-Figure~\ref{fig:removal_no_saturation} pictures two histories $h_1$ and $h_2$, the latter being an
-extension of the former. The operation $\<rem>=>2$ is pending in $h_1$
-and becomes completed in $h_2$.
-Removing the match $\{{\tt add}(1),{\tt rem}=>1\}$ from $h_1$
-and then extending the obtained history in the same way as $h_2$ extends $h_1$ results
-in a history admitted by the atomic stack. However, if the monitoring algorithm would remember
-that $\<add>(2)$ must be ordered before $\<pop>=>{\tt empty}$ in order to obtain a stronger
-history in the kernel of atomic stacks (since by \textsc{Empty}, $\<rem>=>1$ should be ordered before
-$\<rem>=>{\tt empty}$) then he would be able to detect the violation.
-%To detect this violation, the monitor should remember the constraint
-%$\<push>(2) \poker \<pop>=>Empty$ implied by the presence of this matching cluster.
+  Figure~\ref{fig:removal_no_saturation} pictures two histories $h_1$ and
+  $h_2$, the latter being an extension of the former. The $(\sf rem =>
+  2)$-operation is pending in $h_1$ and only completes in $h_2$. However,
+  removing the match $\set{{\sf add}(1), {\sf rem} => 1}$ from $h_1$ before the
+  pending {\sf rem} completes results in a history admitted by the atomic
+  stack. This highlights a risk of incompleteness which we must account for in
+  our development of refinement-monitoring algorithms. Should we simply forget
+  about the match $\set{ {\sf add}(1), {\sf rem} => 1}$ while monitoring, we
+  may not detect the violation obviated when the pending ${\sf rem}$ completes.
+  In order to avoid such incompleteness, at the very least, our monitoring
+  algorithm must remember that the ${\sf add}(2)$ operation should be ordered
+  before $({\sf rm} => {\tt empty})$ (since ${\sf add}(2)$ must be ordered
+  before ${\sf add}(1)$, which is ordered before $({\tt rem} => {\tt empty})$),
+  even after removing the match. Then when $({\sf rem} => 2)$ completes, we
+  could deduce that $({\sf rem} => empty)$ must be ordered after ${\sf add}(2)$
+  and before $({\sf rem} => 2)$, a contradiction with the atomic stack theory
+  $\textsc{Theory}(H_{\sf st})$ of Section~\ref{sec:logic}.
 
 \end{example}
 
