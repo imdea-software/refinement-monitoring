@@ -1,5 +1,3 @@
-%!TEX root = head.tex
-
 \section{Refinement via Propositional Reasoning}
 \label{sec:propositional}
 
@@ -7,14 +5,14 @@ In this section we demonstrate that the history membership problem $h \in
 \overline{H}$ reduces to propositional satisfiability, given a formula
 $\textsc{Theory}(H)$ characterizing the histories of the library kernel $H$.
 Note that $h \in \overline{H}$ if{f} $h$ is weaker than some history $h' \in
-H$, or equivalently weaker than some history $h'$ such that
-$h',M \models \textsc{Theory}(H)$, for some matching function $M$. When
-$h$ is complete, the fact that any stronger history contains exactly the same
-set of operations enables the construction of a formula $\textsc{Stronger}(h)$
-characterizing the histories stronger than $h$. Together with
-$\textsc{Theory}(H)$, this formula describes all stronger histories satisfying
-$\textsc{Theory}(H)$, and is therefore equivalent to $h \in \overline{H}$. We show how
-to construct these formulas in Section~\ref{sec:propositional:complete}.
+H$, or equivalently weaker than some history $h'$ such that $h',M \models
+\textsc{Theory}(H)$, for some matching function $M$. When $h$ is complete, the
+fact that any stronger history contains exactly the same set of operations
+enables the construction of a formula $\textsc{Stronger}(h)$ characterizing the
+histories stronger than $h$. Together with $\textsc{Theory}(H)$, this formula
+describes all stronger histories satisfying $\textsc{Theory}(H)$, and is
+therefore equivalent to $h \in \overline{H}$. We show how to construct these
+formulas in Section~\ref{sec:propositional:complete}.
 
 When $h$ contains pending operations, stronger histories $h'$ may contain fewer
 operations, since some pending operations of $h$ may be omitted in $h'$, and
@@ -32,44 +30,31 @@ histories. It states that a history $h'$ stronger than a complete history $h$
 can only differ in having more order constraints between the operations, the
 operation labels being the same in $h$ and $h'$.
 
-%\begin{lemma}
-%
-%Let $h_1=\tup{O_1,<_1,f_1}$ and $h_2=\tup{O_2,<_2,f_2}$ be two histories. If $h_1\preceq_g h_2$ then
-%for every two completed operations $o_1, o_2\in O_1$, 
-%\[
-%\<Matching>(h_1)(o_1)=o_2\text{ iff }\<Matching>(h_2)(g^{-1}(o_1))=g^{-1}(o_2).
-%\]
-%
-%\end{lemma}
-
 \begin{lemma}
   \label{lemma:complete_history}
 
   A complete history $h=\tup{O,<,f}$ is weaker than another history
   $h'=\tup{O',<',f'}$ iff there exists a bijection $g:O' \to O$ such that:
-
   \begin{itemize}
 
-    \item operations related by $g$ have the same label, i.e., for each $o\in O$, $f(o)=f'(g^{-1}(o))$, and
+    \item operations related by $g$ have the same label, i.e., for each $o\in
+    O$, $f(o)=f'(g^{-1}(o))$, and
 
-    \item order constraints are preserved from $h$ to $h'$, i.e., for each $o,o'\in O$, $o< o'$ implies $g^{-1}(o)<' g^{-1}(o')$.
-
-%    \item the matching function is the same for the two histories, i.e., for each $o,o'\in O_1$, $\<Matching>(h_1)(o)=o'$ iff $\<Matching>(h_2)(g^{-1}(o))=g^{-1}(o')$.
+    \item order constraints are preserved from $h$ to $h'$, i.e., for each
+    $o,o'\in O$, $o< o'$ implies $g^{-1}(o)<' g^{-1}(o')$.
 
   \end{itemize}
 
 \end{lemma}
 
-We characterize histories stronger than $h$ by the formula $\textsc{Stronger}(h)$, defined as
-the conjunction
+We characterize histories stronger than $h$ by the formula
+$\textsc{Stronger}(h)$, defined as the conjunction
 \begin{align*}
-  %\textsc{Match}(M,h) \land 
   \textsc{Domain}(h) \land \textsc{Labels}(h) \land \textsc{Order}(h)
 \end{align*}
 using the formulas of Figure~\ref{fig:formula:history} characterizing the
-%matching function, 
-identifiers, labels, and order constraints of $h$. Note that
-the $\textsc{Domain}(h)$ formula restricts the interpretation domain of each
+identifiers, labels, and order constraints of $h$. Note that the
+$\textsc{Domain}(h)$ formula restricts the interpretation domain of each
 variable to the operations of $h$. As a consequence of
 Lemma~\ref{lemma:complete_history}, the formula $\textsc{Stronger}(h)$ does
 indeed characterize all histories at least as strong as $h$.
