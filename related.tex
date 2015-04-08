@@ -14,7 +14,7 @@ undecidable otherwise~\cite{conf/esop/BouajjaniEEH13}.
 
 Several semi-automated verification approaches rely on annotating method bodies
 with \emph{linearization points}~\cite{conf/tacas/AbdullaHHJR13,
-conf/cav/AmitRRSY07, DBLP:conf/cav/DragoiGH13, conf/fm/LiuCLS09,
+conf/cav/AmitRRSY07, conf/cav/DragoiGH13, conf/fm/LiuCLS09,
 conf/podc/OHearnRVYY10, conf/cav/Vafeiadis10, conf/icse/Zhang11a} to reduce the
 otherwise-exponential number of possible linearizations to one single
 linearization. These methods typically rely on programmer annotation, and do
@@ -28,13 +28,13 @@ complete histories~\cite{conf/concur/HenzingerSV13}.
 
 % TODO either be clear on how this compares, or just omit it
 % Another approach that partially avoids the need of user provided linearization
-% points is described in~\cite{DBLP:conf/issta/ShachamYGABSV14} where verifying
+% points is described in~\cite{conf/issta/ShachamYGABSV14} where verifying
 % linearizability of composed concurrent operations is reduced to finite state
 % model checking.
 
 Most automated approaches for detecting linearizability
-violations~\cite{conf/pldi/BurckhardtDMT10, DBLP:conf/asplos/BurnimNS11,
-DBLP:conf/kbse/ZhangCW13, DBLP:journals/jpdc/WingG93} enumerate the
+violations~\cite{conf/pldi/BurckhardtDMT10, conf/asplos/BurnimNS11,
+conf/kbse/ZhangCW13, journals/jpdc/WingG93} enumerate the
 exponentially-many linearizations of each execution, limiting them to
 executions with few operations, as observed in Section~\ref{sec:exp}.
 Colt~\cite{conf/oopsla/ShachamBASVY11}'s approach mitigates this cost with
