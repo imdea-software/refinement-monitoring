@@ -13,7 +13,7 @@ $h$ is complete, the fact that any stronger history contains exactly the same
 set of operations enables the construction of a formula $\textsc{Stronger}(h)$
 characterizing the histories stronger than $h$. Together with
 $\textsc{Theory}(H)$, this formula describes all stronger histories satisfying
-$\textsc{Theory}(H)$, and is therefore equivalent to $h \in H(L)$. We show how
+$\textsc{Theory}(H)$, and is therefore equivalent to $h \in \overline{H}$. We show how
 to construct these formul\ae in Section~\ref{sec:propositional:complete}.
 
 When $h$ contains pending operations, stronger histories $h'$ may contain fewer
@@ -196,8 +196,8 @@ written in this form. We thus define the guarded formula $G(@p)$ of the formula
 $@p = \forall \vec{x}. \exists \vec{y}. @y$ as
 \begin{align*}
   G(@p) = \forall \vec{x}. \exists \vec{y}.
-  \bigwedge_{x \in \vec{x}} {\sf used}(x) => 
-  \bigvee_{y \in \vec{y}} {\sf used}(y) /| @y
+  \bigwedge_{x_i} {\sf used}(x_i) => 
+  \bigwedge_{y_i} {\sf used}(y_i) /| @y
 \end{align*}
 As usual, universal quantifiers are guarded using implication and existential
 quantifiers using conjunction. It follows from

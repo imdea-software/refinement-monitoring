@@ -1,8 +1,5 @@
-%!TEX root = head.tex
 \section{Removing Matched Operations}
 \label{sec:obsolete}
-
-%Since from a theoretical point of view, testing history membership is NP-complete~\cite{journals/siamcomp/GibbonsK97},
 
 While the reduction to symbolic reasoning enabled by the previous sections
 already offers practical advantages over the explicit enumeration of history
@@ -11,12 +8,13 @@ refinement checking as execution-length increases. A truly useful runtime
 monitor must be \emph{linear} in the number of operations in order to avoid a
 progressive slowdown of the monitored implementation. Achieving this complexity
 goal implies forgetting increasingly-many previously-executed operations.
-However, forgetting arbitrary operations from a valid history can result in a
-false violation. For example, removing the ${\sf write}(1)$ operation from the
-history of the atomic register in Figure~\ref{fig:removal_even_saturation}
-results in a history which is not anymore admitted by this object. To identify
-the removable operations that preserve history membership, we rely on the
-matching functions used to characterize library kernels.
+However, forgetting arbitrary operations from valid histories can result in
+falsely-reported violations. For example, removing the ${\sf write}(1)$
+operation from the valid atomic register history of
+Figure~\ref{fig:removal_even_saturation} results in an invalid history. We
+leverage the same notion of operation matching used to characterize library
+kernels in order to identify groups of operations whose removal preserves
+history membership.
 
 \subsection{Unique matching functions}
 

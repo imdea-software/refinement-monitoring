@@ -66,7 +66,8 @@ forgo such costly branching/backtracking and, for instance, wait until the
 given pending operations are actually completed later in the execution to
 determine their return values. Though it is unclear whether such strategies
 might actually be complete in theory, we hypothesize that they are effective in
-practice, uncovering most violations.
+practice, uncovering the violations which surface in the logs of actual
+executions.
 
 Though limiting symbolic reasoning to saturation, or unit propagation, does
 avoid the exponential cost in the number of operations, a truly useful runtime
@@ -83,12 +84,12 @@ violation, thinking ${\sf dequeue}(b)$ should not precede ${\sf dequeue}(a)$.
 To resolve this issue, we develop a sound theory for the removal of
 \emph{matched} operations, e.g.,~the {\sf enqueue} operations together with the
 {\sf dequeue} operations removing the same added elements. We hypothesize that
-such strategies are, too, effective in practice, in that they do not cause many
-violations to be missed.
+such strategies are, too, effective in practice, in that they continue to catch
+practically-occurring violations.
 
 Empirically we demonstrate that our violation-detection strategies are
 profoundly-more scalable than existing techniques. We also validate our
-aforementioned completeness hypotheses: that in practice, most violations are
+aforementioned completeness hypotheses: that in practice, violations are
 caught despite the possibility for incompleteness.
 
 To summarize, we make the following contributions:
