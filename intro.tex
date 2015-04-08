@@ -78,14 +78,13 @@ memory. Achieving this complexity goal implies that the monitor cannot store
 all previously-executed operations. However, simply forgetting arbitrary
 operations is unsound, in the sense that we may conclude a violation when none
 actually occurred. For instance, if a monitor for an atomic queue object
-observes ordered ${\sf enqueue}(a)$ and ${\sf enqueue}(b)$ operations, and
-${\sf dequeue}(b)$, having dropped ${\sf dequeue}(a)$, the monitor may detect a
-violation, thinking ${\sf dequeue}(b)$ should not precede ${\sf dequeue}(a)$.
-To resolve this issue, we develop a sound theory for the removal of
-\emph{matched} operations, e.g.,~the {\sf enqueue} operations together with the
-{\sf dequeue} operations removing the same added elements. We hypothesize that
-such strategies are, too, effective in practice, in that they continue to catch
-practically-occurring violations.
+observes ordered enqueue$(a)$ and enqueue$(b)$ operations, and dequeue$(b)$,
+having dropped dequeue$(a)$, the monitor may detect a violation, thinking
+dequeue$(b)$ should not precede dequeue$(a)$. To resolve this issue, we develop
+a sound theory for the removal of \emph{matched} operations, e.g.,~the enqueue
+operations together with the dequeue operations removing the same added
+elements. We hypothesize that such strategies are, too, effective in practice,
+in that they continue to catch practically-occurring violations.
 
 Empirically we demonstrate that our violation-detection strategies are
 profoundly-more scalable than existing techniques. We also validate our

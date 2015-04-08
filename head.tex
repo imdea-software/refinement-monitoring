@@ -1,14 +1,14 @@
 \documentclass{sigplanconf}
+
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
-\usepackage{url}
 \usepackage{graphicx}
-\usepackage{tikz}
-\usetikzlibrary{positioning,arrows}
-\usepackage{amsthm}
+\usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{amsfonts}
-\usepackage{alltt}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}[section]
@@ -20,6 +20,7 @@
 \DeclareMathOperator{\range}{ran}
 \newcommand{\set}[1]{{\{ #1 \}}}
 \newcommand{\tup}[1]{{\langle{#1}\rangle}}
+\renewcommand{\implies}{\Rightarrow}
 \newcommand{\db}[1]{[\![{#1}]\!]}
 
 \begin{document}
@@ -65,13 +66,13 @@
 
   \end{abstract}
   
-  \category{CR-number}{subcategory}{third-level}
+  \category{F.3.1}{Specifying and Verifying and Reasoning about Programs}{Mechanical verification}
 
   \terms
-  term1, term2
+  Reliability, Verification
 
   \keywords
-  keyword1, keyword2
+  Concurrency; Refinement; Linearizability
 
   \input intro
   \input refinement
