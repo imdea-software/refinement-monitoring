@@ -8,13 +8,13 @@ In this section we demonstrate that the history membership problem $h \in
 $\textsc{Theory}(H)$ characterizing the histories of the library kernel $H$.
 Note that $h \in \overline{H}$ if{f} $h$ is weaker than some history $h' \in
 H$, or equivalently weaker than some history $h'$ such that
-$h',M |= \textsc{Theory}(H)$, for some matching function $M$. When
+$h',M \models \textsc{Theory}(H)$, for some matching function $M$. When
 $h$ is complete, the fact that any stronger history contains exactly the same
 set of operations enables the construction of a formula $\textsc{Stronger}(h)$
 characterizing the histories stronger than $h$. Together with
 $\textsc{Theory}(H)$, this formula describes all stronger histories satisfying
 $\textsc{Theory}(H)$, and is therefore equivalent to $h \in \overline{H}$. We show how
-to construct these formul\ae in Section~\ref{sec:propositional:complete}.
+to construct these formulas in Section~\ref{sec:propositional:complete}.
 
 When $h$ contains pending operations, stronger histories $h'$ may contain fewer
 operations, since some pending operations of $h$ may be omitted in $h'$, and
@@ -46,7 +46,7 @@ operation labels being the same in $h$ and $h'$.
   \label{lemma:complete_history}
 
   A complete history $h=\tup{O,<,f}$ is weaker than another history
-  $h'=\tup{O',<',f'}$ iff there exists a bijection $g:O'->O$ such that:
+  $h'=\tup{O',<',f'}$ iff there exists a bijection $g:O' \to O$ such that:
 
   \begin{itemize}
 
@@ -63,10 +63,10 @@ operation labels being the same in $h$ and $h'$.
 We characterize histories stronger than $h$ by the formula $\textsc{Stronger}(h)$, defined as
 the conjunction
 \begin{align*}
-  %\textsc{Match}(M,h) /| 
-  \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h)
+  %\textsc{Match}(M,h) \land 
+  \textsc{Domain}(h) \land \textsc{Labels}(h) \land \textsc{Order}(h)
 \end{align*}
-using the formul\ae of Figure~\ref{fig:formula:history} characterizing the
+using the formulas of Figure~\ref{fig:formula:history} characterizing the
 %matching function, 
 identifiers, labels, and order constraints of $h$. Note that
 the $\textsc{Domain}(h)$ formula restricts the interpretation domain of each
@@ -80,18 +80,18 @@ indeed characterize all histories at least as strong as $h$.
 %    & \textsc{Match}(M,h)
 %    && \bigwedge_{o_1 = M_h(o_2)} {\sf match}(o_1,o_2) \\
     & \textsc{Domain}(h)
-    && \bigwedge_{o_1, o_2 \in O} o_1 \neq o_2 /| \forall x.\ \bigvee_{o\in O} x = o \\
+    && \bigwedge_{o_1, o_2 \in O} o_1 \neq o_2 \land \forall x.\ \bigvee_{o\in O} x = o \\
     & \textsc{Labels}(h)
-    && \hspace{-5mm} \bigwedge_{f(o) = (m(u) => v)}
+    && \hspace{-5mm} \bigwedge_{f(o) = (m(u) \Rightarrow v)}
       \hspace{-5mm}
-      {\sf meth}(o) = m /| {\sf arg}(o) = u /| 
+      {\sf meth}(o) = m \land {\sf arg}(o) = u \land 
       [{\sf ret}(o) = v]_{v \neq \bot} \\
     & \textsc{Order}(h)
     && \bigwedge_{o_1 < o_2} {\sf b}(o_1, o_2) \\
     & \textsc{Used} 
-    && \forall x.\ {\sf ret}(x) \neq \bot => {\sf used}(x)
+    && \forall x.\ {\sf ret}(x) \neq \bot \implies {\sf used}(x)
   \end{align*}
-  \caption{Formul\ae characterizing histories $h = \tup{O,<,f}$ (${\sf ret}(o) = v$
+  \caption{Formulas characterizing histories $h = \tup{O,<,f}$ (${\sf ret}(o) = v$
   is present in $\textsc{Labels}(h)$ only if $v\neq \bot$).}
   \label{fig:formula:history}
 \end{figure}
@@ -100,7 +100,7 @@ indeed characterize all histories at least as strong as $h$.
   \label{lem:stronger_form_complete}
   
   Let $h$ and $h'$ be histories.
-  Then $h \preceq h'$ if{f} $h' |= \textsc{Stronger}(h)$.
+  Then $h \preceq h'$ if{f} $h' \models \textsc{Stronger}(h)$.
 
 \end{lemma}
 
@@ -113,21 +113,21 @@ histories $h$ reduces to first-order satisfiability.
 
   Let $h$ be a complete history, and $H$ a history set.
   Then $h \in \overline{H}$ if{f}
-  $\textsc{Stronger}(h) /| \textsc{Theory}(H)$ is satisfiable.
+  $\textsc{Stronger}(h) \land \textsc{Theory}(H)$ is satisfiable.
 
 \end{theorem}
 
 As long as the formula $\textsc{Theory}(H)$ contains only a fixed set of
-predicates e.g.,~$=$ and $\leq$, as is the case for all formul\ae of
+predicates e.g.,~$=$ and $\leq$, as is the case for all formulas of
 Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization},
-satisfiability of $\textsc{Stronger}(h) /| \textsc{Theory}(H)$ reduces to
+satisfiability of $\textsc{Stronger}(h) \land \textsc{Theory}(H)$ reduces to
 propositional satisfiability. Intuitively this holds since the domain of
 (quantified) variables is restricted to operations appearing in $h$. Thus for a
 given $h$ and $H$, we construct the propositional formula
-$\db{\textsc{Stronger}(h) /| \textsc{Theory}(H)}$ by replacing each
-universally-quantified subformula $\forall x. @p$ by $\bigwedge_{o \in O} @p[x
-|-> o]$, and each existentially-quantified subformula $\exists x. @p$ by
-$\bigvee_{o \in O} @p[x |-> o]$. It follows that this propositional formula is
+$\db{\textsc{Stronger}(h) \land \textsc{Theory}(H)}$ by replacing each
+universally-quantified subformula $\forall x. \varphi$ by $\bigwedge_{o \in O} \varphi[x
+\mapsto o]$, and each existentially-quantified subformula $\exists x. \varphi$ by
+$\bigvee_{o \in O} \varphi[x \mapsto o]$. It follows that this propositional formula is
 equisatisfiable to the original first-order formula, and is constructed in
 polynomial time.
 
@@ -136,7 +136,7 @@ polynomial time.
 
   Let $h$ be a complete history, and $H$ a history set.
   Then $h \in \overline{H}$ if{f} the propositional formula
-  $$\db{\textsc{Stronger}(h) /| \textsc{Theory}(H)}$$
+  $$\db{\textsc{Stronger}(h) \land \textsc{Theory}(H)}$$
   is satisfiable.
 
 \end{corollary}
@@ -163,41 +163,41 @@ formula, projected on the set of operations satisfying ${\sf used}$.
 Thus, we override the $\textsc{Stronger}(h)$ formula for incomplete histories
 $h$ as the conjunction
 \begin{align*}
-  \textsc{Domain}(h) /| \textsc{Labels}(h) /| \textsc{Order}(h) /| \textsc{Used},
+  \textsc{Domain}(h) \land \textsc{Labels}(h) \land \textsc{Order}(h) \land \textsc{Used},
 \end{align*}
 where $\textsc{Used}$ is defined in Figure~\ref{fig:formula:history}.
 
 
 %We define the formula {\sc Used} as
 %\begin{align*}
-%  \forall x.\ {\sf ret}(x) \neq \bot => {\sf used}(x)
+%  \forall x.\ {\sf ret}(x) \neq \bot \implies {\sf used}(x)
 %\end{align*}
 
 For arbitrary, not necessarily complete, histories $h$, the models of
-$\textsc{Stronger}(h)$ are histories paired with an interpretation $U : O ->
-\<Bools>$ for the domain predicate ${\sf used}$, mapping the operations $O$ of
+$\textsc{Stronger}(h)$ are histories paired with an interpretation $U : O \to
+\mathbb{B}$ for the domain predicate ${\sf used}$, mapping the operations $O$ of
 $h$ to $\set{\sf true, false}$ . Given such a model $\tup{h,U}$, let $U(h)$ be
 the history obtained from $h$ by deleting operations $o$ such that $\lnot U(o)$.
 
 \begin{lemma}
   \label{lem:stronger_form_pending}
 
-  Let $h$ and $h'$ be histories, and $U : O' -> \<Bools>$.
-  Then $h', U |= \textsc{Stronger}(h)$ if{f} $h \preceq U(h')$.
+  Let $h$ and $h'$ be histories, and $U : O' \to \mathbb{B}$.
+  Then $h', U \models \textsc{Stronger}(h)$ if{f} $h \preceq U(h')$.
 
 \end{lemma}
 
 We leverage the predicate {\sf used} to guard the domain of quantifiers in
 $\textsc{Theory}(H)$. For simplicity, we assume that $\textsc{Theory}(H)$ is
 given in prenex normal form, whose quantifier prefix is of the form $\forall^*
-\exists^*$. All of the formul\ae of
+\exists^*$. All of the formulas of
 Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization} can be
-written in this form. We thus define the guarded formula $G(@p)$ of the formula
-$@p = \forall \vec{x}. \exists \vec{y}. @y$ as
+written in this form. We thus define the guarded formula $G(\varphi)$ of the formula
+$\varphi = \forall \vec{x}. \exists \vec{y}. \psi$ as
 \begin{align*}
-  G(@p) = \forall \vec{x}. \exists \vec{y}.
-  \bigwedge_{x_i} {\sf used}(x_i) => 
-  \bigwedge_{y_i} {\sf used}(y_i) /| @y
+  G(\varphi) = \forall \vec{x}. \exists \vec{y}.
+  \bigwedge_{x_i} {\sf used}(x_i) \implies 
+  \bigwedge_{y_i} {\sf used}(y_i) \land \psi
 \end{align*}
 As usual, universal quantifiers are guarded using implication and existential
 quantifiers using conjunction. It follows from
@@ -209,7 +209,7 @@ first-order satisfiability.
 
   Let $h$ be a history, and $H$ a history set. Then $h \in \overline{H}$ if{f}
   the first-order formula
-  $$\textsc{Stronger}(h) /| G(\textsc{Theory}(H))$$
+  $$\textsc{Stronger}(h) \land G(\textsc{Theory}(H))$$
   is satisfiable.
 
 \end{theorem}
@@ -223,7 +223,7 @@ via the function $\db{\cdot}$.
 
   Let $h$ be a history, and $H$ a history set. Then $h \in \overline{H}$ if{f}
   the propositional formula
-  $$\db{\textsc{Stronger}(h) /| G(\textsc{Theory}(H))}$$
+  $$\db{\textsc{Stronger}(h) \land G(\textsc{Theory}(H))}$$
   is satisfiable.
 
 \end{corollary}

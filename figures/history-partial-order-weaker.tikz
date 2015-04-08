@@ -6,17 +6,17 @@
   \tikzstyle{nnode}=[minimum size=0pt,inner sep=0pt]
   \tikzstyle{lnode}=[circle,draw,minimum size=4pt,inner sep=0pt,fill]
 
-  \node[lnode] (x1)  [label=left:$\<push>(1)$] at (0,0) {}; %right=4cm of x0,
-  \node[lnode] (x2)  [below of=x1,label=left:$\<push>(2)$] {}; 
-  \node[lnode] (x3)  [below of=x2,label=left:$\<pop> \Rightarrow 1$] {}; 
+  \node[lnode] (x1)  [label=left:push$(1)$] at (0,0) {}; %right=4cm of x0,
+  \node[lnode] (x2)  [below of=x1,label=left:push$(2)$] {}; 
+  \node[lnode] (x3)  [below of=x2,label=left:pop$\Rightarrow 1$] {}; 
 
-  \node[lnode] (x4)  [below of=x3,label=left:$\<push>(3)$] {};
+  \node[lnode] (x4)  [below of=x3,label=left:push$(3)$] {};
 
-  \node[lnode] (x6)  [right=4mm of x3,label=right:$\<pop>\Rightarrow {\tt EMPTY}$] {};
+  \node[lnode] (x6)  [right=4mm of x3,label=right:pop$\Rightarrow {\tt EMPTY}$] {};
 
-  \node[lnode] (x5)  [below of=x6,label=right:$\<pop> \Rightarrow \bot$] {};
+  \node[lnode] (x5)  [below of=x6,label=right:pop$\Rightarrow \bot$] {};
 
-  \node[lnode] (x51)  [above of=x6,label=right:$\<pop>\Rightarrow\bot$] {};
+  \node[lnode] (x51)  [above of=x6,label=right:pop$\Rightarrow\bot$] {};
 
   \draw[->,>=stealth',thick] (x1) -- (x6);
   \draw[->,>=stealth',thick] (x2) -- (x6);

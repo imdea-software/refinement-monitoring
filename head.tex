@@ -1,59 +1,14 @@
-%\documentclass[preprint,10pt,nocopyrightspace]{sigplanconf}
-\documentclass[pldi,10pt,nocopyrightspace]{sigplanconf}
-
-%\usepackage{SIunits}            % typset units correctly
-\usepackage{courier}            % standard fixed width font
-\usepackage[scaled]{helvet} % see www.ctan.org/get/macros/latex/required/psnfss/psnfss2e.pdf
-\usepackage{url}                  % format URLs
-\usepackage{listings}          % format code
-\usepackage{enumitem}      % adjust spacing in enums
-\usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
-% known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
-\newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
-
-
+\documentclass{sigplanconf}
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
-%\usepackage[numbers]{natbib}
-\usepackage{xspace}
-\usepackage{balance}
-\usepackage{hyperref}
 \usepackage{url}
-\usepackage{breakurl}
-\usepackage{enumerate}
-\usepackage{enumitem}
-\usepackage{listings}
-
 \usepackage{graphicx}
 \usepackage{tikz}
-\usetikzlibrary{positioning,shapes,shadows,arrows}
-\usetikzlibrary{decorations.pathmorphing,snakes}
-\usepackage{tkz-graph}
-
-\def\ttat{\mtt{@}} % the at package clobbers this
-\usepackage{at}
-
+\usetikzlibrary{positioning,arrows}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{latexsym}
-\usepackage{wasysym} % causing problems with llncs's bold vectors
-\usepackage{stmaryrd}
 \usepackage{alltt}
-\usepackage{mathpartir}
-\usepackage[ligature,reserved,inference]{semantic}
-\usepackage[lined]{algorithm2e}
-\usepackage{graphicx}
-\usepackage{pgf}
-\usepackage{tikz}
-
-\usetikzlibrary{arrows,automata}
-\usetikzlibrary{positioning,shapes,shadows}
-\usetikzlibrary{decorations}
-
-\newcommand{\todo}[1]{\textcolor{blue}{[TODO: #1]}} 
-\newcommand{\alert}[1]{\textcolor{red}{#1}} 
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}[section]
@@ -61,23 +16,31 @@
 \newtheorem{definition}{Definition}[section]
 \newtheorem{corollary}{Corollary}
 \newtheorem{example}{Example}[section]
-\newtheorem{remark}{Remark}
 
-\title{Monitoring Refinement via Symbolic Reasoning}
-% \title{Monitoring Observational Refinement} % short and sweet
-% \title{Monitoring Refinement for Concurrent Objects} % original
-% \title{Scalable Refinement Monitoring for Concurrent Objects}
-% \title{Scalable Refinement Checking for Concurrent Objects} % similar to POPL
-
-%\authorinfo{ }
-%\authorinfo{Ahmed Bouajjani}{LIAFA, Université Paris Diderot}{abou@liafa.univ-paris-diderot.fr}
-%\authorinfo{Michael Emmi}{IMDEA Software Institute}{michael.emmi@imdea.org}
-%\authorinfo{Constantin Enea \and Jad Hamza}{LIAFA, Université Paris Diderot}{\{cenea,jhamza\}@liafa.univ-paris-diderot.fr}
-
-\input macros
-\input macros-programs
+\DeclareMathOperator{\range}{ran}
+\newcommand{\set}[1]{{\{ #1 \}}}
+\newcommand{\tup}[1]{{\langle{#1}\rangle}}
+\newcommand{\db}[1]{[\![{#1}]\!]}
 
 \begin{document}
+
+  \special{papersize=8.5in,11in}
+  \setlength{\pdfpageheight}{\paperheight}
+  \setlength{\pdfpagewidth}{\paperwidth}
+
+  \conferenceinfo{PLDI'15}{, June 13--17, 2015, Portland, OR, USA}
+  \CopyrightYear{2015}
+  \crdata{978-1-4503-3468-6/15/06}
+  \doi{nnnnnnn.nnnnnnn}
+
+  \title{Monitoring Refinement via Symbolic Reasoning}
+
+  \authorinfo{Michael Emmi}
+    {IMDEA Software Institute}
+    {michael.emmi@imdea.org}
+  \authorinfo{Constantin Enea \and Jad Hamza}
+    {LIAFA, Université Paris Diderot}
+    {\{cenea,jhamza\}@liafa.univ-paris-diderot.fr}
 
   \maketitle
 
@@ -101,6 +64,14 @@
     nearly all violations arising in actual executions.
 
   \end{abstract}
+  
+  \category{CR-number}{subcategory}{third-level}
+
+  \terms
+  term1, term2
+
+  \keywords
+  keyword1, keyword2
 
   \input intro
   \input refinement
@@ -114,7 +85,3 @@
   \bibliography{violin}
 
 \end{document}
-
-
-
-

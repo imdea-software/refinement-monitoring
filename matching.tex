@@ -15,7 +15,7 @@ increase over an a-priori fixed size.
 Every low-level execution of a collection defines a correlation between operations that effectively add 
 and respectively remove the same value, or the same version of a value if we consider collections
 that store a multiset of values. For instance, an execution of a stack implementation relates
-every $\<pop>=>v$ operation to the $\<push>(v)$ operation that added the version of $v$ returned 
+every $\<pop>\Rightarrowv$ operation to the $\<push>(v)$ operation that added the version of $v$ returned 
 by $\<pop>$ (the value $v$ could be added several times using different $\<push>$ operations).
 This correlation, called \emph{matching function}, 
 is determined by the input values and the interleaving between the internal actions of 
@@ -27,8 +27,8 @@ the tag of the removed value, such that the matching
 function is uniquely determined by the sequence of call and return actions.
 
 Throughout this work we assume that every execution $e$ (of any library) is mapped to 
-a unique matching function $\<Matching>(e):O/-> O$, where $O$ is the set of operations in $e$
-($/->$ denotes a partial function).
+a unique matching function $\<Matching>(e):O \rightharpoonup O$, where $O$ is the set of operations in $e$
+($\rightharpoonup$ denotes a partial function).
 Typically, the domain of $\<Matching>(e)$ consists of operations deleting a value from the collection or 
 testing the presence of a value while the image of $\<Matching>(e)$ consists of operations  
 adding a value to the collection~\footnote{For collections where a remove operation can delete 
@@ -72,32 +72,32 @@ The operations in the domain, resp., the image, of $\<Matching>(e)$ are called n
 %\item{Queue}
 %  \begin{itemize}
 %  \item{Positive Labels:} $\set{\<enqueue>(x)\ |\ x \in \domain}$
-%  \item{Negative Labels:} $\set{\<dequeue> => x\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<dequeue> \Rightarrow x\ |\ x \in \domain}$
 %  \end{itemize}
 %
 %\item{Stack}
 %  \begin{itemize}
 %  \item{Positive Labels:} $\set{\<push>(x)\ |\ x \in \domain}$
-%  \item{Negative Labels:} $\set{\<pop> => x\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<pop> \Rightarrow x\ |\ x \in \domain}$
 %  \end{itemize}
 %
 %\item{Register}
 %  \begin{itemize}
 %  \item{Positive Labels:} $\set{\<write>(x)\ |\ x \in \domain}$
-%  \item{Negative Labels:} $\set{\<read> => x\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<read> \Rightarrow x\ |\ x \in \domain}$
 %  \end{itemize}
 %
 %\item{PriorityQueue}
 %  \begin{itemize}
 %  \item{Positive Labels:} $\set{\<add>(x)\ |\ x \in \domain}$
-%  \item{Negative Labels:} $\set{\<removeMax> => x\ |\ x \in \domain}$
+%  \item{Negative Labels:} $\set{\<removeMax> \Rightarrow x\ |\ x \in \domain}$
 %  \end{itemize}
 %  
 %\item{Set}
 %  \todo{Necessary explanation for the choice we did for the set}
 %  \begin{itemize}
 %  \item{Positive Label:} $\<add>$
-%  \item{Negative Labels:} $\<remove>$ and $\<contains> => \top$
+%  \item{Negative Labels:} $\<remove>$ and $\<contains> \Rightarrow \top$
 %  \end{itemize}
 %  
 %\item{Lock}
@@ -168,7 +168,7 @@ for every \<lock> operation in an execution and every successful execution
 of a $\<lock>$ operation results in an object state that stores that input value.
 When
 an \<unlock> operation succeeds, it returns the value stored in the object state.
-Therefore, the matching function maps $\<unlock>=>v$ operations to $\<lock>(v)$ operations.
+Therefore, the matching function maps $\<unlock>\Rightarrowv$ operations to $\<lock>(v)$ operations.
 
 \end{example}
 
@@ -215,10 +215,10 @@ unique matching function denoted by $\<Matching>(h)$.
 %
 %  Let $h_1 = \tup{O_1,<_1,f_1,\<Matching>_1}$ and $h_2 = \tup{O_2,<_2,f_2,\<Matching>_2}$. We say $h_1$ is
 %  \emph{weaker than} $h_2$, written $h_1 \preceq h_2$, when there exists an
-%  injection $g: O_2 -> O_1$ such that
+%  injection $g: O_2 \to O_1$ such that
 %  \begin{itemize}
 %
-%    \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
+%    \item $o \in \<range>(g)$ when $f_1(o) = m(u) \Rightarrow v$ and $v \neq \bot$,
 %
 %    \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
 %
@@ -228,7 +228,7 @@ unique matching function denoted by $\<Matching>(h)$.
 %    \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
 %
 %  \end{itemize}
-%  where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 =
+%  where $(m_1(u_1) \Rightarrow v_1) \ll (m_2(u_2) \Rightarrow v_2)$ if{f} $m_1 = m_2$, $u_1 =
 %  u_2$, and $v_1 \in \set{ v_2, \bot }$. We say $h_1$ and $h_2$ are
 %  \emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$.
 %

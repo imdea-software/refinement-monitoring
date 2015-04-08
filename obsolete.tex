@@ -18,62 +18,51 @@ history membership.
 
 \subsection{Unique matching functions}
 
-Recall that a history $h\in \overline{H}$ iff there exists a history $h'$ stronger than $h$
-and a matching function $M : O /-> O$ such that $h',M\models \textsc{Theory}(H)$.
-We assume in the following that for every history $h$, 
-the matching function $M : O /-> O$ is unique and that it is defined by the 
-operation labels in $h$, i.e., there exists a function $\<Matching>:\<Labels>/-> \<Labels>$
-such that $M(o)=o'$ iff $\<Matching>(f(o))=f(o')$.
-The matching function associated to some history $h$ is denoted by $M_h$.
-We give some examples of how to construct histories of  
-standard libraries with unique matching functions. 
-%These constructions rely on the fact that many concurrent objects 
-
+Recall that a history $h\in \overline{H}$ iff there exists a history $h'$
+stronger than $h$ and a matching function $M : O \rightharpoonup O$ such that
+$h',M\models \textsc{Theory}(H)$. We assume in the following that for every
+history $h$, the matching function $M : O \rightharpoonup O$ is unique and that
+it is defined by the operation labels in $h$, i.e.,~there exists a function
+$\mathsf{M}:\mathbb{L} \rightharpoonup \mathbb{L}$ such that $M(o)=o'$ iff
+$\mathsf{M}(f(o))=f(o')$. The matching function associated to some history $h$
+is denoted by $M_h$. We give some examples of how to construct histories of
+standard libraries with unique matching functions.
 
 \begin{example}[Collections]
 
-For usual implementations of collections 
-such as stacks, queues, and sets, 
-%it is 
-%straightforward to instrument an implementation in order the get the matching 
-%relation. 
-each operation adding a value to the collection is going to 
-receive as input a value which is uniquely identified by a tag. When a method removing 
-an element from the collection succeeds 
-%succeeds -- for instance pops an 
-%element from the stack -- 
-it is also going to return the unique tag associated
-with that element, thus defining a unique matching function
-from remove operations to add operations. The same strategy can be adapted to 
-implementations of a register: the inputs to write operations are tagged 
-and the read operations return tagged values.
+  For usual implementations of collections such as stacks, queues, and sets,
+  each operation adding a value to the collection is going to receive as input
+  a value which is uniquely identified by a tag. When a method removing an
+  element from the collection succeeds it is also going to return the unique
+  tag associated with that element, thus defining a unique matching function
+  from remove operations to add operations. The same strategy can be adapted to
+  implementations of a register: the inputs to write operations are tagged and
+  the read operations return tagged values.
 
 \end{example}
 
 \begin{example}[Locks]
 
-The implementations of a lock object usually have two abstract states, one where the
-object is unlocked, and one where it is locked. 
-%We can thus instrument the 
-%implementation in the following way. 
-The \<lock> operations can be modified to receive as input a value which is unique
-for every \<lock> operation in an execution and every successful execution
-of a $\<lock>$ operation results in an object state that stores that input value.
-When
-an \<unlock> operation succeeds, it returns the value stored in the object state.
-Therefore, the matching function maps $\<unlock>=>v$ operations to $\<lock>(v)$ operations.
+  The implementations of a lock object usually have two abstract states, one
+  where the object is unlocked, and one where it is locked. The lock operations
+  can be modified to receive as input a value which is unique for every lock
+  operation in an execution and every successful execution of a lock operation
+  results in an object state that stores that input value. When an unlock
+  operation succeeds, it returns the value stored in the object state.
+  Therefore, the matching function maps unlock$\Rightarrow v$ operations to
+  lock$(v)$ operations.
 
 \end{example}
 
 \begin{example}[Semaphores]
 
-Semaphore objects are usually implemented using a counter, which counts the 
-number of \<acquire> operations which successfully entered the semaphore and
-which are not yet released. We can instrument the implementation by keeping
-a map which maps each \emph{slot} (from $1$ to the capacity $\capacity$) to a unique tag 
-which was received as input by the \<acquire> operation which has that slot, if any.
-When a \<release> succeeds in decrementing the counter, it returns the unique 
-tag of the \<acquire> which had the slot.
+  Semaphore objects are usually implemented using a counter, which counts the
+  number of acquire operations which successfully entered the semaphore and
+  which are not yet released. We can instrument the implementation by keeping a
+  map which maps each \emph{slot} (from $1$ to the capacity $c$) to a unique
+  tag which was received as input by the acquire operation which has that slot,
+  if any. When a release succeeds in decrementing the counter, it returns the
+  unique tag of the acquire which had the slot.
 
 \end{example}
 
@@ -90,44 +79,34 @@ is denoted by $+(m)$.
 
 \begin{example}
 
-Let $h$ be the history in Figure~\ref{fig:complete_removal}
-such that the matching function $M_h$ maps every
-$\<pop>=>i$ operation to the $\<push>(i)$ operation.
-The matches of $h$ are $m_1=\{\<add>(1),\<rem>=>1\}$, $m_2=\{\<add>(2),\<rem>=>2\}$,
-and $m_3=\{\<add>(3),\<rem>=>3\}$. Since every operation has a different label, 
-we abuse the notation and write matches as sets of operation labels.
-Then, $+(m_i)=\<add>(i)$, for each $i$.
+  Let $h$ be the history in Figure~\ref{fig:complete_removal} such that the
+  matching function $M_h$ maps every pop$\Rightarrow i$ operation to the
+  push$(i)$ operation. The matches of $h$ are $m_1 = \set{ \text{add}(1),
+  \text{rem}\Rightarrow 1 }$, $m_2 = \set{ \text{add}(2),
+  \text{rem}\Rightarrow2 }$, and $m_3 = \set{ \text{add}(3),
+  \text{rem}\Rightarrow 3 }$. Since every operation has a different label, we
+  abuse the notation and write matches as sets of operation labels. Then,
+  $+(m_i) = \text{add}(i)$, for each $i$.
 
 \end{example}
 
-A set of histories $H$ is \emph{match-removal closed} iff for every history $h\in H$
-and every match $m$ of $h$, $H$ contains the history obtained from $h$ by deleting the 
-operations in $m$. The history obtained from another history $h$ by deleting a set
-of operations $O$ is denoted by $h\setminus O$.
+A set of histories $H$ is \emph{match-removal closed} iff for every history
+$h\in H$ and every match $m$ of $h$, $H$ contains the history obtained from $h$
+by deleting the operations in $m$. The history obtained from another history
+$h$ by deleting a set of operations $O$ is denoted by $h \setminus O$.
 
-The kernels of all the reference implementations described in Section~\ref{sec:logic} are 
-match-removal closed. For instance, consider a sequential history $h$ in the basis of an atomic queue
-and a match $m=\{\<add>(1),\<rem>=>1\}$. 
-%$\sigma_1\cdot \<add>(1)\cdot\sigma_2\cdot \<rem>=>1\cdot\sigma_3$ 
-%(the history is written as a sequence of operation labels) such that the matching function 
-%maps the $\<rem>=>1$ operation to the $\<add>(1)$ operation. 
-%These two operations form a match
-%because the matching function for queue histories is injective (there is only one
-%operation mapped to $\<add>(1)$).
-The history obtained from $h$ by removing the match $m$
-is also a valid sequential queue history because essentially, the remaining values are still removed 
-in the order in which they are added. 
+The kernels of all the reference implementations described in
+Section~\ref{sec:logic} are match-removal closed. For instance, consider a
+sequential history $h$ in the basis of an atomic queue and a match $m=\set{
+\text{add}(1), \text{rem}\Rightarrow1 }$. The history obtained from $h$ by
+removing the match $m$ is also a valid sequential queue history because
+essentially, the remaining values are still removed in the order in which they
+are added.
 
-%\begin{theorem}
-%
-%The bases of the atomic stacks, queues, priority queues, sets, locks, semaphores, and of the
-%exchanger are match-removal closed.
-%
-%\end{theorem}
-
-The match-removal closure property extends from a kernel $H$ to the entire library $\overline{H}$.
-Therefore, if by deleting matches from a history we get a history which is not admitted
-by a library $\overline{H}$ then the initial history is also not admitted by $\overline{H}$.
+The match-removal closure property extends from a kernel $H$ to the entire
+library $\overline{H}$. Therefore, if by deleting matches from a history we get
+a history which is not admitted by a library $\overline{H}$ then the initial
+history is also not admitted by $\overline{H}$.
 
 \begin{theorem}
   \label{th:match_closure}
@@ -138,77 +117,68 @@ by a library $\overline{H}$ then the initial history is also not admitted by $\o
 
 \begin{proof}
 
-%Let $H(B)$ be a basis of $L$, $h$ a history in $H(L)$, and $m$
-%a match of $h$.
-Let $h\in \overline{H}$ and $m$ a match of $h$.
-By definition, %and~\ref{lemma:pending_histories}, 
-there exists a history $h'\in H$ such that $h\preceq h'$. 
-%Since all the operations in $m$ are completed, they are included in $h'$ with the
-%same labeling. Moreover, 
-By the assumptions on the matching functions, 
-$m$ is also a match of $h'$.
-By hypothesis, $H$ is match-removal closed which implies 
-that the history $h''$ obtained from $h'$ by deleting the operations in $m$ 
-is also in $H$. From the definition of $\preceq$ it follows that
-the history $h\setminus m$ 
-is weaker than $h''$ which implies $h\setminus m\in \overline{H}$.
+  Let $h\in \overline{H}$ and $m$ a match of $h$. By definition, there exists a
+  history $h'\in H$ such that $h\preceq h'$. By the assumptions on the matching
+  functions, $m$ is also a match of $h'$. By hypothesis, $H$ is match-removal
+  closed which implies that the history $h''$ obtained from $h'$ by deleting
+  the operations in $m$ is also in $H$. From the definition of $\preceq$ it
+  follows that the history $h\setminus m$ is weaker than $h''$ which implies
+  $h\setminus m\in \overline{H}$.
+
 \end{proof}
 
 While the statement of Theorem~\ref{th:match_closure} implies that a history
-$h\setminus m$, where $m$ is a match of $h$, belongs to $\overline{H}$ whenever $h\in \overline{H}$,
-Example~\ref{ex:complete_removal} shows that the reverse is not true. 
-%Consequently, 
-%a monitor that eagerly removes all matching clusters from the history it tracks 
-%may miss some violations.
+$h\setminus m$, where $m$ is a match of $h$, belongs to $\overline{H}$ whenever
+$h\in \overline{H}$, Example~\ref{ex:complete_removal} shows that the reverse
+is not true.
 
 \begin{figure}
 
-\input figures/complete_removal
+  \input figures/complete_removal
 
-\caption{A history that is not admitted by the atomic stack. Each operation is represented
-by an horizontal line segment. The line segment of an operation ending before
-the line segment of another operation means that the two operations are ordered
-(reading from left to right).
-}
-\label{fig:complete_removal}
+  \caption{A history that is not admitted by the atomic stack. Each operation
+  is represented by an horizontal line segment. The line segment of an
+  operation ending before the line segment of another operation means that the
+  two operations are ordered (reading from left to right).}
+  \label{fig:complete_removal}
 
 \end{figure}
 
-\begin{example}\label{ex:complete_removal}
+\begin{example}
+  \label{ex:complete_removal}
 
-Figure~\ref{fig:complete_removal} pictures a history which is not admitted by the atomic stack:
-since the element $3$ was pushed after $2$, $\<pop>=>3$ should not have started after 
-$\<pop>=>2$ has finished. The matching function $M_h$ maps every
-$\<pop>=>i$ operation to the $\<push>(i)$ operation..
-%and $h'$, the latter being an
-%extension of the former. 
-The history obtained by removing the 
-match $\{{\tt push}(2),{\tt pop}=>2\}$ is however admitted by the atomic stack.
+  Figure~\ref{fig:complete_removal} pictures a history which is not admitted by
+  the atomic stack: since the element $3$ was pushed after $2$, pop$\Rightarrow
+  3$ should not have started after pop$\Rightarrow 2$ has finished. The
+  matching function $M_h$ maps every pop$\Rightarrow i$ operation to the
+  push$(i)$ operation.
+
+  The history obtained by removing the match $\set{ \text{push}(2),
+  \text{pop}\Rightarrow 2 }$ is however admitted by the atomic stack.
 
 \end{example}
 
 \subsection{Forgetting matched operations}
 
-When continuously checking membership to a reference implementation 
-on a history that keeps extending with new operations, 
-one must ensure that forgetting matches doesn't lead to spurious violations
-at later times. In the continuation of Theorem~\ref{th:match_closure},
-one should also prove that a match of  
-a history $h$ is a match of every extension of $h$ 
-(a match of $h$ could be strictly included in a match of an extension
-and therefore, not a match of the extension).
-Otherwise, removing an arbitrary match before extending a history may be the same as
-removing a set of operations which is not a match from the extended history
-(therefore, Theorem~\ref{th:match_closure} doesn't apply).
-This result holds when the matching function of all histories in the library is injective
-because every match has exactly two operations. All 
-the reference implementations in Section~\ref{sec:logic} fall into this case 
-except for the atomic sets and registers. 
+When continuously checking membership to a reference implementation on a
+history that keeps extending with new operations, one must ensure that
+forgetting matches doesn't lead to spurious violations at later times. In the
+continuation of Theorem~\ref{th:match_closure}, one should also prove that a
+match of a history $h$ is a match of every extension of $h$ (a match of $h$
+could be strictly included in a match of an extension and therefore, not a
+match of the extension). Otherwise, removing an arbitrary match before
+extending a history may be the same as removing a set of operations which is
+not a match from the extended history (therefore,
+Theorem~\ref{th:match_closure} doesn't apply). This result holds when the
+matching function of all histories in the library is injective because every
+match has exactly two operations. All the reference implementations in
+Section~\ref{sec:logic} fall into this case except for the atomic sets and
+registers.
 
-A history $h_2$ \emph{extends} a history $h_1$ if intuitively it is the history of an 
-execution that extends the execution represented by $h_1$. Formally, 
-$h_2=\tup{O_2,<_2,f_2}$ \emph{extends} $h_1=\tup{O_1,<_1,f_1}$, 
-written $h_1 |> h_2$, iff 
+A history $h_2$ \emph{extends} a history $h_1$ if intuitively it is the history
+of an execution that extends the execution represented by $h_1$. Formally, $h_2
+= \tup{O_2,<_2,f_2}$ \emph{extends} $h_1 = \tup{O_1,<_1,f_1}$, written $h_1
+\vartriangleright h_2$, iff
 \begin{itemize}
 
 	\item $O_1\subseteq O_2$, 
@@ -221,41 +191,41 @@ written $h_1 |> h_2$, iff
 
 \end{itemize}
 
-\begin{lemma}\label{lem:match_extension1}
+\begin{lemma}
+  \label{lem:match_extension1}
 
-Let $\overline{H}$ be a library s.t. $M_h$ is injective for all $h\in \overline{H}$.
-For every two histories $h_1, h_2\in \overline{H}$ s.t. $h_1 |> h_2$,
-if $m$ is a match of $h_1$ then $m$ is also a match of $h_2$.
+  Let $\overline{H}$ be a library such that $M_h$ is injective for all $h\in
+  \overline{H}$. For every two histories $h_1, h_2\in \overline{H}$ such that
+  $h_1 \vartriangleright h_2$, if $m$ is a match of $h_1$ then $m$ is also a
+  match of $h_2$.
 
 \end{lemma}
 
-Example~\ref{ex:removal_even_saturation} shows that this result doesn't 
-hold when the matching function is not injective.
-%a match $m$ of a history $h_1$ could be strictly included in a 
-%match of an extension $h_2$ which implies that $m$ is not a match of $h_2$. 
+Example~\ref{ex:removal_even_saturation} shows that this result doesn't hold
+when the matching function is not injective.
 
 \begin{figure}
 
-\input figures/removal_even_saturation
+  \input figures/removal_even_saturation
 
-\caption{Two histories $h_1$ and $h_2$ of the atomic register, where $h_2$ is an extension of $h_1$.}
-\label{fig:removal_even_saturation}
+  \caption{Two histories $h_1$ and $h_2$ of the atomic register, where $h_2$ is
+  an extension of $h_1$.}
+  \label{fig:removal_even_saturation}
 
 \end{figure}
 
-\begin{example}\label{ex:removal_even_saturation}
+\begin{example}
+  \label{ex:removal_even_saturation}
 
-Figure~\ref{fig:removal_even_saturation} pictures two histories $h_1$ and $h_2$ of the atomic
-register, the latter being an extension of the former. 
-We assume that the matching function maps every
-$\<read>=>i$ operation to the $\<write>(i)$ operation.
-%(otherwise, the histories would not admitted by the atomic register).
-The match $\{\<write>(1),\<read>=>1\}$ of $h_1$
-is strictly included in the match $\{\<write>(1),\<read>=>1,\<read>=>1\}$ of $h_2$,
-and therefore not a match of $h_2$.
-%therefore the match of $h_1$ is not a match of $h_2$.
-Removing the match of $h_1$ and extending it with the $\<read>=>1$ operation
-results in a spurious violation.
+  Figure~\ref{fig:removal_even_saturation} pictures two histories $h_1$ and
+  $h_2$ of the atomic register, the latter being an extension of the former. We
+  assume that the matching function maps every read$\Rightarrow i$ operation to
+  the write$(i)$ operation. The match $\set{ \text{write}(1),
+  \text{read}\Rightarrow 1 }$ of $h_1$ is strictly included in the match $\set{
+  \text{write}(1), \text{read}\Rightarrow 1, \text{read}\Rightarrow 1 }$ of
+  $h_2$, and therefore not a match of $h_2$. Removing the match of $h_1$ and
+  extending it with the read$\Rightarrow 1$ operation results in a spurious
+  violation.
 
 \end{example}
 
@@ -263,32 +233,33 @@ For libraries with non-injective matching functions, we impose additional
 conditions on their kernels, and insist that a match $m$ of $h$ is a match of
 every extension of $h$.
 
-Let $R$ be a relation on operation
-labels. We say that a history $h$ is \emph{$R$-ordered} iff for any two matches $m_1$
-and $m_2$ of $h$ such that $R(+(m_1),+(m_2))$, each operation of $m_1$
-is ordered before each operation of $m_2$.
+Let $R$ be a relation on operation labels. We say that a history $h$ is
+\emph{$R$-ordered} iff for any two matches $m_1$ and $m_2$ of $h$ such that
+$R(+(m_1), +(m_2))$, each operation of $m_1$ is ordered before each operation
+of $m_2$.
 
-Consider the atomic register and the relation $R_{reg}$ which holds for every two labels of two write operations.
-Then, any history from its kernel (which by definition is sequential) is $R$-ordered
-because every read operation is mapped by the matching function
-to the closest preceding write operation.
-Similarly, one can show that any history from the kernel of the atomic set is $R_{set}$-ordered,
-where $R_{set}$ holds for every two labels $\<add>(x)$ and $\<add>(y)$ with $x=y$.
+Consider the atomic register and the relation $R_\mathrm{reg}$ which holds for
+every two labels of two write operations. Then, any history from its kernel
+(which by definition is sequential) is $R$-ordered because every read operation
+is mapped by the matching function to the closest preceding write operation.
+Similarly, one can show that any history from the kernel of the atomic set is
+$R_\mathrm{set}$-ordered, where $R_\mathrm{set}$ holds for every two labels
+add$(x)$ and add$(y)$ with $x = y$.
 
 A set of histories $H$ is $R$-ordered iff every history in $H$ is $R$-ordered.
-Let $\overline{H}$ be a library such that $H$ is $R$-ordered. 
-A match $m$ of a history $h\in \overline{H}$ is \emph{overwritten} by 
-another match $m'$ of $h$ iff 
-the labels of $+(m)$ and $+(m')$ are related by $R$, 
-$+(m)$ finishes before $+(m')$, and every operation 
-overlapping with $+(m')$ is completed. 
+Let $\overline{H}$ be a library such that $H$ is $R$-ordered. A match $m$ of a
+history $h\in \overline{H}$ is \emph{overwritten} by another match $m'$ of $h$
+iff the labels of $+(m)$ and $+(m')$ are related by $R$, $+(m)$ finishes before
+$+(m')$, and every operation overlapping with $+(m')$ is completed.
 
 \begin{example}
 
-Given the histories $h_1$ and $h_2$ in Figure~\ref{fig:removal_even_saturation}, 
-the match $\{\<write>(0),\<read>=>0,\<read>=>0\}$ is overwritten by the
-match $\{\<write>(1),\<read>=>1,\<read>=>1\}$ in $h_2$ but not in $h_1$ since
-a $\<read>=>0$ operation is pending in $h_1$.
+  Given the histories $h_1$ and $h_2$ in
+  Figure~\ref{fig:removal_even_saturation}, the match $\set{ \text{write}(0),
+  \text{read}\Rightarrow 0, \text{read}\Rightarrow0 }$ is overwritten by the
+  match $\set{ \text{write}(1), \text{read}\Rightarrow 1,
+  \text{read}\Rightarrow1 }$ in $h_2$ but not in $h_1$ since a read$\Rightarrow
+  0$ operation is pending in $h_1$.
 
 \end{example}
 
@@ -302,29 +273,27 @@ $o$ occur in this order. Therefore, $H$ is not $R$-ordered.
 \begin{lemma}
   \label{lem:match_extension2}
 
-  Let $H$ be a $R$-ordered, and $h_1, h_2\in \overline{H}$. If $h_1 |> h_2$ and
+  Let $H$ be a $R$-ordered, and $h_1, h_2\in \overline{H}$. If $h_1 \vartriangleright h_2$ and
   $m$ is a match of $h_1$ overwritten by another match $m'$ of $h_1$, then $m$
   is also a match of $h_2$.
 
 \end{lemma}
 
-A match $m$ of a history $h\in  \overline{H}$ is called \emph{obsolete} if (1) it is simply a
-match when the matching function of every history $h\in \overline{H}$
-is injective or (2) it is overwritten by another match of $h$, when $H$
-is $R$-ordered.
-Lemmas~\ref{lem:match_extension1} and~\ref{lem:match_extension2},  and 
-Theorem~\ref{th:match_closure} imply the following.
+A match $m$ of a history $h\in \overline{H}$ is called \emph{obsolete} if
+(1)~it is simply a match when the matching function of every history $h\in
+\overline{H}$ is injective or (2)~it is overwritten by another match of $h$,
+when $H$ is $R$-ordered. Lemmas~\ref{lem:match_extension1}
+and~\ref{lem:match_extension2}, and Theorem~\ref{th:match_closure} imply the
+following.
 
-\begin{corollary}\label{cor:matching_final}
+\begin{corollary}
+  \label{cor:matching_final}
 
-Let $H$ be a match-removal closed history set 
-%$L$ be a library with a match-removal closed basis $B$ 
-s.t.
-$M_h$ is injective for all $h\in \overline{H}$ or $H$ is $R$-ordered,
-for some $R$.
-For every two histories $h_1, h_2\in \overline{H}$ s.t. $h_1 |> h_2$ and
-$m$ an obsolete match of $h_1$, 
-$h_2\setminus m$ is a history of $\overline{H}$.
+  Let $H$ be a match-removal closed history set such that $M_h$ is injective
+  for all $h\in \overline{H}$ or $H$ is $R$-ordered, for some $R$. For every
+  two histories $h_1, h_2\in \overline{H}$ such that $h_1 \vartriangleright
+  h_2$ and $m$ an obsolete match of $h_1$, $h_2\setminus m$ is a history of
+  $\overline{H}$.
 
 \end{corollary}
 
@@ -335,21 +304,22 @@ algorithms which remove operations.
   \label{ex:removal_no_saturation}
 
   Figure~\ref{fig:removal_no_saturation} pictures two histories $h_1$ and
-  $h_2$, the latter being an extension of the former. The $(\sf rem =>
+  $h_2$, the latter being an extension of the former. The $(\sf rem \Rightarrow
   2)$-operation is pending in $h_1$ and only completes in $h_2$. However,
-  removing the match $\set{{\sf add}(1), {\sf rem} => 1}$ from $h_1$ before the
-  pending {\sf rem} completes results in a history admitted by the atomic
-  stack. This highlights a risk of incompleteness which we must account for in
-  our development of refinement-monitoring algorithms. Should we simply forget
-  about the match $\set{ {\sf add}(1), {\sf rem} => 1}$ while monitoring, we
-  may not detect the violation obviated when the pending ${\sf rem}$ completes.
-  In order to avoid such incompleteness, at the very least, our monitoring
-  algorithm must remember that the ${\sf add}(2)$ operation should be ordered
-  before $({\sf rem} => {\tt empty})$ (since ${\sf add}(2)$ must be ordered
-  before ${\sf add}(1)$, which is ordered before $({\tt rem} => {\tt empty})$),
-  even after removing the match. Then when $({\sf rem} => 2)$ completes, we
-  could deduce that $({\sf rem} => empty)$ must be ordered after ${\sf add}(2)$
-  and before $({\sf rem} => 2)$, a contradiction with the atomic stack theory
+  removing the match $\set{{\sf add}(1), {\sf rem} \Rightarrow 1}$ from $h_1$
+  before the pending {\sf rem} completes results in a history admitted by the
+  atomic stack. This highlights a risk of incompleteness which we must account
+  for in our development of refinement-monitoring algorithms. Should we simply
+  forget about the match $\set{ {\sf add}(1), {\sf rem} \Rightarrow 1}$ while
+  monitoring, we may not detect the violation obviated when the pending ${\sf
+  rem}$ completes. In order to avoid such incompleteness, at the very least,
+  our monitoring algorithm must remember that the ${\sf add}(2)$ operation
+  should be ordered before $({\sf rem} \Rightarrow {\tt empty})$ (since ${\sf
+  add}(2)$ must be ordered before ${\sf add}(1)$, which is ordered before
+  $({\tt rem} \Rightarrow {\tt empty})$), even after removing the match. Then
+  when $({\sf rem} \Rightarrow 2)$ completes, we could deduce that $({\sf rem}
+  \Rightarrow empty)$ must be ordered after ${\sf add}(2)$ and before $({\sf
+  rem} \Rightarrow 2)$, a contradiction with the atomic stack theory
   $\textsc{Theory}(H_{\sf st})$ of Section~\ref{sec:logic}.
 
 \end{example}

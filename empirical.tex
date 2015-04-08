@@ -21,10 +21,10 @@ refinement-checking algorithms.
   linearizations $h'$ of $h$'s completions. We check whether each $h'$ is
   included in the kernel $H$ by asking\footnote{Classically this check is
   performed by set inclusion, as the length of $h$ is assumed to be bounded by
-  some number $n \in \<Nats>$ of operations, and the subset $H_n \subseteq H$
+  some number $n \in \mathbb{N}$ of operations, and the subset $H_n \subseteq H$
   of $n$-operation histories of $H$ is computable in finite time. As we assume
   no such bound on the number of operations, we perform this check via
-  theorem-prover query instead.} whether $h' |= \textsc{Theory}(H)$. As soon as
+  theorem-prover query instead.} whether $h' \models \textsc{Theory}(H)$. As soon as
   this check succeeds, we conclude that $h \in \overline{H}$. Otherwise if this
   check fails for all linearizations $h'$, we conclude $h \not\in
   \overline{H}$. We also implement a variation which skips the enumeration of
@@ -32,7 +32,7 @@ refinement-checking algorithms.
   symbolically. The {\tt -c} flag specifies explicit enumeration of completions.
 
   \item[{\sc Symbolic}] checks each history $h$ by reduction to the
-  satisfiability of $\textsc{Stronger}(h) /| \textsc{Theory}(H)$, as described
+  satisfiability of $\textsc{Stronger}(h) \land \textsc{Theory}(H)$, as described
   in Section~\ref{sec:propositional}, delegating the enumeration of both
   completions and linearizations to an underlying solver. If the satisfiability
   check succeeds, or is inconclusive, we conclude that $h \in \overline{H}$.

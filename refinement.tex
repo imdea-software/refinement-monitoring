@@ -13,7 +13,7 @@ CAS}) instructions in order to maximize parallelism. In one atomic step, the
 \begin{figure}[t]
   \scriptsize
   \begin{minipage}[t]{41mm}
-    \begin{program}
+    \begin{verbatim}
 struct node *Top;      
       
 void push(int v):
@@ -24,10 +24,10 @@ void push(int v):
     struct node *t = Top;
     n->next = t;
   } while (! CAS (&Top, t, n));
-    \end{program}
+    \end{verbatim}
   \end{minipage}
   \begin{minipage}[t]{40mm}
-    \begin{program}
+    \begin{verbatim}
 int pop():
   struct node *n,*t;
   do {
@@ -38,31 +38,31 @@ int pop():
   int result = t->data;
   free(t);
   return result;
-    \end{program}
+    \end{verbatim}
   \end{minipage}
   \begin{minipage}[t]{30mm}
-    \begin{program}
+    \begin{verbatim}
 struct node {
   int data;
   struct node *next;
 }
-    \end{program}
+    \end{verbatim}
   \end{minipage}
   \begin{minipage}[t]{25mm}
-    \begin{program}
+    \begin{verbatim}
 void Thread1():
   push(1);
   int x = pop();
-    \end{program}
+    \end{verbatim}
   \end{minipage}
   \begin{minipage}[t]{25mm}
-    \begin{program}
+    \begin{verbatim}
 void Thread2():
   int y = pop();
   push(2);
   push(3);
   int z = pop();
-    \end{program}
+    \end{verbatim}
   \end{minipage}
   \caption{An implementation of Treiber's stack. The {\tt pop} operation
   returns the value {\tt EMPTY} when the stack is empty.}
@@ -123,16 +123,16 @@ $L_1$ yet not with $L_2$.
 
 We capture the interaction between programs and libraries by their
 \emph{histories}, representing the partial happens-before orders of library
-method invocations. Fixing arbitrary sets $\<Ops>$, $\<Methods>$, and $\<Vals>$
+method invocations. Fixing arbitrary sets $\mathbb{O}$, $\mathbb{M}$, and $\mathbb{V}$
 of operation identifiers, method names, and parameter/return values,
-respectively, we define the set of \emph{operation labels} as $\<Labels> =
-(\<Methods> \x \<Vals> \x (\<Vals> \u \set{\bot}))$. We write $m(u) => v$ to
-denote the label $@l = \tup{m,u,v}$. When $v = \bot$ we say $@l$ is
+respectively, we define the set of \emph{operation labels} as $\mathbb{L} =
+(\mathbb{M} \times \mathbb{V} \times (\mathbb{V} \cup \set{\bot}))$. We write $m(u) \Rightarrow v$ to
+denote the label $\ell = \tup{m,u,v}$. When $v = \bot$ we say $\ell$ is
 \emph{pending}, and otherwise \emph{completed}. A \emph{history} $h =
-\tup{O,<,f}$ is a partial order $<$ on a set $O \subseteq \<Ops>$ of operations
-labeled by $f : O -> \<Labels>$ such that operations with pending labels are
-maximal. An operation $o$ with label $@l$ is an \emph{$@l$-operation}, and $o$
-is \emph{pending}/\emph{completed} when $@l$ is. We say $h$ is
+\tup{O,<,f}$ is a partial order $<$ on a set $O \subseteq \mathbb{O}$ of operations
+labeled by $f : O \to \mathbb{L}$ such that operations with pending labels are
+maximal. An operation $o$ with label $\ell$ is an \emph{$\ell$-operation}, and $o$
+is \emph{pending}/\emph{completed} when $\ell$ is. We say $h$ is
 \emph{sequential} when $<$ is a total order on $O$, and \emph{(in)complete}
 when (not) all operations are complete. A history set is \emph{sequential} when
 it contains only sequential histories.
@@ -141,8 +141,8 @@ it contains only sequential histories.
 %   \label{ex:methods}
 %
 %   The method and value sets for collections storing a (multi)set of values, e.g., sets, stacks and queues,
-%   are $\<Methods> = \set{ \<add>, \<rem> }$ and
-%   $\<Vals> = \<Nats> \u \set{ \<empty> }$.
+%   are $\mathbb{M} = \set{ \<add>, \<rem> }$ and
+%   $\mathbb{V} = \<Nats> \cup \set{ \<empty> }$.
 %
 %   TODO GIVE A TABLE LIKE IN THE EXAMPLE 3.1. WHICH SHOWS POSITIVE/NEGATIVE LABELS.
 %
@@ -153,11 +153,11 @@ it contains only sequential histories.
   The history of Figure~\ref{fig:stacks}(b) captures the execution of
   Figure~\ref{fig:stacks}(a), where arrows depict the transitive reduction of
   the order relation. Essentially, operations $o_1$ and $o_2$ are ordered if
-  $o_1$ happens before $o_2$. For example, although the $\<push>(1)$-operation
-  precedes $\<pop> => 3$, since the $\<push>(1)$-operation returns before the
-  $(\<pop> => 3)$-operation is called, the $(\<pop> => 1)$-operation is
-  incomparable to $(\<pop> => 3)$, since it returns after the $(\<pop> =>
-  3)$-operation is called.
+  $o_1$ happens before $o_2$. For example, although the push$(1)$-operation
+  precedes pop$\Rightarrow 3$, since the push$(1)$-operation returns before the
+  (pop$\Rightarrow 3$)-operation is called, the (pop$\Rightarrow 1$)-operation
+  is incomparable to (pop$\Rightarrow 3$), since it returns after the
+  (pop$\Rightarrow 3$)-operation is called.
 
 \end{example}
 
@@ -166,17 +166,17 @@ $\preceq$ relating any two histories $h_1$ and $h_2$ such that $h_2$ includes
 all completed operations of $h_1$, and preserves the order between the
 operations common with $h_1$. Pending operations in $h_1$ can be either omitted
 or completed in $h_2$. Formally, $\tup{O_1, <_1, f_1} \preceq \tup{O_2, <_2,
-f_2}$ if{f} there exists an injection $g: O_2 -> O_1$ such that
+f_2}$ if{f} there exists an injection $g: O_2 \to O_1$ such that
 \begin{itemize}
 
-  \item $o \in \<range>(g)$ when $f_1(o) = m(u) => v$ and $v \neq \bot$,
+  \item $o \in \range(g)$ when $f_1(o) = m(u) \Rightarrow v$ and $v \neq \bot$,
 
   \item $g(o_1) <_1 g(o_2)$ implies $o_1 <_2 o_2$ for each $o_1, o_2 \in O_2$,
 
   \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
 
 \end{itemize}
-where $(m_1(u_1) => v_1) \ll (m_2(u_2) => v_2)$ if{f} $m_1 = m_2$, $u_1 = u_2$,
+where $(m_1(u_1) \Rightarrow v_1) \ll (m_2(u_2) \Rightarrow v_2)$ if{f} $m_1 = m_2$, $u_1 = u_2$,
 and $v_1 \in \set{ v_2, \bot }$. When the injection $g$ need be fixed, we write
 $h_1 \preceq_g h_2$. We say $h_1$ and $h_2$ are \emph{equivalent} when $h_1
 \preceq h_2$ and $h_2 \preceq h_1$. We do not distinguish between equivalent
@@ -188,9 +188,9 @@ weakening.
 
 \begin{example}
 
-  The history of Figure~\ref{fig:stacks}(c) is weaker than that  of
-  Figure~\ref{fig:stacks}(b). While one of the two pending $\<pop>$-operations
-  is mapped to the completed $(\<pop> => 3)$-operation, the other is dropped.
+  The history of Figure~\ref{fig:stacks}(c) is weaker than that of
+  Figure~\ref{fig:stacks}(b). While one of the two pending pop-operations is
+  mapped to the completed (pop$\Rightarrow 3$)-operation, the other is dropped.
 
 \end{example}
 
@@ -210,9 +210,9 @@ acquisitions.
   \label{ex:atomic_stack}
 
   The \emph{atomic stack} is the library whose unique kernel is the set of all
-  sequential histories for which the return value of each $\<pop>$ operation is
-  either the argument value $v$ to the last unmatched $\<push>$ operation, or
-  {\tt EMPTY} if there are no unmatched $\<push>$ operations.
+  sequential histories for which the return value of each pop operation is
+  either the argument value $v$ to the last unmatched push operation, or {\tt
+  EMPTY} if there are no unmatched push operations.
 
 \end{example}
 
