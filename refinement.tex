@@ -123,30 +123,20 @@ $L_1$ yet not with $L_2$.
 
 We capture the interaction between programs and libraries by their
 \emph{histories}, representing the partial happens-before orders of library
-method invocations. Fixing arbitrary sets $\mathbb{O}$, $\mathbb{M}$, and $\mathbb{V}$
-of operation identifiers, method names, and parameter/return values,
-respectively, we define the set of \emph{operation labels} as $\mathbb{L} =
-(\mathbb{M} \times \mathbb{V} \times (\mathbb{V} \cup \set{\bot}))$. We write $m(u) \Rightarrow v$ to
-denote the label $\ell = \tup{m,u,v}$. When $v = \bot$ we say $\ell$ is
-\emph{pending}, and otherwise \emph{completed}. A \emph{history} $h =
-\tup{O,<,f}$ is a partial order $<$ on a set $O \subseteq \mathbb{O}$ of operations
-labeled by $f : O \to \mathbb{L}$ such that operations with pending labels are
-maximal. An operation $o$ with label $\ell$ is an \emph{$\ell$-operation}, and $o$
-is \emph{pending}/\emph{completed} when $\ell$ is. We say $h$ is
-\emph{sequential} when $<$ is a total order on $O$, and \emph{(in)complete}
-when (not) all operations are complete. A history set is \emph{sequential} when
-it contains only sequential histories.
-
-% \begin{example}
-%   \label{ex:methods}
-%
-%   The method and value sets for collections storing a (multi)set of values, e.g., sets, stacks and queues,
-%   are $\mathbb{M} = \set{ \<add>, \<rem> }$ and
-%   $\mathbb{V} = \<Nats> \cup \set{ \<empty> }$.
-%
-%   TODO GIVE A TABLE LIKE IN THE EXAMPLE 3.1. WHICH SHOWS POSITIVE/NEGATIVE LABELS.
-%
-% \end{example}
+method invocations. Fixing arbitrary sets $\mathbb{O}$, $\mathbb{M}$, and
+$\mathbb{V}$ of operation identifiers, method names, and parameter/return
+values, respectively, we define the set of \emph{operation labels} as
+$\mathbb{L} = (\mathbb{M} \times \mathbb{V} \times (\mathbb{V} \cup
+\set{\bot}))$. We write $m(u) \Rightarrow v$ to denote the label $\ell =
+\tup{m,u,v}$. When $v = \bot$ we say $\ell$ is \emph{pending}, and otherwise
+\emph{completed}. A \emph{history} $h = \tup{O,<,f}$ is a partial order $<$ on
+a set $O \subseteq \mathbb{O}$ of operations labeled by $f : O \to \mathbb{L}$
+such that operations with pending labels are maximal. An operation $o$ with
+label $\ell$ is an \emph{$\ell$-operation}, and $o$ is
+\emph{pending}/\emph{completed} when $\ell$ is. We say $h$ is \emph{sequential}
+when $<$ is a total order on $O$, and \emph{(in)complete} when (not) all
+operations are complete. A history set is \emph{sequential} when it contains
+only sequential histories.
 
 \begin{example}
 
@@ -154,10 +144,10 @@ it contains only sequential histories.
   Figure~\ref{fig:stacks}(a), where arrows depict the transitive reduction of
   the order relation. Essentially, operations $o_1$ and $o_2$ are ordered if
   $o_1$ happens before $o_2$. For example, although the push$(1)$-operation
-  precedes pop$\Rightarrow 3$, since the push$(1)$-operation returns before the
-  (pop$\Rightarrow 3$)-operation is called, the (pop$\Rightarrow 1$)-operation
-  is incomparable to (pop$\Rightarrow 3$), since it returns after the
-  (pop$\Rightarrow 3$)-operation is called.
+  precedes pop $\Rightarrow 3$, since the push$(1)$-operation returns before
+  the (pop $\Rightarrow 3$)-operation is called, the (pop $\Rightarrow
+  1$)-operation is incomparable to pop $\Rightarrow 3$, since it returns
+  after the (pop $\Rightarrow 3$)-operation is called.
 
 \end{example}
 
@@ -176,21 +166,21 @@ f_2}$ if{f} there exists an injection $g: O_2 \to O_1$ such that
   \item $f_1(g(o)) \ll f_2(o)$ for each $o \in O_2$.
 
 \end{itemize}
-where $(m_1(u_1) \Rightarrow v_1) \ll (m_2(u_2) \Rightarrow v_2)$ if{f} $m_1 = m_2$, $u_1 = u_2$,
-and $v_1 \in \set{ v_2, \bot }$. When the injection $g$ need be fixed, we write
-$h_1 \preceq_g h_2$. We say $h_1$ and $h_2$ are \emph{equivalent} when $h_1
-\preceq h_2$ and $h_2 \preceq h_1$. We do not distinguish between equivalent
-histories, and we assume every set $H$ of histories is closed under inclusion
-of equivalent histories, i.e.,~if $h_1$ and $h_2$ are equivalent and $h_1 \in
-H$, then $h_2 \in H$ as well. Finally, $\overline{H}$ denotes the closure
-$\set{ h : \exists h' \in H.\ h \preceq h' }$ of a history set $H$ under
-weakening.
+where $(m_1(u_1) \Rightarrow v_1) \ll (m_2(u_2) \Rightarrow v_2)$ if{f} $m_1 =
+m_2$, $u_1 = u_2$, and $v_1 \in \set{ v_2, \bot }$. When the injection $g$ need
+be fixed, we write $h_1 \preceq_g h_2$. We say $h_1$ and $h_2$ are
+\emph{equivalent} when $h_1 \preceq h_2$ and $h_2 \preceq h_1$. We do not
+distinguish between equivalent histories, and we assume every set $H$ of
+histories is closed under inclusion of equivalent histories, i.e.,~if $h_1$ and
+$h_2$ are equivalent and $h_1 \in H$, then $h_2 \in H$ as well. Finally,
+$\overline{H}$ denotes the closure $\set{ h : \exists h' \in H.\ h \preceq h'
+}$ of a history set $H$ under weakening.
 
 \begin{example}
 
   The history of Figure~\ref{fig:stacks}(c) is weaker than that of
   Figure~\ref{fig:stacks}(b). While one of the two pending pop-operations is
-  mapped to the completed (pop$\Rightarrow 3$)-operation, the other is dropped.
+  mapped to the completed (pop $\Rightarrow 3$)-operation, the other is dropped.
 
 \end{example}
 

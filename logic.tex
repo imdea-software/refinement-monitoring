@@ -1,45 +1,34 @@
-%!TEX root = head.tex
-
 \section{Refinement via Symbolic Reasoning}
 \label{sec:logic}
 
 In this section we represent the kernels of typical concurrent objects,
-including atomic collections and locks, in a simple first-order language. 
-Besides function and predicate symbols describing the operation labels and 
-the order relation of a history, this language includes
-a predicate {\sf match} describing a \emph{matching function} $M$ that
-%simplify, and avoid having to determine, e.g.,~which operation removes the
-%instance of a value added by another, we suppose that objects come equipped
-%with a \emph{matching function} $M$ mapping each history $h = \tup{O,<,f}$ to a
-%partial function $M_h : O /-> O$ over its operations. Intuitively, $M_h$ 
-maps
-operations $o$ which ``remove'' or ``test the presence'' of values to the operations $M(o)$ which added
-them. For instance, a matching function $M$ for a history of the atomic
-stack object is injective, and maps each pop$(\Rightarrow v_1)$-operation $o$ to a
-push$(v_2)$-operation $M(o)$ such that $v_1 = v_2$ when $M(o)$ is
-defined. Similarly, the matching function $M$ for an atomic lock object is
-also injective, and maps each ${\sf unlock}$-operation $o$ to a
-${\sf lock}$-operation $M(o)$ if $M(o)$ is defined. 
-%In
-%Section~\ref{sec:matching} we demonstrate that such matching functions can be
-%maintained for all objects of interest, e.g.,~by tagging values with unique
-%identifiers.
+including atomic collections and locks, in a simple first-order language.
+Besides function and predicate symbols describing the operation labels and the
+order relation of a history, this language includes a predicate {\sf match}
+describing a \emph{matching function} $M$ that maps operations $o$ which remove
+or test the presence of values to the operations $M(o)$ which added them. For
+instance, a matching function $M$ for a history of the atomic stack object is
+injective, and maps each (pop $\Rightarrow v_1$)-operation $o$ to a
+push$(v_2)$-operation $M(o)$ such that $v_1 = v_2$ when $M(o)$ is defined.
+Similarly, the matching function $M$ for an atomic lock object is also
+injective, and maps each unlock operation $o$ to a lock operation $M(o)$ if
+$M(o)$ is defined.
 
 Figures~\ref{fig:formulas:common}--\ref{fig:formulas:synchronization} list the
 properties characterizing typical concurrent objects in a first-order language
 whose variables range over operation identifiers, and whose functions and
 predicates are interpreted over the operation labels and order relation of a
-history, and a given matching function. We use the function symbols
-{\sf meth}-od, {\sf arg}-ument, and {\sf ret}-urn, as well as the predicate
-symbols {\sf match} and {\sf b}-efore for this purpose. Note that we interpret
-the predicate ${\sf match}(x_1,x_2)$ by $o_1 = M(o_2)$ when each $x_i$ binds
-to $o_i$. We represent the kernel $H$ of each of the following objects by a
-first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M \models \textsc{Theory}(H)$, 
-for some $M$, where
-the satisfaction relation $\_, \_ \models \_$ is defined as usual, using the
-aforementioned interpretations.
+history, and a given matching function. We use the function symbols {\sf
+meth}-od, {\sf arg}-ument, and {\sf ret}-urn, as well as the predicate symbols
+{\sf match} and {\sf b}-efore for this purpose. Note that we interpret the
+predicate ${\sf match}(x_1,x_2)$ by $o_1 = M(o_2)$ when each $x_i$ binds to
+$o_i$. We represent the kernel $H$ of each of the following objects by a
+first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
+\models \textsc{Theory}(H)$, for some $M$, where the satisfaction relation $\_,
+\_ \models \_$ is defined as usual, using the aforementioned interpretations.
 
 \begin{figure}
+
   \footnotesize
   \begin{align*}
     & \textsc{Atomic} \\
@@ -77,18 +66,16 @@ aforementioned interpretations.
       & \forall x, y.\ 
         {\sf match}(x,y) \implies {\sf meth}(x) = X \land {\sf meth}(y) = Y
   \end{align*}
+
   \caption{Generic formulas used across many objects ($\oplus$ denotes exclusive or).}
   \label{fig:formulas:common}
+
 \end{figure}
 
 \begin{example}[Atomic collections]
 
   The kernel of atomic queue objects is represented by the conjunction of properties stating:
   \begin{itemize}
-
-%    \item remove operations return distinct\footnote{Appealing to our
-%    aforementioned use of matching functions, we assume each value is added to
-%    an atomic collection at most once.} values ({\sc UniqRem}),
 
     \item values are added before they are removed ({\sc AddRem}),
 
@@ -121,13 +108,9 @@ aforementioned interpretations.
 \end{example}
 
 \begin{figure}
+
   \footnotesize
   \begin{align*}
-%    & \textsc{UniqRem} \\
-%      & \forall r_1, r_2.\
-%        {\sf meth}(r_1) = {\sf meth}(r_2) = {\sf rem} \land
-%        {\sf ret}(r_1) = {\sf ret}(r_2) \implies r_1 = r_2
-%    \\
     & \textsc{AddRem} \\
     & \forall r.\ {\sf meth}(r) = {\sf rem} \land {\sf ret}(r) \neq {\sf empty} \implies
       \exists a.\ {\sf match}(a,r) \land {\sf b}(a,r)
@@ -148,34 +131,11 @@ aforementioned interpretations.
     & \forall a_1, a_2, r_1.\ {\sf meth}(a_2) = {\sf add} \land {\sf match}(a_1,r_1) \land {\sf b}(a_2,r_1) \\
     & \quad \land {\sf arg}(a_1) < {\sf arg}(a_2) \implies \exists r_2.\ {\sf match}(a_2,r_2) \land {\sf b}(r_2,r_1)
   \end{align*}
+
   \caption{Formulas for collection objects.}
   \label{fig:formulas:collecions}
-\end{figure}
 
-%\item
-%For the Set, we use two formulas, one for $\tt contains => true$ violations, 
-%and one for $\tt contains => false$ violations.
-%
-%The first one says that there is a $\tt contains => true$  ($c$)
-%and a remove, so that there is no add in between.
-%\begin{align*}
-%\exists r,c.\ &
-%  {\sf remove}(r) \land {\sf contains}(c) \land \rval{c} = {\sf true}
-%  \land r \poker c \land\\
-%    &\forall a.\ r \poker a \land a \poker c \implies 
-%      \neg \<Matching>(c,a)
-%\end{align*}
-%
-%The second one says that there is a $\tt contains => false$ (abbreviated $CF$)
-%and an add, so that there is no remove in between.
-%\begin{align*}
-%\exists a,c.\ &
-%  {\sf add}(a) \land \containsfalse(c)
-%  \land a \poker c \land\\
-%   & \forall r.\ (a \poker r \land r \poker c \land {\sf remove}(r))
-%    \implies \\
-%    &\qquad \neg \<Matching>(r,a)
-%\end{align*}
+\end{figure}
 
 \begin{example}[Atomic sets]
 
@@ -202,6 +162,7 @@ aforementioned interpretations.
 \end{example}
 
 \begin{figure}
+
   \footnotesize
   \begin{align*}
     & \textsc{Include} \\
@@ -229,8 +190,10 @@ aforementioned interpretations.
     & \quad \land \forall q.\ {\sf b}(q,p) \vee {\sf b}(r,q) \vee {\sf arg}(q)\neq {\sf arg}(r) \\
     & \quad \implies {\sf meth}(p)={\sf add} \vee ({\sf meth}(p)={\sf contains} \land {\sf ret}(p) = {\sf true}) 
   \end{align*}
+
   \caption{Formulas for set objects.}
   \label{fig:formulas:set}
+
 \end{figure}
 
 \begin{example}[Atomic register]
@@ -248,6 +211,7 @@ aforementioned interpretations.
 \end{example}
 
 \begin{figure}
+
   \footnotesize
   \begin{align*}
     & \textsc{ReadWrite} \\
@@ -257,8 +221,10 @@ aforementioned interpretations.
     & \forall w_1, r.\ {\sf meth}(w_1) = {\sf write} \land {\sf meth}(r) = {\sf read} \land \neg {\sf match}(w_1,r) \\
     & \quad \land {\sf b}(w_1,r) \implies \exists w_2.\ {\sf match}(w_2,r) \land {\sf b}(w_1,w_2) \land {\sf b}(w_2,r)
   \end{align*}
+
   \caption{Formulas for register objects.}
   \label{fig:formulas:register}
+
 \end{figure}
 
 \begin{example}[Synchronization objects]
@@ -269,22 +235,21 @@ aforementioned interpretations.
   \begin{align*}
     \textsc{Atomic} \land \textsc{Total}({\sf unlock}) \land \textsc{Mutex}
   \end{align*}
-  and enforce coherent matching by adding the formulas $\textsc{Match3}({\sf
-  lock},{\sf unlock})$ and $\textsc{Injective}$.
-  Atomic semaphore objects with {\sf acquire} and {\sf release} methods generalize
-  atomic locks, ensuring that at most $n$ copies of a resource are held at any
-  moment, for some fixed $n \in \mathbb{N}$. We represent the kernel of atomic
-  semaphores by
+  and enforce coherent matching by adding $\textsc{Match3}({\sf lock, unlock})$
+  and $\textsc{Injective}$ formulas. Atomic semaphore objects with acquire and
+  release methods generalize atomic locks, ensuring that at most $n$ copies of
+  a resource are held at any moment, for some fixed $n \in \mathbb{N}$. We
+  represent the kernel of atomic semaphores by
   \begin{align*}
     \textsc{Atomic} \land \textsc{Total}({\sf release}) \land \textsc{Limit}
   \end{align*}
-  and enforce coherent matching by adding the formulas 
-  $\textsc{Match3}({\sf acquire},{\sf release})$ and $\textsc{Injective}$.
+  and enforce coherent matching by adding $\textsc{Match3}({\sf acquire,
+  release})$ and $\textsc{Injective}$ formulas.
   
   Exchanger objects are used to pair up threads so they can atomically swap
-  values. The only method of this object is ${\sf exchange}$ which receives as
+  values. The only method of this object is exchange, which receives as
   input a value $v$ that a thread it offers to swap and returns a value $v'\neq
-  {\sf null}$ if it has paired up with an ${\sf exchange}(v')$ operation. The latter
+  {\sf null}$ if it has paired up with an exchange$(v')$ operation. The latter
   operation will return the value $v$. We represent the kernel of exchanger
   objects by
   \begin{align*}
@@ -304,6 +269,7 @@ aforementioned interpretations.
 \end{example}
 
 \begin{figure}
+
   \footnotesize
   \begin{align*}
     & \textsc{Mutex} \\
@@ -319,36 +285,8 @@ aforementioned interpretations.
     & \textsc{MatchOverlap} \\
     & \forall x_1,x_2.\ {\sf match}(x_1,x_2) \implies \neg {\sf b}(x_1,x_2) \land \neg {\sf b}(x_2,x_1) 
   \end{align*}
+
   \caption{Formulas for synchronization objects.}
   \label{fig:formulas:synchronization}
+
 \end{figure}
-
-
-%The following result follows easily from definitions.
-
-
-%%, it uses another symbol $<_{\sf k}$.
-%
-%
-%The syntax of the formulas $\psi$ we consider for describing sets of complete histories 
-%is given in Figure~\ref{fig:logic}. Thus, $\psi$ is a second-order
-%formula that existentially quantifies over a relation $\poker$ and that is a conjunction of:
-%\begin{itemize}
-%  \item a formula $\<PO>(\poker)$ expressing the fact that $\poker$ is a strict
-%  partial order,
-%  \item a formula expressing the fact that the order relation $<$ in the modeled history 
-%  is weaker than the order relation $\poker$,
-%  \item a formula expressing the fact that the set of operations in the modeled history
-%ordered by $\poker$ forms a history in the kernel of $L$.
-%\end{itemize} 
-%The latter sub-formula is a \emph{closed} formula (i.e., without free variables) 
-%with $\forall^*\exists^*$ quantifier prefix.
-%
-%The semantics of $\psi$ is defined as usual. The satisfaction relation $\models$ for quantified formulas
-%is defined by:
-%\begin{align*}
-%h\models \exists \poker.\ \psi' & \mbox{ iff $\exists \poker\subseteq O\times O$ s.t. }\tup{h,\poker}\models \psi' \\
-%%\tup{h,\poker}\models \exists x.\ \varphi & \mbox{ iff $\exists o\in O$ s.t. }\tup{h,\poker}\models \varphi [x \mapsto o]
-%\end{align*}
-
-
