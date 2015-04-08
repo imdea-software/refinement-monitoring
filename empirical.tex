@@ -122,8 +122,8 @@ under $5$s.
 Our second experiment measures the average number of steps each algorithm is
 able to process in a fixed time limit of $5$s per history over $100$ histories
 of Scal's Michael-Scott Queue and $100$ histories of Scal's bounded-reordering
-queue. Each history contains $20$ {\sf enqueue}-operations and $30$ {\sf
-dequeue} operations (total $100$ steps) obtained from highly-concurrent
+queue. Each history contains $20$ enqueue-operations and $30$ 
+dequeue operations (total $100$ steps) obtained from highly-concurrent
 executions in which most operations are concurrent. Although most sequential
 executions of the bounded-reordering queue exhibit violations with respect to
 an atomic queue, the extreme concurrency in this set of histories allows great
@@ -170,7 +170,7 @@ that ``needle-in-a-haystack'' violations are swiftly discovered by the {\sc
 Saturate} checker, our third experiment elaborates, measuring the percentage of
 violations each algorithm is able discover in a fixed time limit of $5$s per
 history over $100$ histories of Scal's bounded-reordering queue. Each history
-contains $20$ {\sf enqueue}-operations and $30$ {\sf dequeue} operations (total
+contains $20$ enqueue-operations and $30$ dequeue operations (total
 $100$ steps) obtained from highly-sequential executions in which most
 operations are sequential. Consequently, the extreme sequentiality in this set
 of histories greatly limits freedom in the linearization of operations of the
@@ -215,21 +215,21 @@ Finally, we address the possible sources of incompleteness due to match removal
 discussed in Section~\ref{sec:obsolete}. Recall the history $h_1$ and its
 extension $h_2$ of Figure~\ref{fig:removal_no_saturation} from
 Example~\ref{ex:removal_no_saturation}. Since the {\sc Saturate} algorithm does
-not speculate on whether the pending {\sf rem}-operation might match the {\sf
-add} of $2$ or $3$ (or both!), it will not detect the violation in $h_1$ until
-the pending {\sf rem}-operation completes. Simply removing the {\sf add}-{\sf
-rem} match of value $1$ from $h_1$ before the pending {\sf rem}-operation
+not speculate on whether the pending rem operation might match the 
+add of $2$ or $3$ (or both!), it will not detect the violation in $h_1$ until
+the pending rem operation completes. Simply removing the add-rem
+match of value $1$ from $h_1$ before the pending rem operation
 completes would result in a non-violating history. However, by applying the
-stack-theory axioms $\textsc{Theory}(H_{\sf st})$ to completed operations
+stack-theory axioms $\textsc{Theory}(H_\mathrm{st})$ to completed operations
 before removing this match, the {\sc Saturate} algorithm infers the constraints
 \begin{align*}
-  {\sf add}(2) < {\sf add}(1) < ({\sf rem} => 1) < ({\sf rem} => {\tt empty})
+  \text{add}(2) < \text{add}(1) < (\text{rem} \Rightarrow 1) < (\text{rem} \Rightarrow {\tt empty})
 \end{align*}
-of which ${\sf add}(2) < ({\sf rem} => {\tt empty})$ persists after the
-match removal. Finally, when the pending {\sf rem}-operation does complete,
+of which $\text{add}(2) < (\text{rem} \Rightarrow {\tt empty})$ persists after the
+match removal. Finally, when the pending \text{rem}-operation does complete,
 returning $2$, the {\sc Saturate} algorithm derives a contradiction, since
 \begin{align*}
-  {\sf add}(2) < ({\sf rem} => {\tt empty}) < ({\sf rem} => 2).
+  \text{add}(2) < (\text{rem} \Rightarrow {\tt empty}) < (\text{rem} \Rightarrow 2).
 \end{align*}
 The incremental nature of the {\sc Saturate} algorithm thus avoids the
 practically-occurring sources of possible incompleteness due to match removal

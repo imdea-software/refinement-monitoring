@@ -95,7 +95,7 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
     \textsc{Atomic} \land \textsc{AddRem}
       \land \textsc{Max} \land \textsc{Empty}
   \end{align*}
-  and the kernel $H_{\sf st}$ of atomic stacks by
+  and the kernel $H_\mathrm{st}$ of atomic stacks by
   \begin{align*}
     \textsc{Atomic} \land \textsc{AddRem}
       \land \textsc{Lifo} \land \textsc{Empty}
@@ -140,10 +140,10 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
 \begin{example}[Atomic sets]
 
   Unlike the atomic queues and stacks which behave as \emph{multisets} and
-  return removed values, the atomic set's {\sf remove} method takes as an
+  return removed values, the atomic set’s remove method takes as an
   argument a value to be removed, and succeeds whether or not the value is
-  present. The formulas {\sc Include} and {\sc Exclude} specify when a {\sf
-  contains}-operation may return {\sf true}. We represent the kernel $H_{\sf s}$
+  present. The formulas {\sc Include} and {\sc Exclude} specify when a 
+  contains-operation may return true. We represent the kernel $H_\mathrm{s}$
   of atomic sets by  
   \begin{align*}
     \textsc{Atomic} \land \textsc{Include} \land \textsc{Exclude}
@@ -169,7 +169,7 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
     & \forall c.\ {\sf meth}(c) = {\sf contains} \land {\sf ret}(c) = {\sf true} \\
     & \quad \implies \exists a.\ {\sf match}(c,a) \land {\sf b}(a,c) \\
     & \forall c,a,r.\ {\sf meth}(c)={\sf contains} \land {\sf ret}(c) = {\sf true} \\
-    & \quad \land {\sf meth}(r) = {\sf remove}\land {\sf meth}(a) = {\sf add} \land  {\sf match}(c,a) \land {\sf match}(r,a)  \\ %{\sf arg}(c) = {\sf arg}(r) = {\sf arg}(a) \\
+    & \quad \land {\sf meth}(r) = {\sf remove}\land {\sf meth}(a) = {\sf add} \land  {\sf match}(c,a) \land {\sf match}(r,a)  \\
     & \quad \implies {\sf b}(a,c) \land {\sf b}(c,r)
     \\
     & \textsc{Exclude} \\
@@ -198,9 +198,9 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
 
 \begin{example}[Atomic register]
 
-  Atomic registers with {\sf read} and {\sf write} methods essentially ensure
+  Atomic registers with read and write methods essentially ensure
   that each value read is written by the most recent {\sc write}-operation.
-  We represent the kernel $H_{\sf r}$ of atomic registers by
+  We represent the kernel $H_\mathrm{r}$ of atomic registers by
   \begin{align*}
     \textsc{Atomic} \land \textsc{ReadWrite} \land \textsc{ReadFrom}
   \end{align*}
@@ -229,7 +229,7 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
 
 \begin{example}[Synchronization objects]
 
-  Atomic lock objects with {\sf lock} and {\sf unlock} methods ensure that at
+  Atomic lock objects with lock and unlock methods ensure that at
   most one thread holds a lock at any moment. We represent the kernel of atomic
   locks by
   \begin{align*}
@@ -249,7 +249,7 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
   Exchanger objects are used to pair up threads so they can atomically swap
   values. The only method of this object is exchange, which receives as
   input a value $v$ that a thread it offers to swap and returns a value $v'\neq
-  {\sf null}$ if it has paired up with an exchange$(v')$ operation. The latter
+  {\tt null}$ if it has paired up with an exchange$(v')$ operation. The latter
   operation will return the value $v$. We represent the kernel of exchanger
   objects by
   \begin{align*}

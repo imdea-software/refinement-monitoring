@@ -9,7 +9,7 @@ monitor must be \emph{linear} in the number of operations in order to avoid a
 progressive slowdown of the monitored implementation. Achieving this complexity
 goal implies forgetting increasingly-many previously-executed operations.
 However, forgetting arbitrary operations from valid histories can result in
-falsely-reported violations. For example, removing the ${\sf write}(1)$
+falsely-reported violations. For example, removing the write$(1)$
 operation from the valid atomic register history of
 Figure~\ref{fig:removal_even_saturation} results in an invalid history. We
 leverage the same notion of operation matching used to characterize library
@@ -49,7 +49,7 @@ standard libraries with unique matching functions.
   operation in an execution and every successful execution of a lock operation
   results in an object state that stores that input value. When an unlock
   operation succeeds, it returns the value stored in the object state.
-  Therefore, the matching function maps unlock$\Rightarrow v$ operations to
+  Therefore, the matching function maps unlock $\Rightarrow v$ operations to
   lock$(v)$ operations.
 
 \end{example}
@@ -80,10 +80,10 @@ is denoted by $+(m)$.
 \begin{example}
 
   Let $h$ be the history in Figure~\ref{fig:complete_removal} such that the
-  matching function $M_h$ maps every pop$\Rightarrow i$ operation to the
+  matching function $M_h$ maps every pop $\Rightarrow i$ operation to the
   push$(i)$ operation. The matches of $h$ are $m_1 = \set{ \text{add}(1),
   \text{rem}\Rightarrow 1 }$, $m_2 = \set{ \text{add}(2),
-  \text{rem}\Rightarrow2 }$, and $m_3 = \set{ \text{add}(3),
+  \text{rem}\Rightarrow 2 }$, and $m_3 = \set{ \text{add}(3),
   \text{rem}\Rightarrow 3 }$. Since every operation has a different label, we
   abuse the notation and write matches as sets of operation labels. Then,
   $+(m_i) = \text{add}(i)$, for each $i$.
@@ -98,7 +98,7 @@ $h$ by deleting a set of operations $O$ is denoted by $h \setminus O$.
 The kernels of all the reference implementations described in
 Section~\ref{sec:logic} are match-removal closed. For instance, consider a
 sequential history $h$ in the basis of an atomic queue and a match $m=\set{
-\text{add}(1), \text{rem}\Rightarrow1 }$. The history obtained from $h$ by
+\text{add}(1), \text{rem}\Rightarrow 1 }$. The history obtained from $h$ by
 removing the match $m$ is also a valid sequential queue history because
 essentially, the remaining values are still removed in the order in which they
 are added.
@@ -124,7 +124,7 @@ history is also not admitted by $\overline{H}$.
   the operations in $m$ is also in $H$. From the definition of $\preceq$ it
   follows that the history $h\setminus m$ is weaker than $h''$ which implies
   $h\setminus m\in \overline{H}$.
-
+  %
 \end{proof}
 
 While the statement of Theorem~\ref{th:match_closure} implies that a history
@@ -148,9 +148,9 @@ is not true.
   \label{ex:complete_removal}
 
   Figure~\ref{fig:complete_removal} pictures a history which is not admitted by
-  the atomic stack: since the element $3$ was pushed after $2$, pop$\Rightarrow
-  3$ should not have started after pop$\Rightarrow 2$ has finished. The
-  matching function $M_h$ maps every pop$\Rightarrow i$ operation to the
+  the atomic stack: since the element $3$ was pushed after $2$, pop $\Rightarrow
+  3$ should not have started after pop $\Rightarrow 2$ has finished. The
+  matching function $M_h$ maps every pop $\Rightarrow i$ operation to the
   push$(i)$ operation.
 
   The history obtained by removing the match $\set{ \text{push}(2),
@@ -219,12 +219,12 @@ when the matching function is not injective.
 
   Figure~\ref{fig:removal_even_saturation} pictures two histories $h_1$ and
   $h_2$ of the atomic register, the latter being an extension of the former. We
-  assume that the matching function maps every read$\Rightarrow i$ operation to
+  assume that the matching function maps every read $\Rightarrow i$ operation to
   the write$(i)$ operation. The match $\set{ \text{write}(1),
   \text{read}\Rightarrow 1 }$ of $h_1$ is strictly included in the match $\set{
   \text{write}(1), \text{read}\Rightarrow 1, \text{read}\Rightarrow 1 }$ of
   $h_2$, and therefore not a match of $h_2$. Removing the match of $h_1$ and
-  extending it with the read$\Rightarrow 1$ operation results in a spurious
+  extending it with the read $\Rightarrow 1$ operation results in a spurious
   violation.
 
 \end{example}
@@ -258,7 +258,7 @@ $+(m')$, and every operation overlapping with $+(m')$ is completed.
   Figure~\ref{fig:removal_even_saturation}, the match $\set{ \text{write}(0),
   \text{read}\Rightarrow 0, \text{read}\Rightarrow0 }$ is overwritten by the
   match $\set{ \text{write}(1), \text{read}\Rightarrow 1,
-  \text{read}\Rightarrow1 }$ in $h_2$ but not in $h_1$ since a read$\Rightarrow
+  \text{read}\Rightarrow1 }$ in $h_2$ but not in $h_1$ since a read $\Rightarrow
   0$ operation is pending in $h_1$.
 
 \end{example}
@@ -304,22 +304,22 @@ algorithms which remove operations.
   \label{ex:removal_no_saturation}
 
   Figure~\ref{fig:removal_no_saturation} pictures two histories $h_1$ and
-  $h_2$, the latter being an extension of the former. The $(\sf rem \Rightarrow
-  2)$-operation is pending in $h_1$ and only completes in $h_2$. However,
-  removing the match $\set{{\sf add}(1), {\sf rem} \Rightarrow 1}$ from $h_1$
-  before the pending {\sf rem} completes results in a history admitted by the
+  $h_2$, the latter being an extension of the former. The (rem $\Rightarrow
+  2$)-operation is pending in $h_1$ and only completes in $h_2$. However,
+  removing the match $\set{ \text{add}(1), \text{rem}\Rightarrow 1 }$ from $h_1$
+  before the pending rem completes results in a history admitted by the
   atomic stack. This highlights a risk of incompleteness which we must account
   for in our development of refinement-monitoring algorithms. Should we simply
-  forget about the match $\set{ {\sf add}(1), {\sf rem} \Rightarrow 1}$ while
-  monitoring, we may not detect the violation obviated when the pending ${\sf
-  rem}$ completes. In order to avoid such incompleteness, at the very least,
-  our monitoring algorithm must remember that the ${\sf add}(2)$ operation
-  should be ordered before $({\sf rem} \Rightarrow {\tt empty})$ (since ${\sf
-  add}(2)$ must be ordered before ${\sf add}(1)$, which is ordered before
-  $({\tt rem} \Rightarrow {\tt empty})$), even after removing the match. Then
-  when $({\sf rem} \Rightarrow 2)$ completes, we could deduce that $({\sf rem}
-  \Rightarrow empty)$ must be ordered after ${\sf add}(2)$ and before $({\sf
-  rem} \Rightarrow 2)$, a contradiction with the atomic stack theory
+  forget about the match $\set{ \text{add}(1), \text{rem} \Rightarrow 1}$ while
+  monitoring, we may not detect the violation obviated when the pending
+  rem completes. In order to avoid such incompleteness, at the very least,
+  our monitoring algorithm must remember that the add$(2)$ operation
+  should be ordered before rem $\Rightarrow {\tt empty}$ (since
+  add$(2)$ must be ordered before add$(1)$, which is ordered before
+  rem $\Rightarrow {\tt empty}$), even after removing the match. Then
+  when rem $\Rightarrow 2$ completes, we could deduce that rem 
+  $\Rightarrow {\tt empty}$ must be ordered after add$(2)$ and before rem
+  $\Rightarrow 2$, a contradiction with the atomic stack theory
   $\textsc{Theory}(H_{\sf st})$ of Section~\ref{sec:logic}.
 
 \end{example}

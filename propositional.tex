@@ -75,10 +75,9 @@ Lemma~\ref{lemma:complete_history}, the formula $\textsc{Stronger}(h)$ does
 indeed characterize all histories at least as strong as $h$.
 
 \begin{figure}
+
   \footnotesize
   \begin{align*}
-%    & \textsc{Match}(M,h)
-%    && \bigwedge_{o_1 = M_h(o_2)} {\sf match}(o_1,o_2) \\
     & \textsc{Domain}(h)
     && \bigwedge_{o_1, o_2 \in O} o_1 \neq o_2 \land \forall x.\ \bigvee_{o\in O} x = o \\
     & \textsc{Labels}(h)
@@ -91,9 +90,11 @@ indeed characterize all histories at least as strong as $h$.
     & \textsc{Used} 
     && \forall x.\ {\sf ret}(x) \neq \bot \implies {\sf used}(x)
   \end{align*}
+
   \caption{Formulas characterizing histories $h = \tup{O,<,f}$ (${\sf ret}(o) = v$
   is present in $\textsc{Labels}(h)$ only if $v\neq \bot$).}
   \label{fig:formula:history}
+
 \end{figure}
 
 \begin{lemma}
@@ -145,20 +146,16 @@ polynomial time.
 \label{sec:propositional:pending}
 
 The pending operations of a history $h$ may be omitted in a stronger history or
-they may be completed with arbitrary return values. 
-Therefore, 
-%Since in general two comparable histories (w.r.t. the weaker than relation)
-%may consist of different sets of operations 
-%In the general case, 
-the set of histories stronger than a history $h$
-can be characterized by a formula obtained from $\textsc{Stronger}(h)$ by
-adding a domain predicate ${\sf used}$ that is constrained to contain all the
-completed operations of $h$ and by omitting the constraints on the return
-values of pending operations. Moreover, every operation of $h$ whose return
-value is different from $\bot$ in a model of this formula (this may be an
-operation which is pending in $h$) should satisfy ${\sf used}$. It can be
-proved that every history stronger than $h$ corresponds to a model of this
-formula, projected on the set of operations satisfying ${\sf used}$.
+they may be completed with arbitrary return values. Therefore, the set of
+histories stronger than a history $h$ can be characterized by a formula
+obtained from $\textsc{Stronger}(h)$ by adding a domain predicate ${\sf used}$
+that is constrained to contain all the completed operations of $h$ and by
+omitting the constraints on the return values of pending operations. Moreover,
+every operation of $h$ whose return value is different from $\bot$ in a model
+of this formula (this may be an operation which is pending in $h$) should
+satisfy ${\sf used}$. It can be proved that every history stronger than $h$
+corresponds to a model of this formula, projected on the set of operations
+satisfying ${\sf used}$.
 
 Thus, we override the $\textsc{Stronger}(h)$ formula for incomplete histories
 $h$ as the conjunction
@@ -166,12 +163,6 @@ $h$ as the conjunction
   \textsc{Domain}(h) \land \textsc{Labels}(h) \land \textsc{Order}(h) \land \textsc{Used},
 \end{align*}
 where $\textsc{Used}$ is defined in Figure~\ref{fig:formula:history}.
-
-
-%We define the formula {\sc Used} as
-%\begin{align*}
-%  \forall x.\ {\sf ret}(x) \neq \bot \implies {\sf used}(x)
-%\end{align*}
 
 For arbitrary, not necessarily complete, histories $h$, the models of
 $\textsc{Stronger}(h)$ are histories paired with an interpretation $U : O \to
