@@ -8,15 +8,15 @@
 
   \node[lnode] (x1)  [label={left:push$(1)$}] at (0,0) {};
 
-  \node[lnode] (x2)  [right=4mm of x1,yshift=4mm,label={[label distance=1mm]left:pop$\Rightarrow 3$}] {}; 
+  \node[lnode] (x2)  [right=4mm of x1,yshift=4mm,label={[label distance=1mm]left:pop $\Rightarrow 3$}] {}; 
 
-  \node[lnode] (x3)  [right of=x1,yshift=-4mm,label={[label distance=1mm]left:pop$\Rightarrow 1$}] {}; 
+  \node[lnode] (x3)  [right of=x1,yshift=-4mm,label={[label distance=1mm]left:pop $\Rightarrow 1$}] {}; 
 
   \node[lnode] (x4)  [right=4mm of x3,label=below:push$(2)$] {};
 
   \node[lnode] (x5)  [right=4mm of x4,label=right:push$(3)$] {};
 
-  \node[lnode] (x6)  [right of=x5,yshift=6mm,label=above:pop$\Rightarrow {\tt EMPTY}$] {};
+  \node[lnode] (x6)  [right of=x5,yshift=6mm,label=above:pop $\Rightarrow {\tt EMPTY}$] {};
 
   \draw[->,>=stealth',thick] (x1) -- (x2);
   \draw[->,>=stealth',thick] (x1) -- (x3);

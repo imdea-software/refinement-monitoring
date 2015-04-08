@@ -17,7 +17,7 @@
 
   \node[node] (y0)  [below=10mm of x3]  {\bf Thread 2};
   \node[lnode] (y1)  [below=12mm of x4,xshift=2mm,label={[rotate=60,above=1mm]right:pop}] {}; 
-  \node[lnode] (y2)  [right of=y1,label={[rotate=60,above=1mm]right:ret$\Rightarrow 1$}] {}; 
+  \node[lnode] (y2)  [right of=y1,label={[rotate=60,above=1mm]right:ret $\Rightarrow 1$}] {}; 
   \node[lnode] (y3)  [right of=y2,label={[rotate=60,above=1mm]right:${\tt y=1}$}] {}; 
   \node[lnode] (y4)  [right of= y3,label={[rotate=60,above=1mm]right:push$(2)$}] {}; 
   \node[lnode] (y5)  [right of=y4,label={[rotate=60,above=1mm]right:ret}] {}; 
@@ -31,11 +31,11 @@
   \node[node] (v1)  [below=3mm of y6,xshift=5mm] {{\tt n=0xFF}}; 
 
   \node[nnode] (x5)  [above=12mm of y7,xshift=2mm] {}; %label=left:$^{8}$
-  \node[lnode] (x6)  [right of=x5,label={[rotate=60,above=1mm]right:ret$\Rightarrow 3$}] {}; 
+  \node[lnode] (x6)  [right of=x5,label={[rotate=60,above=1mm]right:ret $\Rightarrow 3$}] {}; 
   \node[lnode] (x7)  [right of= x6,label={[rotate=60,above=1mm]right:${\tt x=3}$}] {}; 
 
   \node[lnode] (y8)  [below=12mm of x7,xshift=3mm,label={[rotate=60,above=1mm]right:pop}] {}; 
-  \node[lnode] (y9)  [right of =y8,label={[rotate=60,above=1mm]right:ret$\Rightarrow {\tt EMP}$}] {}; 
+  \node[lnode] (y9)  [right of =y8,label={[rotate=60,above=1mm]right:ret $\Rightarrow {\tt EMP}$}] {}; 
   \node[lnode] (y10)  [right of= y9,label={[rotate=60,above=1mm]right:${\tt z=EMP}$}] {}; 
 
   \node[node] (t1) [right=8mm of x7,yshift=-2mm,label={\bf Thread1}] {};
