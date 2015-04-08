@@ -101,13 +101,16 @@ removal helps, achieving roughly an order-of-magnitude improvement over {\sc
 Enumerate}, the cost of checking remains exponential in the number of steps.
 
 \begin{figure}[t]
+
   \centering
-  \includegraphics[width=\linewidth]{figures/chart_efficiency}
+  \includegraphics[width=\linewidth]{figures/steps-until-timeout}
+
   \caption{The number of steps each algorithm is able to process in given time
   limits of $5$s, $25$s, $50$s, $75$s, and $100$s, per history averaged over
   $10$ histories of an atomic stack implementation. Further right is better.
   The x-axis plots steps on a logarithmic scale, and the y-axis plots time.}
   \label{fig:steprace}
+
 \end{figure}
 
 Even without match removal, the {\sc Saturate} checker achieves roughly a
@@ -135,6 +138,7 @@ Saturate} checker swiftly processes all histories to their entirety well under
 the time limit, averaging $0.1$s, correctly detecting all $4$ violations.
 
 \begin{table}[t]
+
   \footnotesize
   \centering
   \setlength{\tabcolsep}{1.8mm}
@@ -156,6 +160,7 @@ the time limit, averaging $0.1$s, correctly detecting all $4$ violations.
   fixed time limit of $5$s per history, averaged over $200$ very-concurrent
   histories.}
   \label{tab:exp:con}
+
 \end{table}
 
 
@@ -184,29 +189,16 @@ in some cases the {\sc Saturate} checker requires more steps to detect a
 violation. This is of course by design, as we wish to avoid branching and
 backtracking on the possible completions of operations.
 
-\begin{table}[t]
-  \footnotesize
+\begin{figure}[t]
+
   \centering
-  \setlength{\tabcolsep}{1.8mm}
-  \begin{tabular}{lccc}
-   	          & 	              & Avg. step \\
-    Algorithm & $\%$ violations & detected  \\
-    \hline
-    {\sc Enumerate}             & 55$\%$  & 23.8 \\
-    {\sc Enumerate} {\tt -c}    & 88$\%$  & 23.8 \\
-    {\sc Symbolic}              & 75$\%$  & 23.8 \\
-    {\sc Symbolic} {\tt -r}     & 78$\%$  & 23.8 \\
-    {\sc Symbolic} {\tt -i}     & 90$\%$  & 23.8 \\
-    {\sc Symbolic} {\tt -c}     & 100$\%$ & 23.8 \\
-    {\sc Symbolic} {\tt -c -i}  & 100$\%$ & 23.8 \\
-    {\sc Saturate}              & 100$\%$ & 24.2 \\
-    {\sc Saturate} {\tt -r}     & 100$\%$ & 24.2
-  \end{tabular} 
+  \includegraphics[width=\linewidth]{figures/violations-covered}
 
   \caption{The percentage of violations each algorithm is able to discover in a
   fixed time limit of $5$s per history, over $100$ barely-concurrent histories.}
   \label{tab:exp:seq}
-\end{table}
+
+\end{figure}
 
 Finally, we address the possible sources of incompleteness due to match removal
 discussed in Section~\ref{sec:obsolete}. Recall the history $h_1$ and its
