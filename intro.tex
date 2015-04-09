@@ -57,8 +57,14 @@ in proving satisfiability, the solver must essentially build a model of some
 linearization of the given execution which represents a valid object
 method-invocation sequence. In doing so, the solver may need to make branching
 decisions in addition to logical deductions, or \emph{unit propagation},
-possibly backtracking later, about (a)~how pending operations should be
-completed/dropped, and (b)~which operations should be linearized before others.
+possibly backtracking later, about
+\begin{itemize}
+
+  \item how pending operations should be completed/dropped, and
+
+  \item which operations should be linearized before others.
+
+\end{itemize}
 However, from the perspective of detecting violations, it is always sound to
 forgo such costly branching/backtracking and, for instance, wait until the
 given pending operations are actually completed later in the execution to
