@@ -137,22 +137,8 @@ the time limit, averaging $0.1$s, correctly detecting all $4$ violations.
 
 \begin{table}[t]
 
-  \footnotesize
   \centering
-  \setlength{\tabcolsep}{1.8mm}
-  \begin{tabular}{lcccc}
-    Algorithm & Avg. steps & Avg. time to viol. & Nb. violations \\
-    \hline
-    {\sc Enumerate}             & 35  & --      & 0/4 \\
-    {\sc Enumerate} {\tt -c}    & 38  & --      & 0/4 \\
-    {\sc Symbolic}              & 52  & 2.350s  & 3/4 \\
-    {\sc Symbolic} {\tt -r}     & 52  & 2.322s  & 3/4 \\
-    {\sc Symbolic} {\tt -i}     & 51  & 0.984s  & 3/4 \\
-    {\sc Symbolic} {\tt -c}     & 38  & --      & 0/4 \\
-    {\sc Symbolic} {\tt -c -i}  & 38  & --      & 0/4 \\
-    {\sc Saturate}              & 100 & 0.040s  & 4/4 \\
-    {\sc Saturate} {\tt -r}     & 100 & 0.050s  & 4/4
-  \end{tabular} 
+  \includegraphics[width=\linewidth]{figures/steps-until-timeout-normalized}
 
   \caption{The average number of steps each algorithm is able to process in a
   fixed time limit of $5$s per history, averaged over $200$ very-concurrent
