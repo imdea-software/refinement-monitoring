@@ -2,7 +2,7 @@
 \label{sec:exp}
 
 To demonstrate the practical value of the theory developed in the previous
-sections, we argue that our symbolic refinement-checking algorithms
+sections, we argue that our techniques
 \begin{itemize}
 
   \item scale far beyond existing algorithms, and
@@ -10,56 +10,54 @@ sections, we argue that our symbolic refinement-checking algorithms
   \item are complete in practice.
 
 \end{itemize}
-To argue these points we have implemented several variations of three basic
-refinement-checking algorithms.
+To argue these points we have implemented three basic refinement-checking
+algorithms.
 
 \begin{description}
 
-  \item[{\sc Enumerate}] checks each history $h$ by enumerating the
-  linearizations $h'$ of $h$'s completions. We check whether each $h'$ is
-  included in the kernel $H$ by asking\footnote{Classically this check is
-  performed by set inclusion, as the length of $h$ is assumed to be bounded by
-  some number $n \in \mathbb{N}$ of operations, and the subset $H_n \subseteq H$
-  of $n$-operation histories of $H$ is computable in finite time. As we assume
-  no such bound on the number of operations, we perform this check via
-  theorem-prover query instead.} whether $h' \models \textsc{Theory}(H)$. As soon as
-  this check succeeds, we conclude that $h \in \overline{H}$. Otherwise if this
-  check fails for all linearizations $h'$, we conclude $h \not\in
-  \overline{H}$. We also implement a variation which skips the enumeration of
-  $h$'s completions, allowing the solver to search the space of completions
-  symbolically. The {\tt -c} flag specifies explicit enumeration of completions.
+  \item[{\sc enumerate}] is our implementation of the classical
+  linearizability-checking algorithm~\cite{journals/jpdc/WingG93} implemented
+  by Line-up~\cite{conf/pldi/BurckhardtDMT10}, checking each history $h$ by
+  enumerating the linearizations $h'$ of $h$'s completions. We check whether
+  each $h'$ is included in the kernel $H$ by asking\footnote{Classically this
+  check is performed by set inclusion, as the length of $h$ is assumed to be
+  bounded by some number $n \in \mathbb{N}$ of operations, and the subset $H_n
+  \subseteq H$ of $n$-operation histories of $H$ is computable in finite time.
+  As we assume no such bound on the number of operations, we perform this check
+  via theorem-prover query instead.} whether $h' \models \textsc{Theory}(H)$.
+  As soon as this check succeeds, we conclude that $h \in \overline{H}$.
+  Otherwise if this check fails for all linearizations, we conclude $h
+  \not\in \overline{H}$.
 
-  \item[{\sc Symbolic}] checks each history $h$ by reduction to the
-  satisfiability of $\textsc{Stronger}(h) \land \textsc{Theory}(H)$, as described
-  in Section~\ref{sec:propositional}, delegating the enumeration of both
-  completions and linearizations to an underlying solver. If the satisfiability
-  check succeeds, or is inconclusive, we conclude that $h \in \overline{H}$.
-  Otherwise if unsatisfiability is found, we conclude that $h \not\in
-  \overline{H}$. We also implement variations where the completions of $h'$ are
-  enumerated explicitly ({\tt -c}), where the formula $\textsc{Stronger}(h)$ is
-  asserted to the solver incrementally as operations begin and end ({\tt -i}),
-  where the match-removal optimization of Section~\ref{sec:obsolete} is
-  performed ({\tt -r}), and any combination of the three.
+  \item[{\sc symbolic}] checks each history $h$ by reduction to the
+  satisfiability of $\textsc{Stronger}(h) \land \textsc{Theory}(H)$, as
+  described in Section~\ref{sec:propositional}, delegating the enumeration of
+  both completions and linearizations to an underlying solver. If the
+  satisfiability check succeeds, or is inconclusive, we conclude that $h \in
+  \overline{H}$. Otherwise if unsatisfiability is found, we conclude that $h
+  \not\in \overline{H}$.
 
-  \item[{\sc Saturate}] avoids the expensive propositional backtracking
-  inherent to the aforementioned {\sc Symbolic} checker by limiting the
+  \item[{\sc saturate}] avoids the expensive propositional backtracking
+  inherent to the aforementioned {\sc symbolic} checker by limiting the
   satisfiability check to Boolean constraint propagation. Essentially, we
   implement a customized incremental solver which only saturates with unit
   propagation, avoiding any propositional branching. If a contradiction is
   found, we conclude that $h \not\in \overline{H}$. Otherwise if saturation
-  fails to reveal a contradiction, we conclude $h \in \overline{H}$. We also
-  implement a variation where the match-removal optimization of
-  Section~\ref{sec:obsolete} is performed ({\tt -r}).
+  fails to reveal a contradiction, we conclude $h \in \overline{H}$.
 
 \end{description}
+Additionally, we have implemented the removal of obsolete matches as outlined
+in Section~\ref{sec:obsolete}, which can be enabled for the {\sc symbolic}
+and {\sc saturate} algorithms.
 
-We have studied actual concurrent data structure implementations, including the
+We have studied ten concurrent data structure implementations from the
 Scal\footnote{\url{http://scal.cs.uni-salzburg.at}} High-Performance
-Multicore-Scalable Computing suite. Some of these implementations, such as the
+Multicore-Scalable Computing suite. Six of these implementations, such as the
 Michael-Scott Queue~\cite{conf/podc/MichaelS96}, are meant to preserve
 observational refinement\footnote{More precisely, they are designed to be
-linearizable.}, while others, such as the non-blocking bounded-reordering
-queue~\cite{conf/pact/KirschLP13}, are meant to preserve weaker properties.
+linearizable.} while the other four, such as the non-blocking
+bounded-reordering queue~\cite{conf/pact/KirschLP13}, are meant to preserve
+weaker properties.
 
 The input to our checking algorithms are histories given as text files
 consisting of line-separated call and return actions. For the selected set of
@@ -76,27 +74,27 @@ time. Our second set of experiments (\S\ref{sec:exp:complete}) demonstrates
 that our more efficient algorithms are complete in practice: the violations
 surfacing in the logs of actual executions are consistently discovered. We made
 all measurements on similar MacBook Pro 2.XGHz Intel Core i5/i7 machines, and
-discharged theorem-prover queries with an in-process instance of Z3 compiled
-from revision {\tt cee7dd3}.
+discharged theorem-prover queries with an in-process instance of
+Z3\footnote{\url{https://github.com/Z3Prover/z3}}.
 
-Our implementation of the algorithms, and all (generated) histories used in
+Our implementation of the algorithms and all (generated) histories used in
 these experiments, are available on
-Github\footnote{\url{https://github.com/imdea-software/observational-refinement-checking}}.
+GitHub\footnote{\url{https://github.com/imdea-software/observational-refinement-checking}}.
 
 \subsection{Scalability of Symbolic Checking}
 \label{sec:exp:scalable}
 
 Our first experiment measures the number of steps each algorithm is able to
-process for varying time limits, averaged over $10$ histories of an atomic
-stack implementation with an average of $1020.8$ steps. We used five
-per-history time limits of $5$s, $25$s, $50$s, $75$s, and $100$s. The graph of
-Figure~\ref{fig:steprace} shows the results with time plotted on the y-axis,
-and number of steps plotted on the x-axis on a logarithmic scale. The {\sc
-Enumerate} algorithm performs worst, progressing only from $16$ steps in $5$s to
-$18$ steps in $100$s. The {\sc Symbolic} algorithm is a significant improvement,
-progressing from $31.6$ steps in $5$s to $52.7$ steps in $100$s. While adding match
-removal helps, achieving roughly an order-of-magnitude improvement over {\sc
-Enumerate}, the cost of checking remains exponential in the number of steps.
+process for varying time limits over $10$ histories of Scal’s Michael-Scott
+Queue implementation with $10000$ steps each. We used five per-history time
+limits of $5$s, $25$s, $50$s, $75$s, and $100$s. Results are shown in the graph
+of Figure~\ref{fig:steps} — results are similar for the other nine Scal
+implementations. The {\sc enumerate} algorithm performs worst, progressing only
+from median $18$ steps in $5$s to median $32$ steps in $100$s. The {\sc
+symbolic} algorithm is a significant improvement, progressing from median $37$
+steps in $5$s to median $70$ steps in $100$s. While adding match removal helps,
+achieving roughly an order-of-magnitude improvement over {\sc enumerate}, the
+cost of checking remains exponential in the number of steps.
 
 \begin{figure}[t]
 
@@ -104,97 +102,107 @@ Enumerate}, the cost of checking remains exponential in the number of steps.
   \includegraphics[width=\linewidth]{figures/steps-until-timeout}
 
   \caption{The number of steps each algorithm is able to process in given time
-  limits of $5$s, $25$s, $50$s, $75$s, and $100$s, per history averaged over
-  $10$ histories of an atomic stack implementation. Further right is better.
-  The x-axis plots steps on a logarithmic scale, and the y-axis plots time.}
-  \label{fig:steprace}
+  limits of $5$s, $25$s, $50$s, $75$s, and $100$s over $10$ histories of Scal’s
+  Michael-Scott Queue implementation. Whiskers indicate minimums and maximums,
+  numbers indicate medians, and box extents indicate first and third quartiles.
+  Steps are potted to a logarithmic scale.}
+
+  \label{fig:steps}
 
 \end{figure}
 
-Even without match removal, the {\sc Saturate} checker achieves roughly a
-two-orders-of-magnitude improvement over {\sc Enumerate}, progressing from $307.7$
-steps in $5$s to $744.6$ steps in $100$s. Most impressively, adding match removal
-to the {\sc Saturate} checker allows it to process \emph{all} $1020.8$ steps in
-under $5$s.
+Even without match removal, the {\sc saturate} checker achieves a drastic
+improvement over {\sc enumerate}, progressing from median $357$ steps in $5$s
+to median $854$ steps in $100$s. Most impressively, adding match removal to the
+{\sc saturate} checker allows it to process median $1303$ steps in under $5$s.
 
-Our second experiment measures the average number of steps each algorithm is
-able to process in a fixed time limit of $5$s per history over $100$ histories
-of Scal's Michael-Scott Queue and $100$ histories of Scal's bounded-reordering
-queue. Each history contains $20$ enqueue-operations and $30$ 
-dequeue operations (total $100$ steps) obtained from highly-concurrent
-executions in which most operations are concurrent. Although most sequential
-executions of the bounded-reordering queue exhibit violations with respect to
-an atomic queue, the extreme concurrency in this set of histories allows great
-freedom in the linearization of operations, rendering all but $4$ histories
-violation free. Table~\ref{tab:exp:con} shows the results, including the
-average number of steps (out of $100$) processed, the number of violations
-(out of $4$) discovered, within the $5$s time limit. While the {\sc Enumerate}
-algorithm is never able to process enough steps in $5$s to detect any of the
-violations, the {\sc Symbolic} checker, at least without computing history
-completions, does detect $3$ out of $4$ violations. Once again, the {\sc
-Saturate} checker swiftly processes all histories to their entirety well under
-the time limit, averaging $0.1$s, correctly detecting all $4$ violations.
+While the measurements of Figure~\ref{fig:steps} do demonstrate that {\sc
+saturate} is more scalable than {\sc enumerate} and {\sc symbolic}, they do not
+reveal whether {\sc saturate} scales linearly in the number of steps when match
+removal is enabled. This is not visible since the asymptotic complexity of {\sc
+saturate} grows polynomially in the \emph{capacity}\footnote{Here
+\emph{capacity} means the number of values stored inside the data structure at
+a given moment.} of the given concurrent data structures, and the capacities
+seen in our pseudo-random executions tend to grow as time goes on.
+Figure~\ref{fig:steps:normalized} cancels out the effect of capacity growth by
+normalizing data points against the square of the average capacity throughout a
+run: for each data point $\tup{s,t,c}$ of $s$ steps in time $t$ with average
+capacity $c$, we plot the point $\tup{s,t/c^2}$. Here we clearly see that {\sc
+saturate} scales linearly in the number of steps when normalized against
+capacity-squared, whereas {\sc enumerate} and {\sc symbolic} continue to scale
+poorly despite normalization. The apparent anomaly that {\sc saturate} appears
+to scale linearly even with match removal disabled is explained by the fact that
+unmatched (add) operations, which could not have been removed in any case, tend
+to outnumber matched operations in these recorded histories.
 
-\begin{table}[t]
+\begin{figure}[t]
 
   \centering
   \includegraphics[width=\linewidth]{figures/steps-until-timeout-normalized}
 
-  \caption{The average number of steps each algorithm is able to process in a
-  fixed time limit of $5$s per history, averaged over $200$ very-concurrent
-  histories.}
-  \label{tab:exp:con}
+  \caption{The number of steps each algorithm is able to process in time limits
+  $5$s, $25$s, $50$s, $75$s, and $100$s normalized by the square of average
+  capacity of a given run over 10 histories of Scal’s Michael-Scott Queue
+  implementation. Steps are plotted to a logarithmic scale on the x-axis, and
+  the y-axis represents normalized time.}
 
-\end{table}
+  \label{fig:steps:normalized}
 
+\end{figure}
 
 \subsection{Completeness in Practice}
 \label{sec:exp:complete}
 
-While the second experiment of Table~\ref{tab:exp:con} already demonstrates
-that ``needle-in-a-haystack'' violations are swiftly discovered by the {\sc
-Saturate} checker, our third experiment elaborates, measuring the percentage of
-violations each algorithm is able discover in a fixed time limit of $5$s per
-history over $100$ histories of Scal's bounded-reordering queue. Each history
-contains $20$ enqueue-operations and $30$ dequeue operations (total
-$100$ steps) obtained from highly-sequential executions in which most
-operations are sequential. Consequently, the extreme sequentiality in this set
-of histories greatly limits freedom in the linearization of operations of the
-reordering queue, rendering all $100$ histories violations.
-Table~\ref{tab:exp:seq} shows the results, including the percentage of
-histories in which, and average step at which, the violation was discovered
-within the $5$s time limit. Since most operations are already ordered, the {\sc
-Enumerate} checker has very few completions and linearizations to perform, and
-succeeds in exposing most, but not all violations. The {\sc Symbolic} checker
-is more efficient, particularly when interacting with the solver incrementally,
-and computing completions explicitly. Still, the {\sc Saturate} checker is far
-more efficient, and succeeds in discovering \emph{every} violation. Notice that
-in some cases the {\sc Saturate} checker requires more steps to detect a
-violation. This is of course by design, as we wish to avoid branching and
-backtracking on the possible completions of operations.
+Our second experiment measures the amount of violations each algorithm is able
+discover across $100$ histories of each of the ten Scal implementations used.
+Six of the ten are linearizable, and, correctly, no algorithm reported a
+violation therein. The amount of violations detected in the remaining four are
+plotted in Figure~\ref{fig:violations}. The {\sc enumerate} algorithm is the
+baseline being the most-obviously complete algorithm, and detects all
+violations except $1$ for which it exceeds a $10$s timeout. As expected, the
+{\sc symbolic} algorithm, also being theoretically complete, also detects all
+violations. Validating our hypotheses that the {\sc saturate} algorithm and
+match removal are complete in practice, Figure~\ref{fig:violations}
+demonstrates that every single violation is also caught by {\sc saturate}, and
+enabling removal furthermore does not cause missed violations.
 
 \begin{figure}[t]
 
   \centering
   \includegraphics[width=\linewidth]{figures/violations-covered}
 
-  \caption{The percentage of violations each algorithm is able to discover in a
-  fixed time limit of $5$s per history, over $100$ barely-concurrent histories.}
-  \label{tab:exp:seq}
+  \caption{The number of violations each algorithm is able to detect across
+  $100$ histories of each of the four non-linearizable Scal implementations.
+  Algorithms are abbreviated: {\sc Enumerate}, {\sc SYmbolic}, {\sc SAturate},
+  and {\sc Counting}$(k)$, for $k = 2,4$.}
+
+  \label{fig:violations}
 
 \end{figure}
+
+In order to compare the precision of our algorithms with Bouajjani et
+al.~\cite{conf/popl/BouajjaniEEH15}’s parameterized approximation algorithms,
+we also plot the number of violations caught using the $k=4$ and $k=2$
+approximations. Essentially, their $k$-approximation abstract histories via
+weakening by forgetting ordering constraints such that the resulting order is a
+$k$-length interval order. As Figure~\ref{fig:violations} demonstrates, while
+small values of $k$ can miss many violations, larger values of $k$ can catch
+increasingly more, at the expense of additional runtime overhead. To avoid
+clutter in Figure~\ref{fig:steps}, we did not plot their runtimes, though we
+remark that Bouajjani et al.’s algorithms perform on par with our {\sc
+symbolic} algorithm.
 
 Finally, we address the possible sources of incompleteness due to match removal
 discussed in Section~\ref{sec:obsolete}. Recall the history $h_1$ and its
 extension $h_2$ of Figure~\ref{fig:removal_no_saturation} from
-Example~\ref{ex:removal_no_saturation}. Since the {\sc Saturate} algorithm does
+Example~\ref{ex:removal_no_saturation}. Since the {\sc saturate} algorithm does
 not speculate on whether the pending rem operation might match the 
 add of $2$ or $3$ (or both!), it will not detect the violation in $h_1$ until
 the pending rem operation completes. Simply removing the add-rem
 match of value $1$ from $h_1$ before the pending rem operation
 completes would result in a non-violating history. However, by applying the
 stack-theory axioms $\textsc{Theory}(H_\mathrm{st})$ to completed operations
-before removing this match, the {\sc Saturate} algorithm infers the constraints
+before removing this match, the {\sc saturate} algorithm infers the constraints
 \begin{align*}
   \text{add}(2) < \text{add}(1) < (\text{rem} \Rightarrow 1) < (\text{rem} \Rightarrow {\tt empty})
 \end{align*}
@@ -204,6 +212,6 @@ returning $2$, the {\sc Saturate} algorithm derives a contradiction, since
 \begin{align*}
   \text{add}(2) < (\text{rem} \Rightarrow {\tt empty}) < (\text{rem} \Rightarrow 2).
 \end{align*}
-The incremental nature of the {\sc Saturate} algorithm thus avoids the
+The incremental nature of the {\sc saturate} algorithm thus avoids the
 practically-occurring sources of possible incompleteness due to match removal
 of which we are aware.
