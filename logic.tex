@@ -1,3 +1,4 @@
+%!TEX root = conf-pldi-EmmiEH15.tex
 \section{Refinement via Symbolic Reasoning}
 \label{sec:logic}
 
@@ -167,15 +168,15 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
   \begin{align*}
     & \textsc{Include} \\
     & \forall c.\ {\sf meth}(c) = {\sf contains} \land {\sf ret}(c) = {\sf true} \\
-    & \quad \implies \exists a.\ {\sf match}(c,a) \land {\sf b}(a,c) \\
+    & \quad \implies \exists a.\ {\sf match}(a,c) \land {\sf b}(a,c) \\
     & \forall c,a,r.\ {\sf meth}(c)={\sf contains} \land {\sf ret}(c) = {\sf true} \\
-    & \quad \land {\sf meth}(r) = {\sf remove}\land {\sf meth}(a) = {\sf add} \land  {\sf match}(c,a) \land {\sf match}(r,a)  \\
+    & \quad \land {\sf meth}(r) = {\sf remove}\land {\sf meth}(a) = {\sf add} \land  {\sf match}(a,c) \land {\sf match}(a,r)  \\
     & \quad \implies {\sf b}(a,c) \land {\sf b}(c,r)
     \\
     & \textsc{Exclude} \\
     & \forall c,a.\ {\sf meth}(c)={\sf contains} \land {\sf ret}(c) = {\sf false} \\
     & \quad \land {\sf meth}(a) = {\sf add}\land {\sf arg}(c) = {\sf arg}(a) \land {\sf b}(a,c) \\
-    & \quad \implies \exists r.\ {\sf meth}(r)={\sf remove} \land {\sf match}(r,a) \land {\sf b}(r,c)
+    & \quad \implies \exists r.\ {\sf meth}(r)={\sf remove} \land {\sf match}(a,r) \land {\sf b}(r,c)
     \\
     & \textsc{AddRem} \\
     & \forall a,r.\ {\sf match}(a,r) \land {\sf meth}(r) = {\sf remove}  \implies {\sf meth}(a)={\sf add} \land {\sf b}(a,r) 
@@ -186,7 +187,7 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
     & \quad \implies {\sf meth}(p)={\sf remove} \vee ({\sf meth}(p)={\sf contains} \land {\sf ret}(p) = {\sf false}) 
     \\
     & \textsc{MatchingRem} \\
-    & \forall a,r,p.\ {\sf match}(r,a) \land {\sf arg}(p) = {\sf arg}(r) \land {\sf meth}(r)={\sf remove}\\
+    & \forall a,r,p.\ {\sf match}(a,r) \land {\sf arg}(p) = {\sf arg}(r) \\ %\land {\sf meth}(r)={\sf remove}
     & \quad \land \forall q.\ {\sf b}(q,p) \vee {\sf b}(r,q) \vee {\sf arg}(q)\neq {\sf arg}(r) \\
     & \quad \implies {\sf meth}(p)={\sf add} \vee ({\sf meth}(p)={\sf contains} \land {\sf ret}(p) = {\sf true}) 
   \end{align*}
@@ -278,7 +279,7 @@ first-order formula $\textsc{Theory}(H)$ such that $h \in H$ if{f} $h, M
     \\
     & \textsc{Limit} \\
     & \forall x_0,\dots,x_n.\ \bigwedge_{0 \leq i < n} {\sf b}(x_i,x_n) \land \bigwedge_{0 \leq i \leq n} {\sf meth}(x_i) = {\sf acquire} \\
-    & \quad \implies \exists r.\ {\sf b}(r,x_n) \land \bigvee_{0 \leq i \leq n} {\sf match}(y,x_i)
+    & \quad \implies \exists r.\ {\sf b}(r,x_n) \land \bigvee_{0 \leq i \leq n} {\sf match}(r,x_i)
     \\
     & \textsc{Exchange} \\
     & \forall x.\ {\sf ret}(x) \neq {\sf null} \implies  \exists y.\ {\sf match}(x,y)  \\
