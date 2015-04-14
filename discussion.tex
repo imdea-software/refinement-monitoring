@@ -9,6 +9,12 @@ experience, reported in Section~\ref{sec:exp}, suggests completeness, and we
 have no evidence to suggest that {\sc saturate} is incomplete, even with
 operation removal.
 
+While the {\sc enumerate} algorithm is complete by definition, it follows from
+Sections~\ref{sec:logic} and~\ref{sec:propositional} that the {\sc symbolic}
+algorithm is also complete without operation removal, and it follows from
+Section~\ref{sec:obsolete} that both {\sc enumerate} and {\sc symbolic} are
+incomplete with operation removal.
+
 Based on our experience in this and prior works~\cite{ conf/esop/BouajjaniEEH13,
 conf/popl/BouajjaniEEH15}, we conjecture the theoretical completeness of {\sc
 saturate} as well, with and without operation removal, for naturally-occurring
@@ -17,9 +23,3 @@ operations eventually return. This would imply that the propositional
 backtracking thought to be inherent in linearizability is unnecessary, and that
 linearizability is polynomial-time checkable for typical concurrent objects.
 This insight has not been suggested by any previous works of which we are aware.
-
-While the {\sc enumerate} algorithm is complete by definition, it follows from
-Sections~\ref{sec:logic} and~\ref{sec:propositional} that the {\sc symbolic}
-algorithm is also complete without operation removal, and it follows from
-Section~\ref{sec:obsolete} that both {\sc enumerate} and {\sc symbolic} are
-incomplete with operation removal.
