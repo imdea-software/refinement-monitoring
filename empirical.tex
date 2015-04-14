@@ -204,7 +204,7 @@ completes would result in a non-violating history. However, by applying the
 stack-theory axioms $\textsc{Theory}(H_\mathrm{st})$ to completed operations
 before removing this match, the {\sc saturate} algorithm infers the constraints
 \begin{align*}
-  \text{add}(2) < \text{add}(1) < (\text{rem} \Rightarrow 1) < (\text{rem} \Rightarrow {\tt empty})
+  \text{add}(2) < (\text{rem} \Rightarrow 1) < (\text{rem} \Rightarrow {\tt empty})
 \end{align*}
 of which $\text{add}(2) < (\text{rem} \Rightarrow {\tt empty})$ persists after the
 match removal. Finally, when the pending \text{rem}-operation does complete,
