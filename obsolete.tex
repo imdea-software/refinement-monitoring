@@ -17,7 +17,7 @@ leverage the same notion of operation matching used to characterize library
 kernels in order to identify groups of operations whose removal preserves
 history membership.
 
-\subsection{Unique matching functions}
+\subsection{Unique Matching Functions}
 
 Recall that a history $h\in \overline{H}$ iff there exists a history $h'$
 stronger than $h$ and a matching function $M : O \rightharpoonup O$ such that
@@ -67,7 +67,7 @@ standard libraries with unique matching functions.
 
 \end{example}
 
-\subsection{Closure under removing matched operations}
+\subsection{Closure under Removing Matched Operations}
 
 A \emph{match} of a history $h$ is an operation $o$ together with the maximal 
 set of operations mapped by $M_h$ to $o$. 
@@ -167,7 +167,7 @@ is not true.
 
 \end{example}
 
-\subsection{Forgetting matched operations}
+\subsection{Forgetting Matched Operations}
 
 A runtime monitor continuously checking history membership can soundly forget
 matches provided that Theorem~\ref{th:match_closure} holds and that every match of a history $h$ is also a match of 
